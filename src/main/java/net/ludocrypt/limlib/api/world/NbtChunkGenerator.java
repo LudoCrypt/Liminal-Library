@@ -67,7 +67,7 @@ public abstract class NbtChunkGenerator extends ChunkGenerator {
 
 	@Override
 	public CompletableFuture<Chunk> populateNoise(Executor var1, Blender var2, StructureAccessor var3, Chunk var4) {
-		throw new UnsupportedOperationException("populateNoise should never be called in instanceof ChunkGeneratorExtraInfo");
+		throw new UnsupportedOperationException("populateNoise should never be called in " + this.getClass());
 	}
 
 	public abstract CompletableFuture<Chunk> populateNoise(Executor executor, Chunk chunk, ChunkStatus targetStatus, ServerWorld world, ChunkRegion chunkRegion, StructureManager structureManager, ServerLightingProvider lightingProvider);
