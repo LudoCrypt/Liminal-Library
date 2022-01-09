@@ -114,7 +114,7 @@ public abstract class NbtChunkGenerator extends ChunkGenerator {
 				if (state.isOf(Blocks.BARREL)) {
 					region.setBlockState(pos, state, Block.NOTIFY_ALL, 1);
 					if (region.getBlockEntity(pos)instanceof BarrelBlockEntity barrel) {
-						barrel.setLootTable(LootTables.SIMPLE_DUNGEON_CHEST, region.getSeed() + MathHelper.hashCode(pos));
+						barrel.setLootTable(this.getBarrelLootTable(), region.getSeed() + MathHelper.hashCode(pos));
 					}
 				} else if (state.isOf(Blocks.BARRIER)) {
 					region.setBlockState(pos, Blocks.AIR.getDefaultState(), Block.NOTIFY_ALL, 1);
@@ -129,6 +129,10 @@ public abstract class NbtChunkGenerator extends ChunkGenerator {
 				}
 			}
 		}).spawnEntities(region, at, rotation);
+	}
+
+	protected Identifier getBarrelLootTable() {
+		return LootTables.SIMPLE_DUNGEON_CHEST;
 	}
 
 	public int getChunkRadius() {
