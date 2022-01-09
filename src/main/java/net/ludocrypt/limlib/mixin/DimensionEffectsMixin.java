@@ -20,7 +20,7 @@ public class DimensionEffectsMixin {
 	private static Object2ObjectMap<Identifier, DimensionEffects> BY_IDENTIFIER;
 
 	static {
-		LiminalDimensions.LIMINAL_WORLD_REGISTRY.forEach((world) -> BY_IDENTIFIER.put(world.worldId, world.worldDimensionEffects));
+		LiminalDimensions.LIMINAL_WORLD_REGISTRY.forEach((world) -> BY_IDENTIFIER.put(world.worldId, world.worldDimensionEffects.get()));
 	}
 
 }
