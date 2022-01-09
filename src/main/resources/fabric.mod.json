@@ -1,0 +1,30 @@
+{
+	"schemaVersion": 1,
+	"id": "limlib",
+	"version": "${version}",
+	"name": "Liminal Library",
+	"description": "Library for Liminal Space dimensions!",
+	"authors": [
+		"LudoCrypt"
+	],
+	"contact": {
+		"homepage": "https://github.com/LudoCrypt/Liminal-Library",
+		"sources": "https://github.com/LudoCrypt/Liminal-Library"
+	},
+	"license": "LGPLv3",
+	"icon": "assets/limlib/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"client": [
+			"net.ludocrypt.limlib.api.LimLibClient"
+		]
+	},
+	"mixins": [
+		"limlib.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.11.3",
+		"fabric": "*",
+		"minecraft": "1.18.x"
+	}
+}

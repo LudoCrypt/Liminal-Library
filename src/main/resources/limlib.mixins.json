@@ -1,0 +1,23 @@
+{
+	"required": true,
+	"minVersion": "0.8",
+	"package": "net.ludocrypt.limlib.mixin",
+	"compatibilityLevel": "JAVA_16",
+	"mixins": [
+		"BlockEntityAccessor",
+		"ChunkStatusMixin",
+		"DimensionOptionsMixin",
+		"DimensionTypeMixin"
+	],
+	"client": [
+		"DimensionEffectsMixin",
+		"SoundManagerAccessor",
+		"SoundSystemAccessor",
+		"SoundSystemMixin",
+		"SourceAccessor",
+		"WorldRendererMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}
