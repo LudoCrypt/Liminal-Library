@@ -28,8 +28,8 @@ public class ChunkStatusMixin {
 
 	@Inject(method = "method_38284(Lnet/minecraft/world/chunk/ChunkStatus;Ljava/util/concurrent/Executor;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Lnet/minecraft/structure/StructureManager;Lnet/minecraft/server/world/ServerLightingProvider;Ljava/util/function/Function;Ljava/util/List;Lnet/minecraft/world/chunk/Chunk;Z)Ljava/util/concurrent/CompletableFuture;", at = @At(value = "RETURN", ordinal = 0), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
 	private static void limlib$noise(ChunkStatus targetStatus, Executor executor, ServerWorld world, ChunkGenerator generator, StructureManager structureManager, ServerLightingProvider lightingProvider, Function<Chunk, CompletableFuture<Either<Chunk, ChunkHolder.Unloaded>>> function, List<Chunk> chunks, Chunk chunk2, boolean bl, CallbackInfoReturnable<CompletableFuture<Chunk>> ci, ChunkRegion chunkRegion) {
-		if (generator instanceof NbtChunkGenerator) {
-			ci.setReturnValue(((NbtChunkGenerator) generator).populateNoise(executor, chunk2, targetStatus, world, chunkRegion, structureManager, lightingProvider));
+		if (generator instanceof NbtChunkGenerator nbtChunkGenerator) {
+			ci.setReturnValue(((NbtChunkGenerator) generator).populateNoise(executor, chunk2, targetStatus, world, new ChunkRegion(world, chunks, targetStatus, nbtChunkGenerator.getChunkRadius()), structureManager, lightingProvider));
 		}
 	}
 

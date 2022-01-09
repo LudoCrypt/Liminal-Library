@@ -124,4 +124,8 @@ public abstract class NbtChunkGenerator extends ChunkGenerator {
 		}).spawnEntities(region, at, rotation);
 	}
 
+	public int getChunkRadius() {
+		return 1;
+	}
+
 }
