@@ -10,6 +10,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.chunk.ChunkStatus;
 
 public class LimLibClient implements ClientModInitializer {
 
@@ -22,11 +23,13 @@ public class LimLibClient implements ClientModInitializer {
 			for (BlockPos.Mutable mutable : iterable) {
 				BlockPos pos = mutable.toImmutable();
 				if (pos.isWithinDistance(player.getBlockPos(), 16)) {
-					BlockState state = world.getBlockState(pos);
-					if (state.getBlock()instanceof RandomSoundEmitter rse) {
-						if (world.getRandom().nextDouble() < rse.getChance(world, state)) {
-							Vec3d relativePos = rse.getRelativePos(world, state);
-							world.playSound(pos.getX() + relativePos.getX(), pos.getY() + relativePos.getY(), pos.getZ() + relativePos.getZ(), rse.getSound(world, state), SoundCategory.AMBIENT, rse.getVolume(world, state), rse.getPitch(world, state), true);
+					if (world.getChunk(pos).getStatus().isAtLeast(ChunkStatus.FULL)) {
+						BlockState state = world.getBlockState(pos);
+						if (state.getBlock()instanceof RandomSoundEmitter rse) {
+							if (world.getRandom().nextDouble() < rse.getChance(world, state)) {
+								Vec3d relativePos = rse.getRelativePos(world, state);
+								world.playSound(pos.getX() + relativePos.getX(), pos.getY() + relativePos.getY(), pos.getZ() + relativePos.getZ(), rse.getSound(world, state), SoundCategory.AMBIENT, rse.getVolume(world, state), rse.getPitch(world, state), true);
+							}
 						}
 					}
 				}
