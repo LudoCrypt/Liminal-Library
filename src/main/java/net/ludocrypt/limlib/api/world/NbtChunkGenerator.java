@@ -1,6 +1,7 @@
 package net.ludocrypt.limlib.api.world;
 
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -29,8 +30,10 @@ import net.minecraft.world.gen.GenerationStep.Carver;
 import net.minecraft.world.gen.StructureAccessor;
 import net.minecraft.world.gen.chunk.Blender;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
+import net.minecraft.world.gen.chunk.StructureConfig;
 import net.minecraft.world.gen.chunk.StructuresConfig;
 import net.minecraft.world.gen.chunk.VerticalBlockSample;
+import net.minecraft.world.gen.feature.StructureFeature;
 
 public abstract class NbtChunkGenerator extends ChunkGenerator {
 
@@ -41,7 +44,7 @@ public abstract class NbtChunkGenerator extends ChunkGenerator {
 	public final MultiNoiseSampler multiNoiseSampler;
 
 	public NbtChunkGenerator(BiomeSource biomeSource, MultiNoiseSampler multiNoiseSampler, long worldSeed, Identifier nbtId) {
-		super(biomeSource, biomeSource, new StructuresConfig(false), worldSeed);
+		super(biomeSource, biomeSource, new StructuresConfig(Optional.empty(), new HashMap<StructureFeature<?>, StructureConfig>()), worldSeed);
 		this.multiNoiseSampler = multiNoiseSampler;
 		this.worldSeed = worldSeed;
 		this.nbtId = nbtId;
@@ -84,7 +87,11 @@ public abstract class NbtChunkGenerator extends ChunkGenerator {
 
 	@Override
 	public VerticalBlockSample getColumnSample(int x, int z, HeightLimitView world) {
-		return new VerticalBlockSample(0, new BlockState[world.getHeight()]);
+		BlockState[] states = new BlockState[world.getHeight()];
+		for (int i = 0; i < states.length; i++) {
+			states[i] = Blocks.AIR.getDefaultState();
+		}
+		return new VerticalBlockSample(0, states);
 	}
 
 	protected void store(String id, ServerWorld world) {
