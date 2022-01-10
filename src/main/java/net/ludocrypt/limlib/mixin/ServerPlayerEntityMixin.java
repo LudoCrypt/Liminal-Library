@@ -29,7 +29,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 		super(world, pos, yaw, profile);
 	}
 
-	@Inject(method = "moveToWorld", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILHARD)
+	@Inject(method = "moveToWorld", at = @At(value = "RETURN", ordinal = 1), locals = LocalCapture.CAPTURE_FAILHARD)
 	public void limlib$moveToWorld(ServerWorld to, CallbackInfoReturnable<Entity> ci, ServerWorld from, RegistryKey<World> fromKey) {
 		PacketByteBuf buf = PacketByteBufs.create();
 		buf.writeIdentifier(LiminalTravelSounds.getCurrent(to.getRegistryKey()).getSound(from, to).getId());
