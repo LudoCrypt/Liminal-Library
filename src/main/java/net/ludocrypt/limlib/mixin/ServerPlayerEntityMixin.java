@@ -1,20 +1,26 @@
 package net.ludocrypt.limlib.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import com.mojang.authlib.GameProfile;
 
+import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.ludocrypt.limlib.impl.sound.LiminalTravelSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
 
 @Mixin(ServerPlayerEntity.class)
@@ -24,24 +30,16 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 		super(world, pos, yaw, profile);
 	}
 
-	@Unique
-	private int portalId = 1032;
-
-	@Inject(method = "moveToWorld", at = @At("HEAD"))
-	private void limlib$moveToWorld(ServerWorld destination, CallbackInfoReturnable<Entity> ci) {
-		if (LiminalTravelSounds.isChangingDimension) {
-			portalId = 29848748;
-			LiminalTravelSounds.isChangingDimension = false;
-		} else {
-			portalId = 1032;
-		}
+	@Inject(method = "moveToWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V", ordinal = 5, shift = Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
+	public void limlib$moveToWorld(ServerWorld to, CallbackInfoReturnable<Entity> ci, ServerWorld from, RegistryKey<World> fromKey) {
+		PacketByteBuf buf = PacketByteBufs.create();
+		buf.writeIdentifier(LiminalTravelSounds.getCurrent(to.getRegistryKey()).getSound(from, to).getId());
+		ServerPlayNetworking.send((ServerPlayerEntity) (Object) this, new Identifier("limlib", "travel_sound"), buf);
 	}
 
 	@ModifyArg(method = "moveToWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/network/packet/s2c/play/WorldEventS2CPacket;<init>(ILnet/minecraft/util/math/BlockPos;IZ)V", ordinal = 0), index = 0)
 	private int limlib$moveToWorld(int in) {
-		int oldPortalId = portalId;
-		portalId = 1032;
-		return oldPortalId;
+		return 29848748;
 	}
 
 }
