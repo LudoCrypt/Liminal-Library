@@ -2,7 +2,6 @@ package net.ludocrypt.limlib.mixin;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -30,7 +29,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 		super(world, pos, yaw, profile);
 	}
 
-	@Inject(method = "moveToWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V", ordinal = 5, shift = Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
+	@Inject(method = "moveToWorld", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILHARD)
 	public void limlib$moveToWorld(ServerWorld to, CallbackInfoReturnable<Entity> ci, ServerWorld from, RegistryKey<World> fromKey) {
 		PacketByteBuf buf = PacketByteBufs.create();
 		buf.writeIdentifier(LiminalTravelSounds.getCurrent(to.getRegistryKey()).getSound(from, to).getId());
