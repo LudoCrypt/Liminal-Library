@@ -2,19 +2,14 @@ package net.ludocrypt.limlib.api;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.ludocrypt.limlib.api.sound.RandomSoundEmitter;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.client.sound.PositionedSoundInstance;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.chunk.ChunkStatus;
 
 public class LimLibClient implements ClientModInitializer {
@@ -41,11 +36,6 @@ public class LimLibClient implements ClientModInitializer {
 					}
 				}
 			}
-		});
-
-		ClientPlayNetworking.registerGlobalReceiver(new Identifier("limlib", "travel_sound"), (client, handler, buf, responseSender) -> {
-			SoundEvent sound = Registry.SOUND_EVENT.get(buf.readIdentifier());
-			client.execute(() -> client.getSoundManager().play(PositionedSoundInstance.ambient(sound, client.world.getRandom().nextFloat() * 0.4F + 0.8F, 0.25F)));
 		});
 	}
 
