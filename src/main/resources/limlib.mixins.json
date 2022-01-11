@@ -11,6 +11,7 @@
 		"ServerPlayerEntityMixin"
 	],
 	"client": [
+		"ClientPlayNetworkHandlerMixin",
 		"DimensionEffectsMixin",
 		"SoundManagerAccessor",
 		"SoundSystemAccessor",
