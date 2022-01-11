@@ -6,6 +6,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.ludocrypt.limlib.api.render.SkyHook;
 import net.ludocrypt.limlib.api.render.SkyHook.RegularSky;
+import net.ludocrypt.limlib.api.world.LiminalWorld;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.world.World;
@@ -15,6 +16,10 @@ public class LiminalSkyRendering {
 
 	public static final HashMap<RegistryKey<World>, SkyHook> SKYBOX_REGISTRY = new HashMap<RegistryKey<World>, SkyHook>();
 	public static final SkyHook DEFAULT = new RegularSky();
+
+	public static SkyHook register(LiminalWorld world, SkyHook skyHook) {
+		return register(world.worldWorldRegistryKey, skyHook);
+	}
 
 	public static SkyHook register(RegistryKey<World> world, SkyHook skyHook) {
 		return SKYBOX_REGISTRY.put(world, skyHook);
