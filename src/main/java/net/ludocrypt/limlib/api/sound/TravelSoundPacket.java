@@ -4,6 +4,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.network.NetworkThreadUtils;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.listener.ClientPlayPacketListener;
@@ -31,6 +32,7 @@ public class TravelSoundPacket implements Packet<ClientPlayPacketListener> {
 	public void apply(ClientPlayPacketListener clientPlayPacketListener) {
 		if (FabricLoader.getInstance().getEnvironmentType() == EnvType.CLIENT) {
 			MinecraftClient client = MinecraftClient.getInstance();
+			NetworkThreadUtils.forceMainThread(this, clientPlayPacketListener, client);
 			if (client != null) {
 				client.getSoundManager().play(PositionedSoundInstance.ambient(this.sound, client.world.getRandom().nextFloat() * 0.4F + 0.8F, 0.25F));
 			}
