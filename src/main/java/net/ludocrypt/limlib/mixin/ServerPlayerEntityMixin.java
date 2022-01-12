@@ -12,13 +12,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.mojang.authlib.GameProfile;
 
-import net.ludocrypt.limlib.api.sound.TravelSoundPacket;
 import net.ludocrypt.limlib.impl.sound.LiminalTravelSounds;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.network.packet.s2c.play.PlaySoundS2CPacket;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -37,7 +38,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 	public void limlib$moveToWorld(ServerWorld to, CallbackInfoReturnable<Entity> ci) {
 		Optional<SoundEvent> optional = LiminalTravelSounds.getCurrent(((ServerPlayerEntity) (Object) this).getWorld(), to);
 		if (optional.isPresent()) {
-			this.networkHandler.sendPacket(new TravelSoundPacket(optional.get()));
+			this.networkHandler.sendPacket(new PlaySoundS2CPacket(optional.get(), SoundCategory.AMBIENT, this.getX(), this.getY(), this.getZ(), world.getRandom().nextFloat() * 0.4F + 0.8F, 0.25F));
 		}
 	}
 
