@@ -26,7 +26,7 @@ public class LiminalTravelSounds {
 	public static Optional<SoundEvent> getCurrent(ServerWorld from, ServerWorld to) {
 		MutableObject<Optional<SoundEvent>> mutableSound = new MutableObject<Optional<SoundEvent>>(Optional.of(SoundEvents.BLOCK_PORTAL_TRAVEL));
 		List<LiminalTravelSound> list = Lists.newArrayList(TRAVEL_SOUND_REGISTRY.values());
-		Collections.sort(list, (a, b) -> Integer.compare(a.priority(), b.priority()));
+		Collections.sort(list, (a, b) -> Integer.compare(a == null ? 1000 : a.priority(), b == null ? 1000 : b.priority()));
 		for (LiminalTravelSound sound : list) {
 			sound.hookSound(from, to, mutableSound);
 		}
