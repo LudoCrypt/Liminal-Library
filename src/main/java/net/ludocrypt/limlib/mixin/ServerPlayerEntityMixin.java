@@ -38,7 +38,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 	public void limlib$moveToWorld(ServerWorld to, CallbackInfoReturnable<Entity> ci) {
 		Optional<SoundEvent> optional = LiminalTravelSounds.getCurrent(((ServerPlayerEntity) (Object) this).getWorld(), to);
 		if (optional.isPresent()) {
-			this.networkHandler.sendPacket(new PlaySoundS2CPacket(optional.get(), SoundCategory.AMBIENT, this.getX(), this.getY(), this.getZ(), world.getRandom().nextFloat() * 0.4F + 0.8F, 0.25F));
+			this.networkHandler.sendPacket(new PlaySoundS2CPacket(optional.get(), SoundCategory.AMBIENT, this.getX(), this.getY(), this.getZ(), 0.25F, world.getRandom().nextFloat() * 0.4F + 0.8F));
 		}
 	}
 
