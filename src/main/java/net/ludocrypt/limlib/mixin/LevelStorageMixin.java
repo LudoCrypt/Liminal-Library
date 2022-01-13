@@ -36,6 +36,7 @@ public class LevelStorageMixin {
 		if (!dimensions.get(world.worldId.toString()).result().isPresent()) {
 			dimensions.set(world.worldId.toString(), new Dynamic<T>(dimensions.getOps(), DimensionOptions.CODEC.encodeStart(dimensions.getOps(), world.worldDimensionOptions.apply(registry.get(Registry.DIMENSION_TYPE_KEY), registry.get(Registry.BIOME_KEY), in.get("seed").asLong(0))).result().get()));
 		}
+		in.set("dimensions", dimensions);
 		return in;
 	}
 
