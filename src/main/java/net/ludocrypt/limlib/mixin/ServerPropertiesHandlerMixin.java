@@ -10,7 +10,6 @@ import net.minecraft.server.dedicated.ServerPropertiesHandler;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.world.gen.GeneratorOptions;
 
-@Deprecated
 @Mixin(ServerPropertiesHandler.class)
 public class ServerPropertiesHandlerMixin {
 
