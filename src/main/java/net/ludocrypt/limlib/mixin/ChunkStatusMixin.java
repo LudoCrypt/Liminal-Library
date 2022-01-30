@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.mojang.datafixers.util.Either;
 
+import net.ludocrypt.limlib.api.world.LiminalChunkGenerator;
 import net.ludocrypt.limlib.api.world.NbtChunkGenerator;
 import net.minecraft.server.world.ChunkHolder;
 import net.minecraft.server.world.ServerLightingProvider;
@@ -30,8 +31,13 @@ public class ChunkStatusMixin {
 	@Inject(method = "method_38284(Lnet/minecraft/world/chunk/ChunkStatus;Ljava/util/concurrent/Executor;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Lnet/minecraft/structure/StructureManager;Lnet/minecraft/server/world/ServerLightingProvider;Ljava/util/function/Function;Ljava/util/List;Lnet/minecraft/world/chunk/Chunk;Z)Ljava/util/concurrent/CompletableFuture;", at = @At("HEAD"), cancellable = true)
 	private static void limlib$noise(ChunkStatus targetStatus, Executor executor, ServerWorld world, ChunkGenerator generator, StructureManager structureManager, ServerLightingProvider lightingProvider, Function<Chunk, CompletableFuture<Either<Chunk, ChunkHolder.Unloaded>>> function, List<Chunk> chunks, Chunk chunk2, boolean bl, CallbackInfoReturnable<CompletableFuture<?>> ci) {
 		if (bl || !chunk2.getStatus().isAtLeast(targetStatus)) {
-			if (generator instanceof NbtChunkGenerator nbtChunkGenerator) {
-				ci.setReturnValue(((NbtChunkGenerator) generator).populateNoise(executor, chunk2, targetStatus, world, new ChunkRegion(world, chunks, targetStatus, nbtChunkGenerator.getChunkRadius()), structureManager, lightingProvider).thenApply(chunk -> {
+			if (generator instanceof LiminalChunkGenerator liminalChunkGenerator) {
+				if (generator instanceof NbtChunkGenerator nbtChunkGenerator) {
+					if (nbtChunkGenerator.structures.isEmpty()) {
+						nbtChunkGenerator.storeStructures(world);
+					}
+				}
+				ci.setReturnValue(liminalChunkGenerator.populateNoise(executor, chunk2, targetStatus, world, new ChunkRegion(world, chunks, targetStatus, liminalChunkGenerator.getChunkRadius()), structureManager, lightingProvider).thenApply(chunk -> {
 					if (chunk instanceof ProtoChunk protoChunk) {
 						BelowZeroRetrogen belowZeroRetrogen = protoChunk.getBelowZeroRetrogen();
 						if (belowZeroRetrogen != null) {

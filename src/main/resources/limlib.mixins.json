@@ -15,6 +15,7 @@
 	],
 	"client": [
 		"DimensionEffectsMixin",
+		"MinecraftClientMixin",
 		"SoundManagerAccessor",
 		"SoundSystemAccessor",
 		"SoundSystemMixin",
