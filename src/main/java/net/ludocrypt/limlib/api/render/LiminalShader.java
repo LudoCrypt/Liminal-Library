@@ -16,7 +16,7 @@ public abstract class LiminalShader {
 		private final ManagedShaderEffect shader;
 
 		public SimpleShader(Identifier shader) {
-			this(ShaderEffectManager.getInstance().manage(shader));
+			this(ShaderEffectManager.getInstance().manage(new Identifier(shader.getNamespace(), "shaders/post/" + shader.getPath() + ".json")));
 		}
 
 		public SimpleShader(ManagedShaderEffect shader) {

@@ -15,7 +15,7 @@ import net.minecraft.world.World;
 public class LiminalShaderRegistry {
 
 	public static final HashMap<RegistryKey<World>, LiminalShader> SHADER_REGISTRY = new HashMap<RegistryKey<World>, LiminalShader>();
-	public static final LiminalShader DEFAULT = new LiminalShader.SimpleShader(new Identifier("shaders/post/empty_shader.json"));
+	public static final LiminalShader DEFAULT = new LiminalShader.SimpleShader(new Identifier("empty_shader"));
 
 	public static LiminalShader register(LiminalWorld world, LiminalShader shader) {
 		return register(world.worldWorldRegistryKey, shader);
