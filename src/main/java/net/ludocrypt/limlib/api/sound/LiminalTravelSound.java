@@ -1,37 +1,62 @@
 package net.ludocrypt.limlib.api.sound;
 
-import java.util.Optional;
+import java.util.List;
 
-import org.apache.commons.lang3.mutable.Mutable;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.world.World;
 
-public abstract class LiminalTravelSound {
+public class LiminalTravelSound {
 
-	public abstract void hookSound(ServerWorld from, ServerWorld to, Mutable<Optional<SoundEvent>> mutable);
+	private List<TravelRule> toTravelRules;
+	private List<TravelRule> fromTravelRules;
 
-	public int priority() {
-		return 1000;
+	public static final Codec<LiminalTravelSound> CODEC = RecordCodecBuilder.create((instance) -> {
+		return instance.group(Codec.list(TravelRule.CODEC).fieldOf("to_rules").stable().forGetter((travelSound) -> {
+			return travelSound.getToTravelRules();
+		}), Codec.list(TravelRule.CODEC).fieldOf("from_rules").stable().forGetter((travelSound) -> {
+			return travelSound.getFromTravelRules();
+		})).apply(instance, instance.stable(LiminalTravelSound::new));
+	});
+
+	public LiminalTravelSound(List<TravelRule> toTravelRules, List<TravelRule> fromTravelRules) {
+		this.toTravelRules = toTravelRules;
+		this.fromTravelRules = fromTravelRules;
 	}
 
-	public static class SimpleTravelSound extends LiminalTravelSound {
+	public List<TravelRule> getToTravelRules() {
+		return toTravelRules;
+	}
 
-		private final RegistryKey<World> world;
-		private final SoundEvent sound;
+	public List<TravelRule> getFromTravelRules() {
+		return fromTravelRules;
+	}
 
-		public SimpleTravelSound(RegistryKey<World> world, SoundEvent sound) {
-			this.world = world;
-			this.sound = sound;
+	public static class TravelRule {
+
+		public static final Codec<TravelRule> CODEC = RecordCodecBuilder.create((instance) -> {
+			return instance.group(Codec.STRING.fieldOf("regex").stable().forGetter((travelRule) -> {
+				return travelRule.getRegex();
+			}), SoundEvent.CODEC.fieldOf("result").stable().forGetter((travelRule) -> {
+				return travelRule.getResult();
+			})).apply(instance, instance.stable(TravelRule::new));
+		});
+
+		private String regex;
+		private SoundEvent result;
+
+		public TravelRule(String regex, SoundEvent result) {
+			this.regex = regex;
+			this.result = result;
 		}
 
-		@Override
-		public void hookSound(ServerWorld from, ServerWorld to, Mutable<Optional<SoundEvent>> mutable) {
-			if (to.getRegistryKey().equals(world)) {
-				mutable.setValue(Optional.of(sound));
-			}
+		public String getRegex() {
+			return regex;
+		}
+
+		public SoundEvent getResult() {
+			return result;
 		}
 
 	}

@@ -33,7 +33,7 @@ public class ChunkStatusMixin {
 		if (bl || !chunk2.getStatus().isAtLeast(targetStatus)) {
 			if (generator instanceof LiminalChunkGenerator liminalChunkGenerator) {
 				if (generator instanceof NbtChunkGenerator nbtChunkGenerator) {
-					if (nbtChunkGenerator.structures.isEmpty()) {
+					if (nbtChunkGenerator.loadedStructures.isEmpty()) {
 						nbtChunkGenerator.storeStructures(world);
 					}
 				}

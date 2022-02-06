@@ -1,11 +1,13 @@
 package net.ludocrypt.limlib.api;
 
+import java.util.Optional;
+
 import ladysnake.satin.api.event.ShaderEffectRenderCallback;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.ludocrypt.limlib.access.DimensionTypeAccess;
 import net.ludocrypt.limlib.api.render.LiminalShader;
 import net.ludocrypt.limlib.api.sound.RandomSoundEmitter;
-import net.ludocrypt.limlib.impl.render.LiminalShaderRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -21,9 +23,11 @@ public class LimLibClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		ShaderEffectRenderCallback.EVENT.register(tickDelta -> {
 			MinecraftClient client = MinecraftClient.getInstance();
-			LiminalShader shader = LiminalShaderRegistry.getCurrent(client);
-			if (shader.shouldRender(client, tickDelta)) {
-				shader.getShader(client, tickDelta).render(tickDelta);
+			Optional<LiminalShader> shader = ((DimensionTypeAccess) client.world.getDimension()).getLiminalEffects().getShader();
+			if (shader.isPresent()) {
+				if (shader.get().shouldRender(client, tickDelta)) {
+					shader.get().getShader(client, tickDelta).render(tickDelta);
+				}
 			}
 		});
 

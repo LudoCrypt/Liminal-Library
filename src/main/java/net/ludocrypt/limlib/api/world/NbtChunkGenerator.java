@@ -1,6 +1,7 @@
 package net.ludocrypt.limlib.api.world;
 
 import java.util.HashMap;
+import java.util.List;
 
 import net.ludocrypt.limlib.mixin.BlockEntityAccessor;
 import net.minecraft.block.Block;
@@ -21,17 +22,20 @@ import net.minecraft.world.biome.source.util.MultiNoiseUtil.MultiNoiseSampler;
 
 public abstract class NbtChunkGenerator extends LiminalChunkGenerator {
 
-	public final HashMap<String, NbtPlacerUtil> structures = new HashMap<String, NbtPlacerUtil>(30);
+	public final HashMap<String, NbtPlacerUtil> loadedStructures = new HashMap<String, NbtPlacerUtil>(30);
 	public final Identifier nbtId;
+	public final List<String> structures;
 
-	public NbtChunkGenerator(BiomeSource biomeSource, long worldSeed, Identifier nbtId) {
+	public NbtChunkGenerator(BiomeSource biomeSource, long worldSeed, Identifier nbtId, List<String> structures) {
 		super(biomeSource, worldSeed);
 		this.nbtId = nbtId;
+		this.structures = structures;
 	}
 
-	public NbtChunkGenerator(BiomeSource biomeSource, MultiNoiseSampler multiNoiseSampler, long worldSeed, Identifier nbtId) {
+	public NbtChunkGenerator(BiomeSource biomeSource, MultiNoiseSampler multiNoiseSampler, long worldSeed, Identifier nbtId, List<String> structures) {
 		super(biomeSource, multiNoiseSampler, worldSeed);
 		this.nbtId = nbtId;
+		this.structures = structures;
 	}
 
 	@Override
@@ -46,10 +50,12 @@ public abstract class NbtChunkGenerator extends LiminalChunkGenerator {
 
 	// impl
 
-	public abstract void storeStructures(ServerWorld world);
+	public void storeStructures(ServerWorld world) {
+		this.structures.forEach((string) -> this.store(string, world));
+	}
 
 	protected void store(String id, ServerWorld world) {
-		structures.put(id, NbtPlacerUtil.load(world.getServer().getResourceManager(), new Identifier(this.nbtId.getNamespace(), "nbt/" + this.nbtId.getPath() + "/" + id + ".nbt")).get());
+		loadedStructures.put(id, NbtPlacerUtil.load(world.getServer().getResourceManager(), new Identifier(this.nbtId.getNamespace(), "nbt/" + this.nbtId.getPath() + "/" + id + ".nbt")).get());
 	}
 
 	protected void store(String id, ServerWorld world, int from, int to) {
@@ -63,7 +69,7 @@ public abstract class NbtChunkGenerator extends LiminalChunkGenerator {
 	}
 
 	protected void generateNbt(ChunkRegion region, BlockPos at, String id, BlockRotation rotation) {
-		structures.get(id).rotate(rotation).generateNbt(region, at, (pos, state, nbt) -> this.modifyStructure(region, pos, state, nbt)).spawnEntities(region, at, rotation);
+		loadedStructures.get(id).rotate(rotation).generateNbt(region, at, (pos, state, nbt) -> this.modifyStructure(region, pos, state, nbt)).spawnEntities(region, at, rotation);
 	}
 
 	protected void modifyStructure(ChunkRegion region, BlockPos pos, BlockState state, NbtCompound nbt) {

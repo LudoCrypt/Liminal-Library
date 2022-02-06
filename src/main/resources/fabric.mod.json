@@ -15,6 +15,9 @@
 	"icon": "assets/limlib/icon.png",
 	"environment": "*",
 	"entrypoints": {
+		"main": [
+			"net.ludocrypt.limlib.api.LimLib"
+		],
 		"client": [
 			"net.ludocrypt.limlib.api.LimLibClient"
 		]

@@ -1,5 +1,7 @@
 package net.ludocrypt.limlib.api.sound;
 
+import java.util.Optional;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.openal.AL11;
@@ -7,7 +9,7 @@ import org.lwjgl.openal.EXTEfx;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.ludocrypt.limlib.impl.sound.LiminalWorldReverb;
+import net.ludocrypt.limlib.access.DimensionTypeAccess;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.util.math.MathHelper;
@@ -56,15 +58,19 @@ public class ReverbFilter {
 
 	public static void update(SoundInstance soundInstance, int sourceID) {
 		MinecraftClient client = MinecraftClient.getInstance();
+
 		if (!(ReverbSettings.shouldIgnore(soundInstance.getId()) || client == null || client.world == null)) {
-			for (int i = 0; i < 2; i++) {
-				AL11.alSourcei(sourceID, EXTEfx.AL_DIRECT_FILTER, 0);
-				AL11.alSource3i(sourceID, EXTEfx.AL_AUXILIARY_SEND_FILTER, update(soundInstance, LiminalWorldReverb.getCurrent(client)) ? slot : 0, 0, 0);
-				int error = AL11.alGetError();
-				if (error == AL11.AL_NO_ERROR) {
-					break;
-				} else {
-					LOGGER.warn("OpenAl Error {}", error);
+			Optional<ReverbSettings> reverb = ((DimensionTypeAccess) client.world.getDimension()).getLiminalEffects().getReverb();
+			if (reverb.isPresent()) {
+				for (int i = 0; i < 2; i++) {
+					AL11.alSourcei(sourceID, EXTEfx.AL_DIRECT_FILTER, 0);
+					AL11.alSource3i(sourceID, EXTEfx.AL_AUXILIARY_SEND_FILTER, update(soundInstance, reverb.get()) ? slot : 0, 0, 0);
+					int error = AL11.alGetError();
+					if (error == AL11.AL_NO_ERROR) {
+						break;
+					} else {
+						LOGGER.warn("OpenAl Error {}", error);
+					}
 				}
 			}
 		}

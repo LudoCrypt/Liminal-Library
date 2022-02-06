@@ -1,9 +1,14 @@
 package net.ludocrypt.limlib.api.render;
 
+import java.util.function.Function;
+
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.ludocrypt.limlib.impl.world.LiminalSkyRegistry;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
@@ -21,15 +26,34 @@ import net.minecraft.util.math.Vec3f;
 @Environment(EnvType.CLIENT)
 public abstract class SkyHook {
 
+	public static final Codec<SkyHook> CODEC = LiminalSkyRegistry.LIMINAL_SKY.getCodec().dispatchStable(SkyHook::getCodec, Function.identity());
+
 	public abstract void renderSky(WorldRenderer worldRenderer, MinecraftClient client, MatrixStack matrices, Matrix4f projectionMatrix, float tickDelta);
 
+	public abstract Codec<? extends SkyHook> getCodec();
+
 	public static class RegularSky extends SkyHook {
+
+		public static final Codec<RegularSky> CODEC = RecordCodecBuilder.create((instance) -> instance.stable(new RegularSky()));
+
 		@Override
 		public void renderSky(WorldRenderer worldRenderer, MinecraftClient client, MatrixStack matrices, Matrix4f projectionMatrix, float tickDelta) {
 		}
+
+		@Override
+		public Codec<? extends SkyHook> getCodec() {
+			return CODEC;
+		}
+
 	}
 
 	public static class SkyboxSky extends SkyHook {
+
+		public static final Codec<SkyboxSky> CODEC = RecordCodecBuilder.create((instance) -> {
+			return instance.group(Identifier.CODEC.fieldOf("skybox").stable().forGetter((sky) -> {
+				return sky.identifier;
+			})).apply(instance, instance.stable(SkyboxSky::new));
+		});
 
 		public final Identifier identifier;
 
@@ -93,6 +117,11 @@ public abstract class SkyHook {
 			RenderSystem.depthMask(true);
 			RenderSystem.enableTexture();
 			RenderSystem.disableBlend();
+		}
+
+		@Override
+		public Codec<? extends SkyHook> getCodec() {
+			return CODEC;
 		}
 
 	}
