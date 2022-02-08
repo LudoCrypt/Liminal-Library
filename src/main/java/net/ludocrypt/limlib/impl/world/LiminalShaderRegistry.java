@@ -15,8 +15,8 @@ public class LiminalShaderRegistry {
 	@SuppressWarnings("unchecked")
 	public static final SimpleRegistry<Codec<? extends LiminalShader>> LIMINAL_SHADER = (SimpleRegistry<Codec<? extends LiminalShader>>) (Object) FabricRegistryBuilder.createSimple(Codec.class, new Identifier("limlib", "liminal_shader_codec")).attribute(RegistryAttribute.SYNCED).buildAndRegister();
 
-	public static Codec<? extends LiminalShader> register(Identifier id, Codec<? extends LiminalShader> maze) {
-		return Registry.register(LIMINAL_SHADER, id, maze);
+	public static Codec<? extends LiminalShader> register(Identifier id, Codec<? extends LiminalShader> shader) {
+		return Registry.register(LIMINAL_SHADER, id, shader);
 	}
 
 }
