@@ -26,6 +26,10 @@ public abstract class LiminalTravelSound {
 
 	public abstract Codec<? extends LiminalTravelSound> getCodec();
 
+	public int priority() {
+		return 1000;
+	}
+
 	public static class SimpleTravelSound extends LiminalTravelSound {
 
 		public static final Codec<SimpleTravelSound> CODEC = RecordCodecBuilder.create((instance) -> {
