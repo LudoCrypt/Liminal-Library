@@ -26,6 +26,12 @@ public abstract class NbtChunkGenerator extends LiminalChunkGenerator {
 	public final Identifier nbtId;
 	public final List<String> structures;
 
+	public NbtChunkGenerator(BiomeSource biomeSource, long worldSeed, Identifier nbtId) {
+		super(biomeSource, worldSeed);
+		this.nbtId = nbtId;
+		this.structures = List.of();
+	}
+
 	public NbtChunkGenerator(BiomeSource biomeSource, long worldSeed, Identifier nbtId, List<String> structures) {
 		super(biomeSource, worldSeed);
 		this.nbtId = nbtId;
@@ -47,8 +53,6 @@ public abstract class NbtChunkGenerator extends LiminalChunkGenerator {
 	public int getMinimumY() {
 		return 0;
 	}
-
-	// impl
 
 	public void storeStructures(ServerWorld world) {
 		this.structures.forEach((string) -> this.store(string, world));

@@ -39,7 +39,7 @@ public class LimLibClient implements ClientModInitializer {
 						if (state.getBlock()instanceof RandomSoundEmitter rse) {
 							if (world.getRandom().nextDouble() < rse.getChance(world, state, pos)) {
 								Vec3d relativePos = rse.getRelativePos(world, state, pos);
-								world.playSound(pos.getX() + relativePos.getX(), pos.getY() + relativePos.getY(), pos.getZ() + relativePos.getZ(), rse.getSound(world, state, pos), rse.getSoundCategory(world, state, pos), rse.getVolume(world, state, pos), rse.getPitch(world, state, pos), true);
+								world.playSound(null, pos.getX() + relativePos.getX(), pos.getY() + relativePos.getY(), pos.getZ() + relativePos.getZ(), rse.getSound(world, state, pos), rse.getSoundCategory(world, state, pos), rse.getVolume(world, state, pos), rse.getPitch(world, state, pos));
 							}
 						}
 					}
