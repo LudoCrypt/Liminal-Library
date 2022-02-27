@@ -63,8 +63,7 @@ public class ChunkStatusMixin {
 					nbtChunkGenerator.storeStructures(world);
 				}
 			}
-			new ChunkRegion(world, chunks, targetStatus, liminalChunkGenerator.getChunkRadius());
-			liminalChunkGenerator.buildSurface(targetStatus, world, liminalChunkGenerator, chunk);
+			liminalChunkGenerator.buildSurface(new ChunkRegion(world, chunks, targetStatus, liminalChunkGenerator.getChunkRadius()), targetStatus, world, liminalChunkGenerator, chunk);
 			ci.cancel();
 		}
 	}
@@ -77,8 +76,7 @@ public class ChunkStatusMixin {
 					nbtChunkGenerator.storeStructures(world);
 				}
 			}
-			new ChunkRegion(world, chunks, targetStatus, liminalChunkGenerator.getChunkRadius());
-			liminalChunkGenerator.carve(targetStatus, world, liminalChunkGenerator, chunk);
+			liminalChunkGenerator.carve(new ChunkRegion(world, chunks, targetStatus, liminalChunkGenerator.getChunkRadius()), targetStatus, world, liminalChunkGenerator, chunk);
 			ci.cancel();
 		}
 	}

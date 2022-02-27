@@ -76,9 +76,11 @@ public abstract class LiminalChunkGenerator extends ChunkGenerator {
 
 	public abstract CompletableFuture<Chunk> populateNoise(Executor executor, Chunk chunk, ChunkStatus targetStatus, ServerWorld world, ChunkRegion chunkRegion, StructureManager structureManager, ServerLightingProvider lightingProvider);
 
-	public abstract <T extends LiminalChunkGenerator> void buildSurface(ChunkStatus targetStatus, ServerWorld world, T generator, Chunk chunk);
+	public <T extends LiminalChunkGenerator> void buildSurface(ChunkRegion chunkRegion, ChunkStatus targetStatus, ServerWorld world, T generator, Chunk chunk) {
+	}
 
-	public abstract <T extends LiminalChunkGenerator> void carve(ChunkStatus targetStatus, ServerWorld world, T generator, Chunk chunk);
+	public <T extends LiminalChunkGenerator> void carve(ChunkRegion chunkRegion, ChunkStatus targetStatus, ServerWorld world, T generator, Chunk chunk) {
+	}
 
 	public int getChunkRadius() {
 		return 0;
