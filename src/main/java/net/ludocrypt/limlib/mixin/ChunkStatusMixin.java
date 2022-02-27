@@ -8,6 +8,7 @@ import java.util.function.Function;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.mojang.datafixers.util.Either;
@@ -54,4 +55,31 @@ public class ChunkStatusMixin {
 		}
 	}
 
+	@Inject(method = "method_16569(Lnet/minecraft/world/chunk/ChunkStatus;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Ljava/util/List;Lnet/minecraft/world/chunk/Chunk;)V", at = @At("HEAD"), cancellable = true)
+	private static void limlib$surface(ChunkStatus targetStatus, ServerWorld world, ChunkGenerator generator, List<Chunk> chunks, Chunk chunk, CallbackInfo ci) {
+		if (generator instanceof LiminalChunkGenerator liminalChunkGenerator) {
+			if (generator instanceof NbtChunkGenerator nbtChunkGenerator) {
+				if (nbtChunkGenerator.loadedStructures.isEmpty()) {
+					nbtChunkGenerator.storeStructures(world);
+				}
+			}
+			new ChunkRegion(world, chunks, targetStatus, liminalChunkGenerator.getChunkRadius());
+			liminalChunkGenerator.buildSurface(targetStatus, world, liminalChunkGenerator, chunk);
+			ci.cancel();
+		}
+	}
+
+	@Inject(method = "method_38282(Lnet/minecraft/world/chunk/ChunkStatus;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Ljava/util/List;Lnet/minecraft/world/chunk/Chunk;)V", at = @At("HEAD"), cancellable = true)
+	private static void limlib$carve(ChunkStatus targetStatus, ServerWorld world, ChunkGenerator generator, List<Chunk> chunks, Chunk chunk, CallbackInfo ci) {
+		if (generator instanceof LiminalChunkGenerator liminalChunkGenerator) {
+			if (generator instanceof NbtChunkGenerator nbtChunkGenerator) {
+				if (nbtChunkGenerator.loadedStructures.isEmpty()) {
+					nbtChunkGenerator.storeStructures(world);
+				}
+			}
+			new ChunkRegion(world, chunks, targetStatus, liminalChunkGenerator.getChunkRadius());
+			liminalChunkGenerator.carve(targetStatus, world, liminalChunkGenerator, chunk);
+			ci.cancel();
+		}
+	}
 }

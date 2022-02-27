@@ -48,10 +48,12 @@ public abstract class LiminalChunkGenerator extends ChunkGenerator {
 
 	@Override
 	public void carve(ChunkRegion var1, long var2, BiomeAccess var4, StructureAccessor var5, Chunk var6, Carver var7) {
+		throw new UnsupportedOperationException("buildSurface should never be called in " + this.getClass());
 	}
 
 	@Override
 	public void buildSurface(ChunkRegion var1, StructureAccessor var2, Chunk var3) {
+		throw new UnsupportedOperationException("buildSurface should never be called in " + this.getClass());
 	}
 
 	@Override
@@ -72,9 +74,11 @@ public abstract class LiminalChunkGenerator extends ChunkGenerator {
 		return new VerticalBlockSample(0, states);
 	}
 
-	// impl
-
 	public abstract CompletableFuture<Chunk> populateNoise(Executor executor, Chunk chunk, ChunkStatus targetStatus, ServerWorld world, ChunkRegion chunkRegion, StructureManager structureManager, ServerLightingProvider lightingProvider);
+
+	public abstract <T extends LiminalChunkGenerator> void buildSurface(ChunkStatus targetStatus, ServerWorld world, T generator, Chunk chunk);
+
+	public abstract <T extends LiminalChunkGenerator> void carve(ChunkStatus targetStatus, ServerWorld world, T generator, Chunk chunk);
 
 	public int getChunkRadius() {
 		return 0;
