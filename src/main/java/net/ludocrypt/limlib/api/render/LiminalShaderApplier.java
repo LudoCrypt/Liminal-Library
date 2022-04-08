@@ -7,21 +7,24 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import ladysnake.satin.api.managed.ManagedShaderEffect;
 import ladysnake.satin.api.managed.ShaderEffectManager;
-import net.ludocrypt.limlib.impl.world.LiminalShaderRegistry;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.ludocrypt.limlib.impl.LimlibRegistries;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 
-public abstract class LiminalShader {
+@Environment(EnvType.CLIENT)
+public abstract class LiminalShaderApplier {
 
-	public static final Codec<LiminalShader> CODEC = LiminalShaderRegistry.LIMINAL_SHADER.getCodec().dispatchStable(LiminalShader::getCodec, Function.identity());
+	public static final Codec<LiminalShaderApplier> CODEC = LimlibRegistries.LIMINAL_SHADER_APPLIER.getCodec().dispatchStable(LiminalShaderApplier::getCodec, Function.identity());
 
 	public abstract boolean shouldRender(MinecraftClient client, float tickdelta);
 
 	public abstract ManagedShaderEffect getShader(MinecraftClient client, float tickdelta);
 
-	public abstract Codec<? extends LiminalShader> getCodec();
+	public abstract Codec<? extends LiminalShaderApplier> getCodec();
 
-	public static class SimpleShader extends LiminalShader {
+	public static class SimpleShader extends LiminalShaderApplier {
 
 		public static final Codec<SimpleShader> CODEC = RecordCodecBuilder.create((instance) -> {
 			return instance.group(Identifier.CODEC.fieldOf("shader").stable().forGetter((shader) -> {
@@ -52,7 +55,7 @@ public abstract class LiminalShader {
 		}
 
 		@Override
-		public Codec<? extends LiminalShader> getCodec() {
+		public Codec<? extends LiminalShaderApplier> getCodec() {
 			return SimpleShader.CODEC;
 		}
 

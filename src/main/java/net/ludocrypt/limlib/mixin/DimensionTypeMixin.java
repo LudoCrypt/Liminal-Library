@@ -1,7 +1,5 @@
 package net.ludocrypt.limlib.mixin;
 
-import java.util.Optional;
-
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -21,35 +19,37 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.Lifecycle;
 
-import net.ludocrypt.limlib.access.DimensionTypeAccess;
-import net.ludocrypt.limlib.impl.LiminalEffects;
-import net.ludocrypt.limlib.impl.world.LiminalDimensions;
+import net.ludocrypt.limlib.access.DimensionEffectsAccess;
+import net.ludocrypt.limlib.api.LiminalEffects;
+import net.ludocrypt.limlib.impl.LimlibRegistries;
+import net.minecraft.structure.StructureSet;
+import net.minecraft.util.math.noise.DoublePerlinNoiseSampler;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.MutableRegistry;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.SimpleRegistry;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.dimension.DimensionType;
+import net.minecraft.world.gen.chunk.ChunkGeneratorSettings;
 
 @Mixin(DimensionType.class)
-public class DimensionTypeMixin implements DimensionTypeAccess {
+public class DimensionTypeMixin implements DimensionEffectsAccess {
 
 	@Shadow
 	@Mutable
 	@Final
 	public static Codec<DimensionType> CODEC;
 
-	private LiminalEffects liminalEffects = new LiminalEffects(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+	private LiminalEffects liminalEffects = new LiminalEffects();
 
-	@Inject(method = "addRegistryDefaults", at = @At("TAIL"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
-	private static void limlib$addRegistryDefaults(DynamicRegistryManager registryManager, CallbackInfoReturnable<DynamicRegistryManager> ci, MutableRegistry<DimensionType> mutableRegistry) {
-		LiminalDimensions.LIMINAL_WORLD_REGISTRY.forEach((world) -> mutableRegistry.add(world.worldDimensionTypeRegistryKey, world.worldDimensionType, Lifecycle.stable()));
+	@Inject(method = "Lnet/minecraft/world/dimension/DimensionType;addRegistryDefaults(Lnet/minecraft/util/registry/DynamicRegistryManager$Mutable;)Lnet/minecraft/util/registry/DynamicRegistryManager$Mutable;", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILHARD)
+	private static void limlib$addRegistryDefaults(DynamicRegistryManager.Mutable registryManager, CallbackInfoReturnable<DynamicRegistryManager.Mutable> ci, MutableRegistry<DimensionType> mutableRegistry) {
+		LimlibRegistries.LIMINAL_WORLD.forEach((world) -> mutableRegistry.add(world.getDimensionTypeKey(), world.getDimensionType(), Lifecycle.stable()));
 	}
 
-	@Inject(method = "Lnet/minecraft/world/dimension/DimensionType;createDefaultDimensionOptions(Lnet/minecraft/util/registry/DynamicRegistryManager;JZ)Lnet/minecraft/util/registry/SimpleRegistry;", at = @At("TAIL"), cancellable = true, locals = LocalCapture.CAPTURE_FAILHARD)
-	private static void limlib$createDefaultDimensionOptions(DynamicRegistryManager registryManager, long seed, boolean bl, CallbackInfoReturnable<SimpleRegistry<DimensionOptions>> ci, SimpleRegistry<DimensionOptions> simpleRegistry, Registry<DimensionType> dimensionRegistry, Registry<Biome> biomeRegistry) {
-		LiminalDimensions.LIMINAL_WORLD_REGISTRY.forEach((world) -> simpleRegistry.add(world.worldDimensionOptionsRegistryKey, world.worldDimensionOptions.apply(dimensionRegistry, biomeRegistry, seed), Lifecycle.stable()));
+	@Inject(method = "Lnet/minecraft/world/dimension/DimensionType;createDefaultDimensionOptions(Lnet/minecraft/util/registry/DynamicRegistryManager;JZ)Lnet/minecraft/util/registry/Registry;", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILHARD)
+	private static void limlib$createDefaultDimensionOptions(DynamicRegistryManager registryManager, long seed, boolean bl, CallbackInfoReturnable<Registry<DimensionOptions>> ci, MutableRegistry<DimensionOptions> dimensionOptionsRegistry, Registry<DimensionType> dimensionTypeRegistry, Registry<Biome> biomeRegistry, Registry<StructureSet> stuctureSetRegistry, Registry<ChunkGeneratorSettings> chunkGeneratorSettingsRegistry, Registry<DoublePerlinNoiseSampler.NoiseParameters> noiseSettingsRegistry) {
+		LimlibRegistries.LIMINAL_WORLD.forEach((world) -> dimensionOptionsRegistry.add(world.getDimensionKey(), world.getDimensionOptionsGetter().get(dimensionOptionsRegistry, dimensionTypeRegistry, biomeRegistry, stuctureSetRegistry, chunkGeneratorSettingsRegistry, noiseSettingsRegistry, registryManager, seed), Lifecycle.stable()));
 	}
 
 	@Inject(method = "<clinit>", at = @At("RETURN"))
@@ -63,7 +63,7 @@ public class DimensionTypeMixin implements DimensionTypeAccess {
 				DataResult<T> encoded = in.encode(input, ops, prefix);
 				if (encoded.result().isPresent()) {
 					if (encoded.result().get()instanceof JsonObject json) {
-						json.add("limlib_liminal_effects", LiminalEffects.CODEC.encodeStart(JsonOps.INSTANCE, ((DimensionTypeAccess) input).getLiminalEffects()).result().get());
+						json.add("limlib_liminal_effects", LiminalEffects.CODEC.encodeStart(JsonOps.INSTANCE, ((DimensionEffectsAccess) input).getLiminalEffects()).result().get());
 					}
 				}
 				return encoded;
@@ -75,7 +75,7 @@ public class DimensionTypeMixin implements DimensionTypeAccess {
 				if (decoded.result().isPresent() && input instanceof JsonObject json) {
 					DimensionType dimensionType = decoded.result().get().getFirst();
 					if (json.has("limlib_liminal_effects")) {
-						((DimensionTypeAccess) dimensionType).setLiminalEffects(LiminalEffects.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json.get("limlib_liminal_effects").toString())).result().get());
+						((DimensionEffectsAccess) dimensionType).setLiminalEffects(LiminalEffects.CODEC.parse(JsonOps.INSTANCE, JsonParser.parseString(json.get("limlib_liminal_effects").toString())).result().get());
 					}
 				}
 				return decoded;

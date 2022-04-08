@@ -4,23 +4,11 @@
 	"package": "net.ludocrypt.limlib.mixin",
 	"compatibilityLevel": "JAVA_16",
 	"mixins": [
-		"BlockEntityAccessor",
-		"ChunkGeneratorAccessor",
-		"ChunkStatusMixin",
-		"DimensionOptionsMixin",
-		"DimensionTypeMixin",
-		"LevelStorageMixin",
-		"ServerPlayerEntityMixin",
-		"ServerPropertiesHandlerMixin"
+		"DimensionTypeMixin"
 	],
 	"client": [
-		"DimensionEffectsMixin",
-		"MinecraftClientMixin",
-		"SoundManagerAccessor",
-		"SoundSystemAccessor",
 		"SoundSystemMixin",
-		"SourceAccessor",
-		"WorldRendererMixin"
+		"SourceAccessor"
 	],
 	"injectors": {
 		"defaultRequire": 1

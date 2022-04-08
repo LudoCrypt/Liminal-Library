@@ -8,7 +8,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.ludocrypt.limlib.impl.world.LiminalSkyRegistry;
+import net.ludocrypt.limlib.impl.LimlibRegistries;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BufferRenderer;
@@ -24,15 +24,15 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3f;
 
 @Environment(EnvType.CLIENT)
-public abstract class SkyHook {
+public abstract class LiminalSkyRenderer {
 
-	public static final Codec<SkyHook> CODEC = LiminalSkyRegistry.LIMINAL_SKY.getCodec().dispatchStable(SkyHook::getCodec, Function.identity());
+	public static final Codec<LiminalSkyRenderer> CODEC = LimlibRegistries.LIMINAL_SKY_RENDERER.getCodec().dispatchStable(LiminalSkyRenderer::getCodec, Function.identity());
 
 	public abstract void renderSky(WorldRenderer worldRenderer, MinecraftClient client, MatrixStack matrices, Matrix4f projectionMatrix, float tickDelta);
 
-	public abstract Codec<? extends SkyHook> getCodec();
+	public abstract Codec<? extends LiminalSkyRenderer> getCodec();
 
-	public static class RegularSky extends SkyHook {
+	public static class RegularSky extends LiminalSkyRenderer {
 
 		public static final Codec<RegularSky> CODEC = RecordCodecBuilder.create((instance) -> instance.stable(new RegularSky()));
 
@@ -41,13 +41,13 @@ public abstract class SkyHook {
 		}
 
 		@Override
-		public Codec<? extends SkyHook> getCodec() {
+		public Codec<? extends LiminalSkyRenderer> getCodec() {
 			return CODEC;
 		}
 
 	}
 
-	public static class SkyboxSky extends SkyHook {
+	public static class SkyboxSky extends LiminalSkyRenderer {
 
 		public static final Codec<SkyboxSky> CODEC = RecordCodecBuilder.create((instance) -> {
 			return instance.group(Identifier.CODEC.fieldOf("skybox").stable().forGetter((sky) -> {
@@ -120,7 +120,7 @@ public abstract class SkyHook {
 		}
 
 		@Override
-		public Codec<? extends SkyHook> getCodec() {
+		public Codec<? extends LiminalSkyRenderer> getCodec() {
 			return CODEC;
 		}
 

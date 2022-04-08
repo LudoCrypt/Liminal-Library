@@ -1,8 +1,8 @@
 package net.ludocrypt.limlib.access;
 
-import net.ludocrypt.limlib.impl.LiminalEffects;
+import net.ludocrypt.limlib.api.LiminalEffects;
 
-public interface DimensionTypeAccess {
+public interface DimensionEffectsAccess {
 
 	public LiminalEffects getLiminalEffects();
 

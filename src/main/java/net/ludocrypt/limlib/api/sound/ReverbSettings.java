@@ -1,46 +1,41 @@
 package net.ludocrypt.limlib.api.sound;
 
-import java.util.Optional;
-
 import org.lwjgl.openal.EXTEfx;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.util.Identifier;
 
-@Environment(EnvType.CLIENT)
 public class ReverbSettings {
 
 	public static final Codec<ReverbSettings> CODEC = RecordCodecBuilder.create((instance) -> {
-		return instance.group(Codec.BOOL.optionalFieldOf("enabled").stable().forGetter((reverbSettings) -> {
-			return Optional.of(reverbSettings.enabled);
-		}), Codec.floatRange(EXTEfx.AL_EAXREVERB_MIN_DENSITY, EXTEfx.AL_EAXREVERB_MAX_DENSITY).optionalFieldOf("density").stable().forGetter((reverbSettings) -> {
-			return Optional.of(reverbSettings.density);
-		}), Codec.floatRange(EXTEfx.AL_EAXREVERB_MIN_DIFFUSION, EXTEfx.AL_EAXREVERB_MAX_DIFFUSION).optionalFieldOf("diffusion").stable().forGetter((reverbSettings) -> {
-			return Optional.of(reverbSettings.diffusion);
-		}), Codec.floatRange(EXTEfx.AL_EAXREVERB_MIN_GAIN, EXTEfx.AL_EAXREVERB_MAX_GAIN).optionalFieldOf("gain").stable().forGetter((reverbSettings) -> {
-			return Optional.of(reverbSettings.gain);
-		}), Codec.floatRange(EXTEfx.AL_EAXREVERB_MIN_GAINHF, EXTEfx.AL_EAXREVERB_MAX_GAINHF).optionalFieldOf("gain_hf").stable().forGetter((reverbSettings) -> {
-			return Optional.of(reverbSettings.gainHF);
-		}), Codec.floatRange(EXTEfx.AL_EAXREVERB_MIN_DECAY_TIME, EXTEfx.AL_EAXREVERB_MAX_DECAY_TIME).optionalFieldOf("decay_time").stable().forGetter((reverbSettings) -> {
-			return Optional.of(reverbSettings.decayTime);
-		}), Codec.floatRange(EXTEfx.AL_EAXREVERB_MIN_DECAY_HFRATIO, EXTEfx.AL_EAXREVERB_MAX_DECAY_HFRATIO).optionalFieldOf("decay_hf_ratio").stable().forGetter((reverbSettings) -> {
-			return Optional.of(reverbSettings.decayHFRatio);
-		}), Codec.floatRange(EXTEfx.AL_EAXREVERB_MIN_AIR_ABSORPTION_GAINHF, EXTEfx.AL_EAXREVERB_MAX_AIR_ABSORPTION_GAINHF).optionalFieldOf("air_absorption_gain_hf").stable().forGetter((reverbSettings) -> {
-			return Optional.of(reverbSettings.airAbsorptionGainHF);
-		}), Codec.floatRange(EXTEfx.AL_EAXREVERB_MIN_REFLECTIONS_GAIN, EXTEfx.AL_EAXREVERB_MAX_REFLECTIONS_GAIN).optionalFieldOf("max_reflections_gain").stable().forGetter((reverbSettings) -> {
-			return Optional.of(reverbSettings.reflectionsGainBase);
-		}), Codec.floatRange(EXTEfx.AL_EAXREVERB_MIN_LATE_REVERB_GAIN, EXTEfx.AL_EAXREVERB_MAX_LATE_REVERB_GAIN).optionalFieldOf("late_reverb_gain").stable().forGetter((reverbSettings) -> {
-			return Optional.of(reverbSettings.lateReverbGainBase);
-		}), Codec.floatRange(EXTEfx.AL_REVERB_MIN_REFLECTIONS_DELAY, EXTEfx.AL_REVERB_MAX_REFLECTIONS_DELAY).optionalFieldOf("reflections_delay").stable().forGetter((reverbSettings) -> {
-			return Optional.of(reverbSettings.reflectionsDelay);
-		}), Codec.floatRange(EXTEfx.AL_REVERB_MIN_LATE_REVERB_DELAY, EXTEfx.AL_REVERB_MAX_LATE_REVERB_DELAY).optionalFieldOf("late_reverb_delay").stable().forGetter((reverbSettings) -> {
-			return Optional.of(reverbSettings.lateReverbDelay);
-		}), Codec.intRange(EXTEfx.AL_REVERB_MIN_DECAY_HFLIMIT, EXTEfx.AL_REVERB_MAX_DECAY_HFLIMIT).optionalFieldOf("decay_hf_limit").stable().forGetter((reverbSettings) -> {
-			return Optional.of(reverbSettings.decayHFLimit);
+		return instance.group(Codec.BOOL.optionalFieldOf("enabled", true).stable().forGetter((reverbSettings) -> {
+			return reverbSettings.enabled;
+		}), Codec.floatRange(EXTEfx.AL_EAXREVERB_MIN_DENSITY, EXTEfx.AL_EAXREVERB_MAX_DENSITY).optionalFieldOf("density", EXTEfx.AL_EAXREVERB_DEFAULT_DENSITY).stable().forGetter((reverbSettings) -> {
+			return reverbSettings.density;
+		}), Codec.floatRange(EXTEfx.AL_EAXREVERB_MIN_DIFFUSION, EXTEfx.AL_EAXREVERB_MAX_DIFFUSION).optionalFieldOf("diffusion", EXTEfx.AL_EAXREVERB_DEFAULT_DIFFUSION).stable().forGetter((reverbSettings) -> {
+			return reverbSettings.diffusion;
+		}), Codec.floatRange(EXTEfx.AL_EAXREVERB_MIN_GAIN, EXTEfx.AL_EAXREVERB_MAX_GAIN).optionalFieldOf("gain", EXTEfx.AL_EAXREVERB_DEFAULT_GAIN).stable().forGetter((reverbSettings) -> {
+			return reverbSettings.gain;
+		}), Codec.floatRange(EXTEfx.AL_EAXREVERB_MIN_GAINHF, EXTEfx.AL_EAXREVERB_MAX_GAINHF).optionalFieldOf("gain_hf", EXTEfx.AL_EAXREVERB_DEFAULT_GAINHF).stable().forGetter((reverbSettings) -> {
+			return reverbSettings.gainHF;
+		}), Codec.floatRange(EXTEfx.AL_EAXREVERB_MIN_DECAY_TIME, EXTEfx.AL_EAXREVERB_MAX_DECAY_TIME).optionalFieldOf("decay_time", EXTEfx.AL_EAXREVERB_DEFAULT_DECAY_TIME).stable().forGetter((reverbSettings) -> {
+			return reverbSettings.decayTime;
+		}), Codec.floatRange(EXTEfx.AL_EAXREVERB_MIN_DECAY_HFRATIO, EXTEfx.AL_EAXREVERB_MAX_DECAY_HFRATIO).optionalFieldOf("decay_hf_ratio", EXTEfx.AL_EAXREVERB_DEFAULT_DECAY_HFRATIO).stable().forGetter((reverbSettings) -> {
+			return reverbSettings.decayHFRatio;
+		}), Codec.floatRange(EXTEfx.AL_EAXREVERB_MIN_AIR_ABSORPTION_GAINHF, EXTEfx.AL_EAXREVERB_MAX_AIR_ABSORPTION_GAINHF).optionalFieldOf("air_absorption_gain_hf", EXTEfx.AL_EAXREVERB_DEFAULT_AIR_ABSORPTION_GAINHF).stable().forGetter((reverbSettings) -> {
+			return reverbSettings.airAbsorptionGainHF;
+		}), Codec.floatRange(EXTEfx.AL_EAXREVERB_MIN_REFLECTIONS_GAIN, EXTEfx.AL_EAXREVERB_MAX_REFLECTIONS_GAIN).optionalFieldOf("max_reflections_gain", EXTEfx.AL_EAXREVERB_DEFAULT_REFLECTIONS_GAIN).stable().forGetter((reverbSettings) -> {
+			return reverbSettings.reflectionsGainBase;
+		}), Codec.floatRange(EXTEfx.AL_EAXREVERB_MIN_LATE_REVERB_GAIN, EXTEfx.AL_EAXREVERB_MAX_LATE_REVERB_GAIN).optionalFieldOf("late_reverb_gain", EXTEfx.AL_EAXREVERB_DEFAULT_LATE_REVERB_GAIN).stable().forGetter((reverbSettings) -> {
+			return reverbSettings.lateReverbGainBase;
+		}), Codec.floatRange(EXTEfx.AL_REVERB_MIN_REFLECTIONS_DELAY, EXTEfx.AL_REVERB_MAX_REFLECTIONS_DELAY).optionalFieldOf("reflections_delay", EXTEfx.AL_REVERB_DEFAULT_REFLECTIONS_DELAY).stable().forGetter((reverbSettings) -> {
+			return reverbSettings.reflectionsDelay;
+		}), Codec.floatRange(EXTEfx.AL_REVERB_MIN_LATE_REVERB_DELAY, EXTEfx.AL_REVERB_MAX_LATE_REVERB_DELAY).optionalFieldOf("late_reverb_delay", EXTEfx.AL_REVERB_DEFAULT_LATE_REVERB_DELAY).stable().forGetter((reverbSettings) -> {
+			return reverbSettings.lateReverbDelay;
+		}), Codec.intRange(EXTEfx.AL_REVERB_MIN_DECAY_HFLIMIT, EXTEfx.AL_REVERB_MAX_DECAY_HFLIMIT).optionalFieldOf("decay_hf_limit", EXTEfx.AL_REVERB_DEFAULT_DECAY_HFLIMIT).stable().forGetter((reverbSettings) -> {
+			return reverbSettings.decayHFLimit;
 		})).apply(instance, instance.stable(ReverbSettings::new));
 	});
 
@@ -65,46 +60,20 @@ public class ReverbSettings {
 		this.enabled = enabled;
 	}
 
-	public ReverbSettings(Optional<Boolean> enabled, Optional<Float> density, Optional<Float> diffusion, Optional<Float> gain, Optional<Float> gainHF, Optional<Float> decayTime, Optional<Float> decayHFRatio, Optional<Float> airAbsorptionGainHF, Optional<Float> reflectionsGainBase, Optional<Float> lateReverbGainBase, Optional<Float> reflectionsDelay, Optional<Float> lateReverbDelay, Optional<Integer> decayHFLimit) {
-		if (enabled.isPresent()) {
-			this.enabled = enabled.get();
-		}
-		if (density.isPresent()) {
-			this.density = density.get();
-		}
-		if (diffusion.isPresent()) {
-			this.diffusion = diffusion.get();
-		}
-		if (gain.isPresent()) {
-			this.gain = gain.get();
-		}
-		if (gainHF.isPresent()) {
-			this.gainHF = gainHF.get();
-		}
-		if (decayTime.isPresent()) {
-			this.decayTime = decayTime.get();
-		}
-		if (decayHFRatio.isPresent()) {
-			this.decayHFRatio = decayHFRatio.get();
-		}
-		if (airAbsorptionGainHF.isPresent()) {
-			this.airAbsorptionGainHF = airAbsorptionGainHF.get();
-		}
-		if (reflectionsGainBase.isPresent()) {
-			this.reflectionsGainBase = reflectionsGainBase.get();
-		}
-		if (lateReverbGainBase.isPresent()) {
-			this.lateReverbGainBase = lateReverbGainBase.get();
-		}
-		if (reflectionsDelay.isPresent()) {
-			this.reflectionsDelay = reflectionsDelay.get();
-		}
-		if (lateReverbDelay.isPresent()) {
-			this.lateReverbDelay = lateReverbDelay.get();
-		}
-		if (decayHFLimit.isPresent()) {
-			this.decayHFLimit = decayHFLimit.get();
-		}
+	public ReverbSettings(boolean enabled, float density, float diffusion, float gain, float gainHF, float decayTime, float decayHFRatio, float airAbsorptionGainHF, float reflectionsGainBase, float lateReverbGainBase, float reflectionsDelay, float lateReverbDelay, int decayHFLimit) {
+		this.enabled = enabled;
+		this.density = density;
+		this.diffusion = diffusion;
+		this.gain = gain;
+		this.gainHF = gainHF;
+		this.decayTime = decayTime;
+		this.decayHFRatio = decayHFRatio;
+		this.airAbsorptionGainHF = airAbsorptionGainHF;
+		this.reflectionsGainBase = reflectionsGainBase;
+		this.lateReverbGainBase = lateReverbGainBase;
+		this.reflectionsDelay = reflectionsDelay;
+		this.lateReverbDelay = lateReverbDelay;
+		this.decayHFLimit = decayHFLimit;
 	}
 
 	public static boolean shouldIgnore(Identifier identifier) {
