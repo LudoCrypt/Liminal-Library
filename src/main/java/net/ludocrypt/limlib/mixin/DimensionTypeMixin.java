@@ -49,7 +49,7 @@ public class DimensionTypeMixin implements DimensionEffectsAccess {
 
 	@Inject(method = "Lnet/minecraft/world/dimension/DimensionType;createDefaultDimensionOptions(Lnet/minecraft/util/registry/DynamicRegistryManager;JZ)Lnet/minecraft/util/registry/Registry;", at = @At("RETURN"), locals = LocalCapture.CAPTURE_FAILHARD)
 	private static void limlib$createDefaultDimensionOptions(DynamicRegistryManager registryManager, long seed, boolean bl, CallbackInfoReturnable<Registry<DimensionOptions>> ci, MutableRegistry<DimensionOptions> dimensionOptionsRegistry, Registry<DimensionType> dimensionTypeRegistry, Registry<Biome> biomeRegistry, Registry<StructureSet> stuctureSetRegistry, Registry<ChunkGeneratorSettings> chunkGeneratorSettingsRegistry, Registry<DoublePerlinNoiseSampler.NoiseParameters> noiseSettingsRegistry) {
-		LimlibRegistries.LIMINAL_WORLD.forEach((world) -> dimensionOptionsRegistry.add(world.getDimensionKey(), world.getDimensionOptionsGetter().get(dimensionOptionsRegistry, dimensionTypeRegistry, biomeRegistry, stuctureSetRegistry, chunkGeneratorSettingsRegistry, noiseSettingsRegistry, registryManager, seed), Lifecycle.stable()));
+		LimlibRegistries.LIMINAL_WORLD.forEach((world) -> dimensionOptionsRegistry.add(world.getDimensionKey(), world.getDimensionOptionsGetter().get(world, dimensionTypeRegistry, biomeRegistry, stuctureSetRegistry, chunkGeneratorSettingsRegistry, noiseSettingsRegistry, registryManager, seed), Lifecycle.stable()));
 	}
 
 	@Inject(method = "<clinit>", at = @At("RETURN"))

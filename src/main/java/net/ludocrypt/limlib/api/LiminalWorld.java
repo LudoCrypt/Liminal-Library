@@ -1,5 +1,6 @@
 package net.ludocrypt.limlib.api;
 
+import net.ludocrypt.limlib.access.DimensionEffectsAccess;
 import net.minecraft.structure.StructureSet;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.noise.DoublePerlinNoiseSampler;
@@ -24,6 +25,7 @@ public class LiminalWorld {
 		this.dimensionType = dimensionType;
 		this.dimensionOptionsGetter = dimensionOptionsGetter;
 		this.liminalEffects = liminalEffects;
+		((DimensionEffectsAccess) this.dimensionType).setLiminalEffects(liminalEffects);
 	}
 
 	public Identifier getIdentifier() {
@@ -56,7 +58,7 @@ public class LiminalWorld {
 
 	@FunctionalInterface
 	public static interface DimensionOptionsGetter {
-		public DimensionOptions get(Registry<DimensionOptions> mutableRegistry, Registry<DimensionType> dimensionTypeRegistry, Registry<Biome> biomeRegistry, Registry<StructureSet> structureRegistry, Registry<ChunkGeneratorSettings> chunkGeneratorSettingsRegistry, Registry<DoublePerlinNoiseSampler.NoiseParameters> noiseSettingsRegistry, DynamicRegistryManager registryManager, long seed);
+		public DimensionOptions get(LiminalWorld world, Registry<DimensionType> dimensionTypeRegistry, Registry<Biome> biomeRegistry, Registry<StructureSet> structureRegistry, Registry<ChunkGeneratorSettings> chunkGeneratorSettingsRegistry, Registry<DoublePerlinNoiseSampler.NoiseParameters> noiseSettingsRegistry, DynamicRegistryManager registryManager, long seed);
 	}
 
 }
