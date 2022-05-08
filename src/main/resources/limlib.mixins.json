@@ -10,8 +10,11 @@
 		"ServerPlayerEntityMixin"
 	],
 	"client": [
+		"DimensionEffectsMixin",
+		"MinecraftClientMixin",
 		"SoundSystemMixin",
-		"SourceAccessor"
+		"SourceAccessor",
+		"WorldRendererMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

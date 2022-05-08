@@ -7,7 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public interface MultipleSoundEmitter {
+public interface MultipleSoundEmitter extends SoundEmitter {
 
 	public List<SingleSoundEmitter> getEmitters(MinecraftClient client, World world, BlockPos pos, BlockState state);
 

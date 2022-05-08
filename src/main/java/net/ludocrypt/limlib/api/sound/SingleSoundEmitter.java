@@ -10,7 +10,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 
-public interface SingleSoundEmitter {
+public interface SingleSoundEmitter extends SoundEmitter {
 
 	public default Vec3d getOffset(MinecraftClient client, World world, BlockPos pos, BlockState state) {
 		return Vec3d.ofCenter(Vec3i.ZERO);

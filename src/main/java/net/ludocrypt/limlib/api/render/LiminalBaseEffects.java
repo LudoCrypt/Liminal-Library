@@ -24,7 +24,7 @@ public abstract class LiminalBaseEffects extends DimensionEffects {
 
 		public static final Codec<SimpleBaseEffects> CODEC = RecordCodecBuilder.create((instance) -> {
 			return instance.group(Codec.FLOAT.optionalFieldOf("cloud_height").stable().forGetter((effects) -> {
-				return effects.getCloudsHeight() == Float.NaN ? Optional.empty() : Optional.of(effects.getCloudsHeight());
+				return Float.isNaN(effects.getCloudsHeight()) ? Optional.empty() : Optional.of(effects.getCloudsHeight());
 			}), Codec.BOOL.fieldOf("alternate_sky_color").stable().forGetter((effects) -> {
 				return effects.isAlternateSkyColor();
 			}), Codec.STRING.fieldOf("sky_type").stable().forGetter((effects) -> {
