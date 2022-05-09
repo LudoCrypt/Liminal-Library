@@ -22,7 +22,7 @@ public class DimensionEffectsMixin {
 	private static void limlib$byDimensionType(DimensionType dimensionType, CallbackInfoReturnable<DimensionEffects> ci) {
 		Optional<LiminalBaseEffects> limlibEffect = ((DimensionEffectsAccess) dimensionType).getLiminalEffects().getEffects();
 		if (limlibEffect.isPresent()) {
-			ci.setReturnValue(limlibEffect.get());
+			ci.setReturnValue(limlibEffect.get().getDimensionEffects());
 		}
 	}
 

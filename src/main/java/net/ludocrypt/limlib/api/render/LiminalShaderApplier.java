@@ -13,13 +13,14 @@ import net.ludocrypt.limlib.impl.LimlibRegistries;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.util.Identifier;
 
-@Environment(EnvType.CLIENT)
 public abstract class LiminalShaderApplier {
 
 	public static final Codec<LiminalShaderApplier> CODEC = LimlibRegistries.LIMINAL_SHADER_APPLIER.getCodec().dispatchStable(LiminalShaderApplier::getCodec, Function.identity());
 
+	@Environment(EnvType.CLIENT)
 	public abstract boolean shouldRender(MinecraftClient client, float tickdelta);
 
+	@Environment(EnvType.CLIENT)
 	public abstract ManagedShaderEffect getShader(MinecraftClient client, float tickdelta);
 
 	public abstract Codec<? extends LiminalShaderApplier> getCodec();
@@ -41,11 +42,13 @@ public abstract class LiminalShaderApplier {
 		}
 
 		@Override
+		@Environment(EnvType.CLIENT)
 		public boolean shouldRender(MinecraftClient client, float tickdelta) {
 			return true;
 		}
 
 		@Override
+		@Environment(EnvType.CLIENT)
 		public ManagedShaderEffect getShader(MinecraftClient client, float tickdelta) {
 			return shader;
 		}

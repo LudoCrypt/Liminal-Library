@@ -23,11 +23,11 @@ import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3f;
 
-@Environment(EnvType.CLIENT)
 public abstract class LiminalSkyRenderer {
 
 	public static final Codec<LiminalSkyRenderer> CODEC = LimlibRegistries.LIMINAL_SKY_RENDERER.getCodec().dispatchStable(LiminalSkyRenderer::getCodec, Function.identity());
 
+	@Environment(EnvType.CLIENT)
 	public abstract void renderSky(WorldRenderer worldRenderer, MinecraftClient client, MatrixStack matrices, Matrix4f projectionMatrix, float tickDelta);
 
 	public abstract Codec<? extends LiminalSkyRenderer> getCodec();
@@ -37,6 +37,7 @@ public abstract class LiminalSkyRenderer {
 		public static final Codec<RegularSky> CODEC = RecordCodecBuilder.create((instance) -> instance.stable(new RegularSky()));
 
 		@Override
+		@Environment(EnvType.CLIENT)
 		public void renderSky(WorldRenderer worldRenderer, MinecraftClient client, MatrixStack matrices, Matrix4f projectionMatrix, float tickDelta) {
 		}
 
@@ -62,6 +63,7 @@ public abstract class LiminalSkyRenderer {
 		}
 
 		@Override
+		@Environment(EnvType.CLIENT)
 		public void renderSky(WorldRenderer worldRenderer, MinecraftClient client, MatrixStack matrices, Matrix4f projectionMatrix, float tickDelta) {
 			RenderSystem.enableBlend();
 			RenderSystem.defaultBlendFunc();
