@@ -33,11 +33,12 @@ public abstract class LiminalShaderApplier {
 			})).apply(instance, instance.stable(SimpleShader::new));
 		});
 
-		private final ManagedShaderEffect shader;
 		private final Identifier shaderId;
 
+		@Environment(EnvType.CLIENT)
+		private ManagedShaderEffect managedShader = null;
+
 		public SimpleShader(Identifier shader) {
-			this.shader = ShaderEffectManager.getInstance().manage(new Identifier(shader.getNamespace(), "shaders/post/" + shader.getPath() + ".json"));
 			this.shaderId = shader;
 		}
 
@@ -50,7 +51,11 @@ public abstract class LiminalShaderApplier {
 		@Override
 		@Environment(EnvType.CLIENT)
 		public ManagedShaderEffect getShader(MinecraftClient client, float tickdelta) {
-			return shader;
+			if (this.managedShader == null) {
+				this.managedShader = ShaderEffectManager.getInstance().manage(new Identifier(shaderId.getNamespace(), "shaders/post/" + shaderId.getPath() + ".json"));
+			}
+
+			return this.managedShader;
 		}
 
 		public Identifier getShaderId() {
