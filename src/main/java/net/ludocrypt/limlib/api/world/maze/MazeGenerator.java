@@ -15,8 +15,7 @@ import net.minecraft.world.gen.chunk.ChunkGenerator;
 
 public abstract class MazeGenerator<T extends ChunkGenerator> {
 
-	@SuppressWarnings("unchecked")
-	public static final Codec<MazeGenerator<? extends ChunkGenerator>> CODEC = (Codec<MazeGenerator<? extends ChunkGenerator>>) (Object) LimlibRegistries.LIMINAL_MAZE_GENERATOR.getCodec().dispatchStable(MazeGenerator::getCodec, Function.identity());
+	public static final Codec<MazeGenerator<? extends ChunkGenerator>> CODEC = LimlibRegistries.LIMINAL_MAZE_GENERATOR.getCodec().dispatchStable(MazeGenerator::getCodec, Function.identity());
 
 	private final HashMap<BlockPos, MazeComponent> mazes = new HashMap<BlockPos, MazeComponent>(30);
 
