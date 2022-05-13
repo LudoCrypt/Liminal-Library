@@ -11,6 +11,7 @@ import net.ludocrypt.limlib.api.render.LiminalSkyRenderer;
 import net.ludocrypt.limlib.api.world.maze.MazeGenerator;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.SimpleRegistry;
+import net.minecraft.world.gen.chunk.ChunkGenerator;
 
 @SuppressWarnings("unchecked")
 public class LimlibRegistries {
@@ -21,6 +22,6 @@ public class LimlibRegistries {
 	public static final SimpleRegistry<Codec<? extends LiminalShaderApplier>> LIMINAL_SHADER_APPLIER = (SimpleRegistry<Codec<? extends LiminalShaderApplier>>) (Object) FabricRegistryBuilder.createSimple(Codec.class, new Identifier("limlib", "limlib_shader_applier")).attribute(RegistryAttribute.SYNCED).buildAndRegister();
 	public static final SimpleRegistry<Codec<? extends LiminalBaseEffects>> LIMINAL_BASE_EFFECTS = (SimpleRegistry<Codec<? extends LiminalBaseEffects>>) (Object) FabricRegistryBuilder.createSimple(Codec.class, new Identifier("limlib", "limlib_base_effects")).attribute(RegistryAttribute.SYNCED).buildAndRegister();
 
-	public static final SimpleRegistry<Codec<? extends MazeGenerator>> LIMINAL_MAZE_GENERATOR = (SimpleRegistry<Codec<? extends MazeGenerator>>) (Object) FabricRegistryBuilder.createSimple(Codec.class, new Identifier("limlib", "limlib_maze_generator")).attribute(RegistryAttribute.SYNCED).buildAndRegister();
+	public static final SimpleRegistry<Codec<? extends MazeGenerator<? extends ChunkGenerator>>> LIMINAL_MAZE_GENERATOR = (SimpleRegistry<Codec<? extends MazeGenerator<? extends ChunkGenerator>>>) (Object) FabricRegistryBuilder.createSimple(Codec.class, new Identifier("limlib", "limlib_maze_generator")).attribute(RegistryAttribute.SYNCED).buildAndRegister();
 
 }

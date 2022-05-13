@@ -55,11 +55,11 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 		}
 	}
 
-	protected void generateNbt(ChunkRegion region, BlockPos at, String id) {
+	public void generateNbt(ChunkRegion region, BlockPos at, String id) {
 		generateNbt(region, at, id, BlockRotation.NONE);
 	}
 
-	protected void generateNbt(ChunkRegion region, BlockPos at, String id, BlockRotation rotation) {
+	public void generateNbt(ChunkRegion region, BlockPos at, String id, BlockRotation rotation) {
 		loadedStructures.get(id).rotate(rotation).generateNbt(region, at, (pos, state, nbt) -> this.modifyStructure(region, pos, state, nbt)).spawnEntities(region, at, rotation);
 	}
 
