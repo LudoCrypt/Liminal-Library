@@ -74,7 +74,7 @@ public abstract class MazeGenerator<T extends ChunkGenerator> {
 
 	public abstract void decorateCell(BlockPos pos, BlockPos origin, Chunk chunk, ChunkRegion region, T chunkGenerator, CellState state, boolean isOpen, boolean isWall, boolean isTopCell, boolean isSideCell, int thickness);
 
-	public abstract Codec<? extends MazeGenerator<T>> getCodec();
+	public abstract Codec<? extends MazeGenerator<? extends ChunkGenerator>> getCodec();
 
 	protected int mod(int x, int n) {
 		int r = x % n;
