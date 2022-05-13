@@ -8,11 +8,11 @@ import net.ludocrypt.limlib.api.LiminalWorld;
 import net.ludocrypt.limlib.api.render.LiminalBaseEffects;
 import net.ludocrypt.limlib.api.render.LiminalShaderApplier;
 import net.ludocrypt.limlib.api.render.LiminalSkyRenderer;
-import net.ludocrypt.limlib.api.world.maze.deprecated.MazeGenerator;
+import net.ludocrypt.limlib.api.world.maze.MazeGenerator;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.SimpleRegistry;
 
-@SuppressWarnings({ "unchecked", "deprecation" })
+@SuppressWarnings("unchecked")
 public class LimlibRegistries {
 
 	public static final SimpleRegistry<LiminalWorld> LIMINAL_WORLD = FabricRegistryBuilder.createSimple(LiminalWorld.class, new Identifier("limlib", "limlib_world")).attribute(RegistryAttribute.SYNCED).buildAndRegister();

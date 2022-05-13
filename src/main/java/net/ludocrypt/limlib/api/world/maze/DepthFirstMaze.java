@@ -1,4 +1,4 @@
-package net.ludocrypt.limlib.api.world.maze.deprecated;
+package net.ludocrypt.limlib.api.world.maze;
 
 import java.util.List;
 import java.util.Random;
@@ -6,7 +6,6 @@ import java.util.Stack;
 
 import com.google.common.collect.Lists;
 
-@Deprecated
 public class DepthFirstMaze extends MazeComponent {
 
 	public Stack<Vec2i> stack = new Stack<Vec2i>();

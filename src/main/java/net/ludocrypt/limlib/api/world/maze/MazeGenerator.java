@@ -1,4 +1,4 @@
-package net.ludocrypt.limlib.api.world.maze.deprecated;
+package net.ludocrypt.limlib.api.world.maze;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -6,13 +6,13 @@ import java.util.function.Function;
 
 import com.mojang.serialization.Codec;
 
-import net.ludocrypt.limlib.api.world.maze.deprecated.MazeComponent.CellState;
+import net.ludocrypt.limlib.api.world.maze.MazeComponent.CellState;
 import net.ludocrypt.limlib.impl.LimlibRegistries;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.gen.chunk.ChunkGenerator;
 
-@Deprecated
 public abstract class MazeGenerator {
 
 	public static final Codec<MazeGenerator> CODEC = LimlibRegistries.LIMINAL_MAZE_GENERATOR.getCodec().dispatchStable(MazeGenerator::getCodec, Function.identity());
@@ -33,7 +33,7 @@ public abstract class MazeGenerator {
 		this.seedModifier = seedModifier;
 	}
 
-	public void generateMaze(BlockPos pos, Chunk chunk, ChunkRegion region) {
+	public <T extends ChunkGenerator> void generateMaze(BlockPos pos, Chunk chunk, ChunkRegion region, T chunkGenerator) {
 		if (thickness < 1)
 			throw new UnsupportedOperationException("Thickness can not be less than 1");
 
@@ -47,7 +47,7 @@ public abstract class MazeGenerator {
 					if (this.mazes.containsKey(mazePos)) {
 						maze = this.mazes.get(mazePos);
 					} else {
-						maze = this.newMaze(region, chunk, redundancy ? width + 4 : width, redundancy ? height + 4 : height, new Random(blockSeed(mazePos.getX(), mazePos.getZ(), seedModifier)));
+						maze = this.newMaze(region, chunk, redundancy ? width + 4 : width, redundancy ? height + 4 : height, new Random(blockSeed(mazePos.getX(), mazePos.getZ(), seedModifier)), chunkGenerator);
 						this.mazes.put(mazePos, maze);
 					}
 
@@ -63,15 +63,15 @@ public abstract class MazeGenerator {
 
 					CellState originCell = maze.cellState(redundancy ? mazeX + 2 : mazeX, redundancy ? mazeY + 2 : mazeX);
 
-					this.decorateCell(inPos, originPos, chunk, region, originCell, isOpenCell, isWallCell, isTopCell, isSideCell, thickness);
+					this.decorateCell(inPos, originPos, chunk, region, chunkGenerator, originCell, isOpenCell, isWallCell, isTopCell, isSideCell, thickness);
 				}
 			}
 		}
 	}
 
-	public abstract MazeComponent newMaze(ChunkRegion region, Chunk chunk, int width, int height, Random random);
+	public abstract <T extends ChunkGenerator> MazeComponent newMaze(ChunkRegion region, Chunk chunk, int width, int height, Random random, T chunkGenerator);
 
-	public abstract void decorateCell(BlockPos pos, BlockPos origin, Chunk chunk, ChunkRegion region, CellState state, boolean isOpen, boolean isWall, boolean isTopCell, boolean isSideCell, int thickness);
+	public abstract <T extends ChunkGenerator> void decorateCell(BlockPos pos, BlockPos origin, Chunk chunk, ChunkRegion region, T chunkGenerator, CellState state, boolean isOpen, boolean isWall, boolean isTopCell, boolean isSideCell, int thickness);
 
 	public abstract Codec<? extends MazeGenerator> getCodec();
 

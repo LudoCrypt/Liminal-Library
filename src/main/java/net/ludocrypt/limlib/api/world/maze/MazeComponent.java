@@ -1,6 +1,5 @@
-package net.ludocrypt.limlib.api.world.maze.deprecated;
+package net.ludocrypt.limlib.api.world.maze;
 
-@Deprecated
 public abstract class MazeComponent {
 
 	public final int width;
