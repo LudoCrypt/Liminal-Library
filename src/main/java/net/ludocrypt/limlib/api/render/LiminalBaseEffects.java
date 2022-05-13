@@ -71,6 +71,11 @@ public abstract class LiminalBaseEffects {
 				this.dimensionEffects = new DimensionEffects(cloudsHeight.orElse(Float.NaN), alternateSkyColor, SkyType.valueOf(skyType), brightenLighting, darkened) {
 
 					@Override
+					public float[] getFogColorOverride(float skyAngle, float tickDelta) {
+						return null;
+					}
+
+					@Override
 					public Vec3d adjustFogColor(Vec3d color, float angle) {
 						return color;
 					}
