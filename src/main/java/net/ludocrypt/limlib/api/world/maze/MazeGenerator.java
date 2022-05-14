@@ -13,11 +13,11 @@ import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 
-public abstract class MazeGenerator<T extends ChunkGenerator> {
+public abstract class MazeGenerator<C extends ChunkGenerator, M extends MazeComponent> {
 
-	public static final Codec<MazeGenerator<? extends ChunkGenerator>> CODEC = LimlibRegistries.LIMINAL_MAZE_GENERATOR.getCodec().dispatchStable(MazeGenerator::getCodec, Function.identity());
+	public static final Codec<MazeGenerator<? extends ChunkGenerator, ? extends MazeComponent>> CODEC = LimlibRegistries.LIMINAL_MAZE_GENERATOR.getCodec().dispatchStable(MazeGenerator::getCodec, Function.identity());
 
-	private final HashMap<BlockPos, MazeComponent> mazes = new HashMap<BlockPos, MazeComponent>(30);
+	private final HashMap<BlockPos, M> mazes = new HashMap<BlockPos, M>(30);
 
 	public final int width;
 	public final int height;
@@ -33,14 +33,14 @@ public abstract class MazeGenerator<T extends ChunkGenerator> {
 		this.seedModifier = seedModifier;
 	}
 
-	public void generateMaze(BlockPos pos, Chunk chunk, ChunkRegion region, T chunkGenerator) {
+	public void generateMaze(BlockPos pos, Chunk chunk, ChunkRegion region, C chunkGenerator) {
 		for (int x = 0; x < 16; x++) {
 			for (int y = 0; y < 16; y++) {
 				BlockPos inPos = pos.add(x, 0, y);
 				if (mod(inPos.getX(), thickness) == 0 && mod(inPos.getZ(), thickness) == 0) {
 					BlockPos mazePos = new BlockPos(inPos.getX() - mod(inPos.getX(), (width * thickness)), 0, inPos.getZ() - mod(inPos.getZ(), (height * thickness)));
 
-					MazeComponent maze;
+					M maze;
 					if (this.mazes.containsKey(mazePos)) {
 						maze = this.mazes.get(mazePos);
 					} else {
@@ -53,21 +53,21 @@ public abstract class MazeGenerator<T extends ChunkGenerator> {
 
 					CellState originCell = maze.cellState(redundancy ? mazeX + 2 : mazeX, redundancy ? mazeY + 2 : mazeY);
 
-					this.decorateCell(inPos, mazePos, chunk, region, chunkGenerator, originCell, this.thickness);
+					this.decorateCell(inPos, mazePos, chunk, region, chunkGenerator, maze, originCell, this.thickness);
 				}
 			}
 		}
 	}
 
-	public abstract MazeComponent newMaze(BlockPos mazePos, ChunkRegion region, Chunk chunk, T chunkGenerator, int width, int height, Random random);
+	public abstract M newMaze(BlockPos mazePos, ChunkRegion region, Chunk chunk, C chunkGenerator, int width, int height, Random random);
 
-	public abstract void decorateCell(BlockPos pos, BlockPos mazePos, Chunk chunk, ChunkRegion region, T chunkGenerator, CellState state, int thickness);
+	public abstract void decorateCell(BlockPos pos, BlockPos mazePos, Chunk chunk, ChunkRegion region, C chunkGenerator, M maze, CellState state, int thickness);
 
-	public HashMap<BlockPos, MazeComponent> getMazes() {
+	public HashMap<BlockPos, M> getMazes() {
 		return mazes;
 	}
 
-	public abstract Codec<? extends MazeGenerator<? extends ChunkGenerator>> getCodec();
+	public abstract Codec<? extends MazeGenerator<? extends ChunkGenerator, ? extends MazeComponent>> getCodec();
 
 	protected int mod(int x, int n) {
 		int r = x % n;

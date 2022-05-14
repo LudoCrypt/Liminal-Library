@@ -13,8 +13,12 @@ public abstract class MazeComponent {
 		this.width = width;
 		this.height = height;
 		this.maze = new CellState[width * height];
-		for (int i = 0; i < width * height; i++) {
-			this.maze[i] = new CellState();
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
+				CellState state = new CellState();
+				state.setPosition(new Vec2i(x, y));
+				this.maze[y * this.width + x] = state;
+			}
 		}
 		this.visitedCells = 1;
 	}
@@ -47,6 +51,7 @@ public abstract class MazeComponent {
 
 	public static class CellState {
 
+		private Vec2i position = new Vec2i(0, 0);
 		private boolean north = false;
 		private boolean east = false;
 		private boolean south = false;
@@ -73,6 +78,10 @@ public abstract class MazeComponent {
 			this.visited = true;
 		}
 
+		public void setPosition(Vec2i position) {
+			this.position = position;
+		}
+
 		public void setNorth(boolean north) {
 			this.north = north;
 		}
@@ -91,6 +100,10 @@ public abstract class MazeComponent {
 
 		public void setVisited(boolean visited) {
 			this.visited = visited;
+		}
+
+		public Vec2i getPosition() {
+			return position;
 		}
 
 		public boolean isNorth() {
@@ -131,6 +144,14 @@ public abstract class MazeComponent {
 
 		public int getY() {
 			return y;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj instanceof Vec2i pos) {
+				return pos.x == this.x && pos.y == this.y;
+			}
+			return super.equals(obj);
 		}
 
 		@Override
