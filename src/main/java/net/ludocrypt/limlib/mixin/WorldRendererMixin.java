@@ -24,7 +24,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.Matrix4f;
 
 @Mixin(WorldRenderer.class)
-public class WorldRendererMixin {
+public abstract class WorldRendererMixin {
 
 	@Shadow
 	@Final
@@ -44,6 +44,7 @@ public class WorldRendererMixin {
 	private void limlib$render$return(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f positionMatrix, CallbackInfo ci) {
 		if (FabricLoader.getInstance().isModLoaded("iris")) {
 			limlib$renderSky(matrices, positionMatrix, tickDelta);
+			this.renderWeather(lightmapTextureManager, tickDelta, camera.getPos().getX(), camera.getPos().getY(), camera.getPos().getZ());
 		}
 	}
 
@@ -54,5 +55,8 @@ public class WorldRendererMixin {
 			sky.get().renderSky((WorldRenderer) (Object) this, client, matrices, positionMatrix, tickDelta);
 		}
 	}
+
+	@Shadow
+	abstract void renderWeather(LightmapTextureManager manager, float f, double d, double e, double g);
 
 }
