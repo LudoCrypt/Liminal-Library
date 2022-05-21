@@ -11,6 +11,8 @@ import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.fabricmc.loader.api.FabricLoader;
 import net.ludocrypt.limlib.access.DimensionEffectsAccess;
 import net.ludocrypt.limlib.api.render.LiminalSkyRenderer;
@@ -23,7 +25,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.util.math.Matrix4f;
 
-@Mixin(WorldRenderer.class)
+@Mixin(value = WorldRenderer.class, priority = 900)
 public abstract class WorldRendererMixin {
 
 	@Shadow
@@ -44,7 +46,24 @@ public abstract class WorldRendererMixin {
 	private void limlib$render$return(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f positionMatrix, CallbackInfo ci) {
 		if (FabricLoader.getInstance().isModLoaded("iris")) {
 			limlib$renderSky(matrices, positionMatrix, tickDelta);
+
+			MatrixStack matrixStack = RenderSystem.getModelViewStack();
+			matrixStack.push();
+			matrixStack.multiplyPositionMatrix(matrices.peek().getPositionMatrix());
+			RenderSystem.applyModelViewMatrix();
+			matrixStack.pop();
+			RenderSystem.applyModelViewMatrix();
+
+			matrixStack.push();
+			matrixStack.multiplyPositionMatrix(matrices.peek().getPositionMatrix());
+			RenderSystem.applyModelViewMatrix();
+
 			this.renderWeather(lightmapTextureManager, tickDelta, camera.getPos().getX(), camera.getPos().getY(), camera.getPos().getZ());
+
+			RenderSystem.depthMask(true);
+			RenderSystem.disableBlend();
+			matrixStack.pop();
+			RenderSystem.applyModelViewMatrix();
 		}
 	}
 

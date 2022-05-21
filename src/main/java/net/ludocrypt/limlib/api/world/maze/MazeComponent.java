@@ -1,5 +1,9 @@
 package net.ludocrypt.limlib.api.world.maze;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import net.minecraft.util.math.BlockPos;
 
 public abstract class MazeComponent {
@@ -8,6 +12,7 @@ public abstract class MazeComponent {
 	public final int height;
 
 	public final CellState[] maze;
+	public final List<Vec2i> solvedMaze = Lists.newArrayList();
 
 	public int visitedCells = 0;
 
@@ -29,27 +34,33 @@ public abstract class MazeComponent {
 
 	public void generateDistances() {
 		for (CellState cell : maze) {
-			int shortestDistance = this.width * this.height;
-			Iterable<BlockPos> iterable = BlockPos.iterateOutwards(new BlockPos(cell.getPosition().getX(), cell.getPosition().getY(), 0), this.width, this.height, 0);
-			for (BlockPos pos : iterable) {
-				if ((pos.getX() < this.width) && (pos.getY() < this.height) && (pos.getX() > 0) && (pos.getY() > 0)) {
-					if (this.cellState(pos.getX(), pos.getY()).isNorth() || this.cellState(pos.getX(), pos.getY()).isEast() || this.cellState(pos.getX(), pos.getY()).isSouth() || this.cellState(pos.getX(), pos.getY()).isWest()) {
-						int cellDistance = pos.getManhattanDistance(new BlockPos(cell.getPosition().getX(), cell.getPosition().getY(), 0));
-						if (cellDistance < shortestDistance) {
-							shortestDistance = cellDistance;
+			if (cell.isNorth() || cell.isEast() || cell.isSouth() || cell.isWest()) {
+				cell.setDistance(0);
+			} else {
+				int shortestDistance = this.width * this.height;
+				for (Vec2i pos : solvedMaze) {
+					CellState ponderingCell = this.cellState(pos);
+					if (ponderingCell.isNorth() || ponderingCell.isEast() || ponderingCell.isSouth() || ponderingCell.isWest()) {
+						int distance = pos.toPos().getManhattanDistance(cell.getPosition().toPos());
+						if (distance < shortestDistance) {
+							shortestDistance = distance;
+						}
+						if (shortestDistance <= 1) {
+							break;
 						}
 					}
 				}
-				if (shortestDistance <= 1) {
-					break;
-				}
+				cell.setDistance(shortestDistance);
 			}
-			cell.setDistance(shortestDistance);
 		}
 	}
 
 	public CellState cellState(int x, int y) {
 		return this.maze[y * this.width + x];
+	}
+
+	public CellState cellState(Vec2i pos) {
+		return this.cellState(pos.getX(), pos.getY());
 	}
 
 	public boolean hasNorthNeighbor(Vec2i vec) {
@@ -187,6 +198,10 @@ public abstract class MazeComponent {
 
 		public int getY() {
 			return y;
+		}
+
+		public BlockPos toPos() {
+			return new BlockPos(x, y, 0);
 		}
 
 		@Override

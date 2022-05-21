@@ -26,6 +26,7 @@ public class DilateMaze extends MazeComponent {
 								CellState copy = mazeIn.cellState(x, y).copy();
 								copy.setPosition(position);
 								this.maze[mazeY * this.width + mazeX] = copy;
+								this.solvedMaze.add(position);
 							} else {
 								if (mazeIn.cellState(x, y).isEast()) {
 									CellState dilatedCell = new CellState();
@@ -33,6 +34,7 @@ public class DilateMaze extends MazeComponent {
 									dilatedCell.west();
 									dilatedCell.setPosition(position);
 									this.maze[mazeY * this.width + mazeX] = dilatedCell;
+									this.solvedMaze.add(position);
 								}
 							}
 						} else {
@@ -43,6 +45,7 @@ public class DilateMaze extends MazeComponent {
 									dilatedCell.south();
 									dilatedCell.setPosition(position);
 									this.maze[mazeY * this.width + mazeX] = dilatedCell;
+									this.solvedMaze.add(position);
 								}
 							} else {
 								CellState copy = new CellState();

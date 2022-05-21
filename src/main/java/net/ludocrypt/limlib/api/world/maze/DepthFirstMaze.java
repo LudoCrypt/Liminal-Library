@@ -75,6 +75,10 @@ public class DepthFirstMaze extends MazeComponent {
 					break;
 				}
 
+				if (!this.solvedMaze.contains(new Vec2i(this.stack.peek().getX(), this.stack.peek().getY()))) {
+					this.solvedMaze.add(new Vec2i(this.stack.peek().getX(), this.stack.peek().getY()));
+				}
+
 				// Visit Cell
 				this.visitedCells++;
 

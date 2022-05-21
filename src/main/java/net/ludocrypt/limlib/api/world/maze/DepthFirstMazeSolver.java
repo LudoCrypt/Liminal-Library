@@ -112,6 +112,10 @@ public class DepthFirstMazeSolver extends MazeComponent {
 						this.cellState(pos.getX(), pos.getY()).west();
 						this.cellState(nextPos.getX(), nextPos.getY()).east();
 					}
+
+					if (!this.solvedMaze.contains(new Vec2i(pos.getX(), pos.getY()))) {
+						this.solvedMaze.add(new Vec2i(pos.getX(), pos.getY()));
+					}
 				}
 
 				if (this.ends.contains(pos) || pos.equals(this.start)) {
