@@ -32,29 +32,6 @@ public abstract class MazeComponent {
 
 	public abstract void generateMaze();
 
-	public void generateDistances() {
-		for (CellState cell : maze) {
-			if (cell.isNorth() || cell.isEast() || cell.isSouth() || cell.isWest()) {
-				cell.setDistance(0);
-			} else {
-				int shortestDistance = this.width * this.height;
-				for (Vec2i pos : solvedMaze) {
-					CellState ponderingCell = this.cellState(pos);
-					if (ponderingCell.isNorth() || ponderingCell.isEast() || ponderingCell.isSouth() || ponderingCell.isWest()) {
-						int distance = pos.toPos().getManhattanDistance(cell.getPosition().toPos());
-						if (distance < shortestDistance) {
-							shortestDistance = distance;
-						}
-						if (shortestDistance <= 1) {
-							break;
-						}
-					}
-				}
-				cell.setDistance(shortestDistance);
-			}
-		}
-	}
-
 	public CellState cellState(int x, int y) {
 		return this.maze[y * this.width + x];
 	}
@@ -86,7 +63,6 @@ public abstract class MazeComponent {
 	public static class CellState {
 
 		private Vec2i position = new Vec2i(0, 0);
-		private int distance = -1;
 		private boolean north = false;
 		private boolean east = false;
 		private boolean south = false;
@@ -96,7 +72,6 @@ public abstract class MazeComponent {
 		public CellState copy() {
 			CellState newState = new CellState();
 			newState.setPosition(this.position);
-			newState.setDistance(this.distance);
 			newState.setNorth(this.north);
 			newState.setEast(this.east);
 			newState.setSouth(this.south);
@@ -128,10 +103,6 @@ public abstract class MazeComponent {
 			this.position = position;
 		}
 
-		public void setDistance(int distance) {
-			this.distance = distance;
-		}
-
 		public void setNorth(boolean north) {
 			this.north = north;
 		}
@@ -154,10 +125,6 @@ public abstract class MazeComponent {
 
 		public Vec2i getPosition() {
 			return position;
-		}
-
-		public int getDistance() {
-			return distance;
 		}
 
 		public boolean isNorth() {
