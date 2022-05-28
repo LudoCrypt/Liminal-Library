@@ -2,7 +2,7 @@ package net.ludocrypt.limlib.api.world.maze;
 
 import java.util.Random;
 
-import com.ibm.icu.impl.Pair;
+import com.mojang.datafixers.util.Pair;
 
 import net.ludocrypt.limlib.api.world.maze.MazeComponent.CellState;
 import net.minecraft.util.BlockRotation;
