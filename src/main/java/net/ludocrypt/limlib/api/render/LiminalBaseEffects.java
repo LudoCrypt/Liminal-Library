@@ -47,9 +47,6 @@ public abstract class LiminalBaseEffects {
 		private final boolean darkened;
 		private final boolean thickFog;
 
-		@Environment(EnvType.CLIENT)
-		private DimensionEffects dimensionEffects = null;
-
 		public SimpleBaseEffects(Optional<Float> cloudsHeight, boolean alternateSkyColor, String skyType, boolean brightenLighting, boolean darkened, boolean thickFog) {
 			this.cloudsHeight = cloudsHeight;
 			this.alternateSkyColor = alternateSkyColor;
@@ -67,29 +64,24 @@ public abstract class LiminalBaseEffects {
 		@Override
 		@Environment(EnvType.CLIENT)
 		public DimensionEffects getDimensionEffects() {
-			if (this.dimensionEffects == null) {
-				this.dimensionEffects = new DimensionEffects(cloudsHeight.orElse(Float.NaN), alternateSkyColor, SkyType.valueOf(skyType), brightenLighting, darkened) {
+			return new DimensionEffects(cloudsHeight.orElse(Float.NaN), alternateSkyColor, SkyType.valueOf(skyType), brightenLighting, darkened) {
 
-					@Override
-					public float[] getFogColorOverride(float skyAngle, float tickDelta) {
-						return null;
-					}
+				@Override
+				public float[] getFogColorOverride(float skyAngle, float tickDelta) {
+					return null;
+				}
 
-					@Override
-					public Vec3d adjustFogColor(Vec3d color, float angle) {
-						return color;
-					}
+				@Override
+				public Vec3d adjustFogColor(Vec3d color, float angle) {
+					return color;
+				}
 
-					@Override
-					public boolean useThickFog(int var1, int var2) {
-						return SimpleBaseEffects.this.thickFog;
-					}
+				@Override
+				public boolean useThickFog(int var1, int var2) {
+					return SimpleBaseEffects.this.thickFog;
+				}
 
-				};
-			}
-
-			return this.dimensionEffects;
-
+			};
 		}
 
 	}

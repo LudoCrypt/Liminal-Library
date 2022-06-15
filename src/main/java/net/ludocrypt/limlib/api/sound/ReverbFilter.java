@@ -60,7 +60,7 @@ public class ReverbFilter {
 		MinecraftClient client = MinecraftClient.getInstance();
 
 		if (!(ReverbSettings.shouldIgnore(soundInstance.getId()) || client == null || client.world == null)) {
-			Optional<ReverbSettings> reverb = ((DimensionEffectsAccess) client.world.getDimension()).getLiminalEffects().getReverb();
+			Optional<ReverbSettings> reverb = ((DimensionEffectsAccess) (Object) client.world.getDimension()).getLiminalEffects().getReverb();
 			if (reverb.isPresent()) {
 				for (int i = 0; i < 2; i++) {
 					AL11.alSourcei(sourceID, EXTEfx.AL_DIRECT_FILTER, 0);

@@ -109,7 +109,7 @@ public class NbtPlacerUtil {
 
 	public static Optional<NbtCompound> loadNbtFromFile(ResourceManager manager, Identifier id) {
 		try {
-			return Optional.ofNullable(readStructure(manager.getResource(id)));
+			return Optional.ofNullable(readStructure(manager.getResource(id).get()));
 		} catch (Exception e) {
 			e.printStackTrace();
 			return Optional.empty();
@@ -118,7 +118,7 @@ public class NbtPlacerUtil {
 
 	public static NbtCompound readStructure(Resource resource) throws IOException {
 		NbtCompound nbt = NbtIo.readCompressed(resource.getInputStream());
-		resource.close();
+		resource.getInputStream().close();
 		return nbt;
 	}
 

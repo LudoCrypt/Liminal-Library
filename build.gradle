@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.10-SNAPSHOT'
+	id 'fabric-loom' version '0.12-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -10,9 +10,19 @@ archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
 
+loom {
+	accessWidenerPath = file("src/main/resources/limlib.accesswidener")
+}
+
 repositories {
 	maven {
 		url 'https://ladysnake.jfrog.io/artifactory/mods'
+    }
+	maven {
+		url 'https://api.modrinth.com/maven'
+		content {
+			includeGroup "maven.modrinth"
+		}
     }
 }
 
@@ -22,6 +32,10 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 	modImplementation "io.github.ladysnake:satin:${satin_version}"
+	modImplementation "maven.modrinth:sodium:${sodium_version}"
+	modImplementation "maven.modrinth:iris:${iris_version}"
+	modImplementation "org.joml:joml:1.10.4"
+	modImplementation "org.anarres:jcpp:1.4.14"
 }
 
 processResources {

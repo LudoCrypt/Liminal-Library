@@ -26,7 +26,7 @@ public class MinecraftClientMixin {
 	@Inject(method = "getMusicType", at = @At("HEAD"), cancellable = true)
 	private void limlib$getMusicType(CallbackInfoReturnable<MusicSound> ci) {
 		if (this.player != null) {
-			Optional<MusicSound> optional = ((DimensionEffectsAccess) this.world.getDimension()).getLiminalEffects().getMusic();
+			Optional<MusicSound> optional = ((DimensionEffectsAccess) (Object) this.world.getDimension()).getLiminalEffects().getMusic();
 			if (optional.isPresent()) {
 				ci.setReturnValue(optional.get());
 			}

@@ -16,7 +16,7 @@ import net.ludocrypt.limlib.impl.LevelStorageHacks;
 import net.ludocrypt.limlib.impl.LimlibRegistries;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.util.dynamic.RegistryOps;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.world.dimension.DimensionOptions;
 import net.minecraft.world.level.storage.LevelStorage;
 
@@ -28,7 +28,7 @@ public class LevelStorageMixin {
 		Dynamic<T> dynamic = in;
 		if (LevelStorageHacks.earlyDynamicRegistryManager != null) {
 			for (LiminalWorld world : LimlibRegistries.LIMINAL_WORLD) {
-				dynamic = limlib$addDimension(world, dynamic, world.getDimensionOptionsGetter().get(world, LevelStorageHacks.earlyDynamicRegistryManager.get(Registry.DIMENSION_TYPE_KEY), LevelStorageHacks.earlyDynamicRegistryManager.get(Registry.BIOME_KEY), LevelStorageHacks.earlyDynamicRegistryManager.get(Registry.STRUCTURE_SET_KEY), LevelStorageHacks.earlyDynamicRegistryManager.get(Registry.CHUNK_GENERATOR_SETTINGS_KEY), LevelStorageHacks.earlyDynamicRegistryManager.get(Registry.NOISE_WORLDGEN), LevelStorageHacks.earlyDynamicRegistryManager, in.get("seed").asLong(0)));
+				dynamic = limlib$addDimension(world, dynamic, world.getDimensionOptionsGetter().get(world, BuiltinRegistries.DIMENSION_TYPE, BuiltinRegistries.BIOME, BuiltinRegistries.STRUCTURE_SET, BuiltinRegistries.CHUNK_GENERATOR_SETTINGS, BuiltinRegistries.NOISE_PARAMETERS));
 			}
 		}
 		return dynamic;

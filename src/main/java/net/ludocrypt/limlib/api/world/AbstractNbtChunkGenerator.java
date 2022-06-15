@@ -21,26 +21,15 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryEntryList;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.biome.source.BiomeSource;
-import net.minecraft.world.biome.source.util.MultiNoiseUtil.MultiNoiseSampler;
 
 public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 
 	public final HashMap<String, NbtPlacerUtil> loadedStructures = new HashMap<String, NbtPlacerUtil>(30);
 	public final Identifier nbtId;
 
-	public AbstractNbtChunkGenerator(Registry<StructureSet> registry, Optional<RegistryEntryList<StructureSet>> optional, BiomeSource biomeSource, BiomeSource biomeSource2, long l, Identifier nbtId, MultiNoiseSampler multiNoiseSampler) {
-		super(registry, optional, biomeSource, biomeSource2, l, multiNoiseSampler);
+	public AbstractNbtChunkGenerator(Registry<StructureSet> registry, Optional<RegistryEntryList<StructureSet>> optional, BiomeSource biomeSource, Identifier nbtId) {
+		super(registry, optional, biomeSource);
 		this.nbtId = nbtId;
-	}
-
-	@Override
-	public int getSeaLevel() {
-		return 0;
-	}
-
-	@Override
-	public int getMinimumY() {
-		return 0;
 	}
 
 	public abstract void storeStructures(ServerWorld world);

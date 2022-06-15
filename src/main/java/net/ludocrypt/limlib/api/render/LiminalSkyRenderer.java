@@ -75,6 +75,7 @@ public abstract class LiminalSkyRenderer {
 			int b = (int) Math.floor(color.z);
 			int a = 255;
 			RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
+			RenderSystem.setShaderColor(1.0f, 1.0f, 1.0f, 1.0f);
 			BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
 
 			for (int i = 0; i < 6; ++i) {
@@ -111,8 +112,7 @@ public abstract class LiminalSkyRenderer {
 				bufferBuilder.vertex(matrix4f, -100.0F, -100.0F, 100.0F).texture(0.0F, 1.0F).color(r, g, b, a).next();
 				bufferBuilder.vertex(matrix4f, 100.0F, -100.0F, 100.0F).texture(1.0F, 1.0F).color(r, g, b, a).next();
 				bufferBuilder.vertex(matrix4f, 100.0F, -100.0F, -100.0F).texture(1.0F, 0.0F).color(r, g, b, a).next();
-				bufferBuilder.end();
-				BufferRenderer.draw(bufferBuilder);
+				BufferRenderer.drawWithShader(bufferBuilder.end());
 				matrices.pop();
 			}
 
