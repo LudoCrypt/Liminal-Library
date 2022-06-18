@@ -86,7 +86,7 @@ public abstract class WorldRendererMixin {
 			matrixStack.multiplyPositionMatrix(matrices.peek().getPositionMatrix());
 			RenderSystem.applyModelViewMatrix();
 
-			this.renderWeather(lightmapTextureManager, tickDelta, camera.getPos().getX(), camera.getPos().getY(), camera.getPos().getZ());
+//			this.renderWeather(lightmapTextureManager, tickDelta, camera.getPos().getX(), camera.getPos().getY(), camera.getPos().getZ());
 
 			RenderSystem.depthMask(true);
 			RenderSystem.disableBlend();
