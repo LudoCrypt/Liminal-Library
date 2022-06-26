@@ -25,10 +25,13 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.SimpleFramebuffer;
 import net.minecraft.client.render.BufferBuilderStorage;
 import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.WorldRenderer.ChunkInfo;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3f;
@@ -54,6 +57,9 @@ public abstract class WorldRendererMixin implements WorldRendererAccess {
 	@Unique
 	private boolean isRenderingHands = false;
 
+	@Unique
+	private boolean isRenderingItems = false;
+
 	@Override
 	public void renderSky(MatrixStack matrices, Matrix4f positionMatrix, float tickDelta) {
 		Optional<LiminalSkyRenderer> sky = ((DimensionEffectsAccess) (Object) this.world.getDimension()).getLiminalEffects().getSky();
@@ -73,9 +79,10 @@ public abstract class WorldRendererMixin implements WorldRendererAccess {
 
 		Matrix4f projectionMatrix = RenderSystem.getProjectionMatrix().copy();
 
-		if (((GameRendererAccessor) client.gameRenderer).isRenderHand()) {
-			SimpleFramebuffer frameBuffer = new SimpleFramebuffer(client.getFramebuffer().viewportWidth, client.getFramebuffer().viewportHeight, false, false);
+		SimpleFramebuffer frameBuffer = new SimpleFramebuffer(client.getFramebuffer().viewportWidth, client.getFramebuffer().viewportHeight, false, false);
 
+		// Render Hands
+		if (((GameRendererAccessor) client.gameRenderer).isRenderHand()) {
 			frameBuffer.beginWrite(true);
 
 			this.isRenderingHands = true;
@@ -92,18 +99,41 @@ public abstract class WorldRendererMixin implements WorldRendererAccess {
 			this.isRenderingHands = false;
 
 			frameBuffer.endWrite();
-			frameBuffer.delete();
-
+			frameBuffer.clear(MinecraftClient.IS_SYSTEM_MAC);
 			client.getFramebuffer().beginWrite(true);
 		}
 
 		LimlibRegistries.LIMINAL_QUAD_RENDERER.forEach((renderer) -> {
-			renderer.renderQueue.forEach(Runnable::run);
-			renderer.renderQueue.clear();
+			renderer.heldItemRenderQueue.forEach(Runnable::run);
+			renderer.heldItemRenderQueue.clear();
 		});
 
+		// Reset Projection matrix
 		RenderSystem.setProjectionMatrix(projectionMatrix);
 
+		// Render Entities
+		frameBuffer.beginWrite(true);
+
+		isRenderingItems = true;
+
+		for (Entity entity : this.world.getEntities()) {
+			if (entity instanceof ItemEntity) {
+				this.renderEntity(entity, camera.getPos().getX(), camera.getPos().getY(), camera.getPos().getZ(), tickDelta, matrices, this.bufferBuilders.getEntityVertexConsumers());
+			}
+		}
+
+		isRenderingItems = false;
+
+		frameBuffer.endWrite();
+		frameBuffer.clear(MinecraftClient.IS_SYSTEM_MAC);
+		client.getFramebuffer().beginWrite(true);
+
+		LimlibRegistries.LIMINAL_QUAD_RENDERER.forEach((renderer) -> {
+			renderer.itemRenderQueue.forEach(Runnable::run);
+			renderer.itemRenderQueue.clear();
+		});
+
+		// Render Blocks
 		this.getQuadRenderData().forEach((pair) -> {
 			BlockPos pos = pair.getFirst();
 			BlockState state = pair.getSecond();
@@ -117,6 +147,8 @@ public abstract class WorldRendererMixin implements WorldRendererAccess {
 
 		modelViewStack.pop();
 		RenderSystem.applyModelViewMatrix();
+
+		frameBuffer.delete();
 	}
 
 	@Override
@@ -136,5 +168,13 @@ public abstract class WorldRendererMixin implements WorldRendererAccess {
 	public boolean isRenderingHands() {
 		return isRenderingHands;
 	}
+
+	@Override
+	public boolean isRenderingItems() {
+		return isRenderingItems;
+	}
+
+	@Shadow
+	abstract void renderEntity(Entity entity, double cameraX, double cameraY, double cameraZ, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers);
 
 }

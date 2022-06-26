@@ -24,17 +24,14 @@ public class ItemRendererMixin {
 	private void limlib$renderBakedItemModel(BakedModel model, ItemStack stack, int light, int overlay, MatrixStack matrices, VertexConsumer vertices, CallbackInfo ci) {
 		MinecraftClient client = MinecraftClient.getInstance();
 
-		boolean isIris = false;
+		boolean isHandRendering = ((WorldRendererAccess) client.worldRenderer).isRenderingHands() || (FabricLoader.getInstance().isModLoaded("iris") && ((IrisClientAccess) client).isHandRenderingActive());
+		boolean isItemRendering = ((WorldRendererAccess) client.worldRenderer).isRenderingItems();
 
-		if (FabricLoader.getInstance().isModLoaded("iris")) {
-			isIris = ((IrisClientAccess) client).areShadersInUse();
-		}
-
-		if (((WorldRendererAccess) client.worldRenderer).isRenderingHands() || isIris) {
+		if (isHandRendering || isItemRendering) {
 			MatrixStack matrixStack = new MatrixStack();
 			matrixStack.multiplyPositionMatrix(matrices.peek().getPositionMatrix().copy());
 
-			((BakedModelAccess) model).getSubQuads().forEach((id, quads) -> LimlibRegistries.LIMINAL_QUAD_RENDERER.get(id).renderQueue.add(() -> LimlibRegistries.LIMINAL_QUAD_RENDERER.get(id).renderItemQuads(quads, client.world, stack.copy(), matrixStack, client.gameRenderer.getCamera())));
+			((BakedModelAccess) model).getSubQuads().forEach((id, quads) -> (isHandRendering ? LimlibRegistries.LIMINAL_QUAD_RENDERER.get(id).heldItemRenderQueue : LimlibRegistries.LIMINAL_QUAD_RENDERER.get(id).itemRenderQueue).add(() -> LimlibRegistries.LIMINAL_QUAD_RENDERER.get(id).renderItemQuads(quads, client.world, stack.copy(), matrixStack, client.gameRenderer.getCamera())));
 		}
 	}
 }

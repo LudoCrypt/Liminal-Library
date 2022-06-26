@@ -4,4 +4,6 @@ public interface IrisClientAccess {
 
 	public boolean areShadersInUse();
 
+	public boolean isHandRenderingActive();
+
 }

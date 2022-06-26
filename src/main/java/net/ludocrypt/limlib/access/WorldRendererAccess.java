@@ -20,4 +20,6 @@ public interface WorldRendererAccess {
 
 	public boolean isRenderingHands();
 
+	public boolean isRenderingItems();
+
 }

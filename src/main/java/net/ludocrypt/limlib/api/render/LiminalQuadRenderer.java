@@ -37,29 +37,15 @@ import net.minecraft.world.World;
 @Environment(EnvType.CLIENT)
 public abstract class LiminalQuadRenderer {
 
-	public List<Runnable> renderQueue = Lists.newArrayList();
+	public List<Runnable> heldItemRenderQueue = Lists.newArrayList();
+
+	public List<Runnable> itemRenderQueue = Lists.newArrayList();
 
 	public abstract void renderQuad(BakedQuad quad, BufferBuilder bufferBuilder, Matrix4f matrix, Camera camera, World world, MatrixStack matrices, List<Pair<BakedQuad, Optional<Direction>>> quads);
 
 	public void renderQuads(List<Pair<BakedQuad, Optional<Direction>>> quads, World world, BlockPos pos, BlockState state, MatrixStack matrices, Camera camera) {
-		Matrix4f matrix = new MatrixStack().peek().getPositionMatrix().copy();
-
-		// Stationize
-		matrix.multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(180));
-		matrix.multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(camera.getYaw()));
-		matrix.multiply(Vec3f.NEGATIVE_X.getDegreesQuaternion(camera.getPitch()));
-
-		matrix.multiply(matrices.peek().getPositionMatrix().copy());
-
-		RenderSystem.disableTexture();
-		RenderSystem.depthMask(true);
-		RenderSystem.enableBlend();
-		RenderSystem.enableDepthTest();
-		RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
-		RenderSystem.polygonOffset(this.renderBehind() ? 3.0F : -3.0F, this.renderBehind() ? 3.0F : -3.0F);
-		RenderSystem.enablePolygonOffset();
-		BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-		bufferBuilder.begin(drawMode(), vertexFormat());
+		Matrix4f matrix = setupMatrix(matrices, camera);
+		BufferBuilder bufferBuilder = setupRenderer(matrices, camera);
 
 		for (Pair<BakedQuad, Optional<Direction>> quadPair : quads) {
 			BakedQuad quad = quadPair.getFirst();
@@ -72,23 +58,19 @@ public abstract class LiminalQuadRenderer {
 			}
 		}
 
-		BufferRenderer.drawWithShader(bufferBuilder.end());
-		RenderSystem.polygonOffset(0.0F, 0.0F);
-		RenderSystem.disablePolygonOffset();
-		RenderSystem.disableBlend();
-		RenderSystem.enableTexture();
+		this.endRenderer(bufferBuilder, matrices, camera);
 	}
 
 	public void renderItemQuads(List<Pair<BakedQuad, Optional<Direction>>> quads, World world, ItemStack stack, MatrixStack matrices, Camera camera) {
-		Matrix4f matrix = new MatrixStack().peek().getPositionMatrix().copy();
+		Matrix4f matrix = setupMatrix(matrices, camera);
+		BufferBuilder bufferBuilder = setupRenderer(matrices, camera);
 
-		// Stationize
-		matrix.multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(180));
-		matrix.multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(camera.getYaw()));
-		matrix.multiply(Vec3f.NEGATIVE_X.getDegreesQuaternion(camera.getPitch()));
+		quads.forEach((pair) -> this.renderQuad(pair.getFirst(), bufferBuilder, matrix, camera, world, matrices, quads));
 
-		matrix.multiply(matrices.peek().getPositionMatrix().copy());
+		this.endRenderer(bufferBuilder, matrices, camera);
+	}
 
+	public BufferBuilder setupRenderer(MatrixStack matrices, Camera camera) {
 		RenderSystem.disableTexture();
 		RenderSystem.depthMask(true);
 		RenderSystem.enableBlend();
@@ -99,8 +81,22 @@ public abstract class LiminalQuadRenderer {
 		BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
 		bufferBuilder.begin(drawMode(), vertexFormat());
 
-		quads.forEach((pair) -> this.renderQuad(pair.getFirst(), bufferBuilder, matrix, camera, world, matrices, quads));
+		return bufferBuilder;
+	}
 
+	public Matrix4f setupMatrix(MatrixStack matrices, Camera camera) {
+		Matrix4f matrix = new MatrixStack().peek().getPositionMatrix().copy();
+
+		// Stationize
+		matrix.multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(180));
+		matrix.multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(camera.getYaw()));
+		matrix.multiply(Vec3f.NEGATIVE_X.getDegreesQuaternion(camera.getPitch()));
+
+		matrix.multiply(matrices.peek().getPositionMatrix().copy());
+		return matrix;
+	}
+
+	public void endRenderer(BufferBuilder bufferBuilder, MatrixStack matrices, Camera camera) {
 		BufferRenderer.drawWithShader(bufferBuilder.end());
 		RenderSystem.polygonOffset(0.0F, 0.0F);
 		RenderSystem.disablePolygonOffset();
