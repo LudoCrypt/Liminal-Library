@@ -24,6 +24,7 @@
 		"GameRendererAccessorTwo",
 		"GameRendererMixin",
 		"GeneralBakedModelMixin",
+		"InventoryScreenMixin",
 		"ItemRendererMixin",
 		"JsonUnbakedModelDeserializerMixin",
 		"JsonUnbakedModelMixin",

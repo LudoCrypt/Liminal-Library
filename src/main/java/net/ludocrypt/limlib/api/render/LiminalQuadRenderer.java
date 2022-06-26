@@ -44,7 +44,7 @@ public abstract class LiminalQuadRenderer {
 	public abstract void renderQuad(BakedQuad quad, BufferBuilder bufferBuilder, Matrix4f matrix, Camera camera, World world, MatrixStack matrices, List<Pair<BakedQuad, Optional<Direction>>> quads);
 
 	public void renderQuads(List<Pair<BakedQuad, Optional<Direction>>> quads, World world, BlockPos pos, BlockState state, MatrixStack matrices, Camera camera) {
-		Matrix4f matrix = setupMatrix(matrices, camera);
+		Matrix4f matrix = setupMatrix(matrices, camera, true);
 		BufferBuilder bufferBuilder = setupRenderer(matrices, camera);
 
 		for (Pair<BakedQuad, Optional<Direction>> quadPair : quads) {
@@ -61,8 +61,8 @@ public abstract class LiminalQuadRenderer {
 		this.endRenderer(bufferBuilder, matrices, camera);
 	}
 
-	public void renderItemQuads(List<Pair<BakedQuad, Optional<Direction>>> quads, World world, ItemStack stack, MatrixStack matrices, Camera camera) {
-		Matrix4f matrix = setupMatrix(matrices, camera);
+	public void renderItemQuads(List<Pair<BakedQuad, Optional<Direction>>> quads, World world, ItemStack stack, MatrixStack matrices, Camera camera, boolean inGui) {
+		Matrix4f matrix = setupMatrix(matrices, camera, !inGui);
 		BufferBuilder bufferBuilder = setupRenderer(matrices, camera);
 
 		quads.forEach((pair) -> this.renderQuad(pair.getFirst(), bufferBuilder, matrix, camera, world, matrices, quads));
@@ -84,13 +84,15 @@ public abstract class LiminalQuadRenderer {
 		return bufferBuilder;
 	}
 
-	public Matrix4f setupMatrix(MatrixStack matrices, Camera camera) {
+	public Matrix4f setupMatrix(MatrixStack matrices, Camera camera, boolean stationize) {
 		Matrix4f matrix = new MatrixStack().peek().getPositionMatrix().copy();
 
 		// Stationize
-		matrix.multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(180));
-		matrix.multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(camera.getYaw()));
-		matrix.multiply(Vec3f.NEGATIVE_X.getDegreesQuaternion(camera.getPitch()));
+		if (stationize) {
+			matrix.multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(180));
+			matrix.multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(camera.getYaw()));
+			matrix.multiply(Vec3f.NEGATIVE_X.getDegreesQuaternion(camera.getPitch()));
+		}
 
 		matrix.multiply(matrices.peek().getPositionMatrix().copy());
 		return matrix;

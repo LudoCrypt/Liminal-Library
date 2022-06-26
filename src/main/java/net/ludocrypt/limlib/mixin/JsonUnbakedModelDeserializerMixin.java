@@ -16,7 +16,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import net.ludocrypt.limlib.access.UnbakedModelAccess;
-import net.ludocrypt.limlib.impl.LimlibRegistries;
+import net.ludocrypt.limlib.impl.LimlibRendering;
 import net.minecraft.client.render.model.json.JsonUnbakedModel;
 import net.minecraft.client.render.model.json.ModelElement;
 import net.minecraft.util.Identifier;
@@ -29,7 +29,7 @@ public abstract class JsonUnbakedModelDeserializerMixin {
 		Map<Identifier, List<ModelElement>> map = Maps.newHashMap();
 		JsonObject jsonObject = jsonElement.getAsJsonObject();
 		if (jsonObject.has("limlib_extra")) {
-			LimlibRegistries.LIMINAL_QUAD_RENDERER.getEntrySet().forEach((entry) -> {
+			LimlibRendering.LIMINAL_QUAD_RENDERER.getEntrySet().forEach((entry) -> {
 				if (jsonObject.get("limlib_extra").getAsJsonObject().has(entry.getKey().getValue().toString())) {
 					map.put(entry.getKey().getValue(), elementsFromJson(jsonDeserializationContext, jsonObject.get("limlib_extra").getAsJsonObject().get(entry.getKey().getValue().toString()).getAsJsonObject()));
 				}
