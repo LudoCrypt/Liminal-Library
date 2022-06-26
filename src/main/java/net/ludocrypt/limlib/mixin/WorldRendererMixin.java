@@ -71,6 +71,39 @@ public abstract class WorldRendererMixin implements WorldRendererAccess {
 		modelViewStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180));
 		RenderSystem.applyModelViewMatrix();
 
+		Matrix4f projectionMatrix = RenderSystem.getProjectionMatrix().copy();
+
+		if (((GameRendererAccessor) client.gameRenderer).isRenderHand()) {
+			SimpleFramebuffer frameBuffer = new SimpleFramebuffer(client.getFramebuffer().viewportWidth, client.getFramebuffer().viewportHeight, false, false);
+
+			frameBuffer.beginWrite(true);
+
+			this.isRenderingHands = true;
+			matrices.push();
+
+			matrices.multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(180));
+			matrices.multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(camera.getYaw()));
+			matrices.multiply(Vec3f.NEGATIVE_X.getDegreesQuaternion(camera.getPitch()));
+
+			((GameRendererAccessorTwo) client.gameRenderer).callRenderHand(matrices, camera, tickDelta);
+
+			matrices.pop();
+
+			this.isRenderingHands = false;
+
+			frameBuffer.endWrite();
+			frameBuffer.delete();
+
+			client.getFramebuffer().beginWrite(true);
+		}
+
+		LimlibRegistries.LIMINAL_QUAD_RENDERER.forEach((renderer) -> {
+			renderer.renderQueue.forEach(Runnable::run);
+			renderer.renderQueue.clear();
+		});
+
+		RenderSystem.setProjectionMatrix(projectionMatrix);
+
 		this.getQuadRenderData().forEach((pair) -> {
 			BlockPos pos = pair.getFirst();
 			BlockState state = pair.getSecond();
@@ -82,36 +115,8 @@ public abstract class WorldRendererMixin implements WorldRendererAccess {
 			matrices.pop();
 		});
 
-		SimpleFramebuffer frameBuffer = new SimpleFramebuffer(client.getFramebuffer().viewportWidth, client.getFramebuffer().viewportHeight, false, false);
-
-		frameBuffer.beginWrite(false);
-
-		if (((GameRendererAccessor) client.gameRenderer).isRenderHand()) {
-			this.isRenderingHands = true;
-			matrices.push();
-
-			matrices.multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(180));
-			matrices.multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(camera.getYaw()));
-			matrices.multiply(Vec3f.NEGATIVE_X.getDegreesQuaternion(camera.getPitch()));
-
-			client.getEntityRenderDispatcher().getHeldItemRenderer().renderItem(tickDelta, matrices, bufferBuilders.getEntityVertexConsumers(), client.player, client.getEntityRenderDispatcher().getLight(camera.getFocusedEntity(), tickDelta));
-			matrices.pop();
-			this.isRenderingHands = false;
-		}
-
-		frameBuffer.endWrite();
-		frameBuffer.delete();
-
-		client.getFramebuffer().beginWrite(true);
-
-		LimlibRegistries.LIMINAL_QUAD_RENDERER.forEach((renderer) -> {
-			renderer.renderQueue.forEach(Runnable::run);
-			renderer.renderQueue.clear();
-		});
-
 		modelViewStack.pop();
 		RenderSystem.applyModelViewMatrix();
-
 	}
 
 	@Override

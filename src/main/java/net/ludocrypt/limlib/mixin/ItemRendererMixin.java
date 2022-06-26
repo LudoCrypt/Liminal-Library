@@ -6,8 +6,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.irisshaders.iris.api.v0.IrisApi;
 import net.ludocrypt.limlib.access.BakedModelAccess;
+import net.ludocrypt.limlib.access.IrisClientAccess;
 import net.ludocrypt.limlib.access.WorldRendererAccess;
 import net.ludocrypt.limlib.impl.LimlibRegistries;
 import net.minecraft.client.MinecraftClient;
@@ -27,7 +27,7 @@ public class ItemRendererMixin {
 		boolean isIris = false;
 
 		if (FabricLoader.getInstance().isModLoaded("iris")) {
-			isIris = IrisApi.getInstance().isShaderPackInUse();
+			isIris = ((IrisClientAccess) client).areShadersInUse();
 		}
 
 		if (((WorldRendererAccess) client.worldRenderer).isRenderingHands() || isIris) {

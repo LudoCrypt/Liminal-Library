@@ -21,6 +21,7 @@
 		"ChunkInfoAccessor",
 		"DimensionEffectsMixin",
 		"GameRendererAccessor",
+		"GameRendererAccessorTwo",
 		"GameRendererMixin",
 		"GeneralBakedModelMixin",
 		"ItemRendererMixin",

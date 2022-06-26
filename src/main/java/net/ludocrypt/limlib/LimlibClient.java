@@ -69,7 +69,7 @@ public class LimlibClient implements ClientModInitializer {
 				RenderSystem.setShader(core::getShader);
 
 				for (int i = 0; i < 6; i++) {
-					RenderSystem.setShaderTexture(i, new Identifier(quad.getSprite().getId().getNamespace(), "textures/" + quad.getSprite().getId().getPath() + ".png"));
+					RenderSystem.setShaderTexture(i, new Identifier(quad.getSprite().getId().getNamespace(), "textures/" + quad.getSprite().getId().getPath() + "_" + i + ".png"));
 				}
 
 				LiminalQuadRenderer.quad((vec3f) -> bufferBuilder.vertex(vec3f.getX(), vec3f.getY(), vec3f.getZ()).next(), matrix, quad);

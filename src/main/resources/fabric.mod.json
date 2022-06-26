@@ -25,7 +25,8 @@
 	"accessWidener": "limlib.accesswidener",
 	"mixins": [
 		"limlib.mixins.json",
-		"limlib.sodium.mixins.json"
+		"limlib.sodium.mixins.json",
+		"limlib.iris.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.11.3",

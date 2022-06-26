@@ -42,25 +42,27 @@ public abstract class LiminalQuadRenderer {
 	public abstract void renderQuad(BakedQuad quad, BufferBuilder bufferBuilder, Matrix4f matrix, Camera camera, World world, MatrixStack matrices, List<Pair<BakedQuad, Optional<Direction>>> quads);
 
 	public void renderQuads(List<Pair<BakedQuad, Optional<Direction>>> quads, World world, BlockPos pos, BlockState state, MatrixStack matrices, Camera camera) {
+		Matrix4f matrix = new MatrixStack().peek().getPositionMatrix().copy();
+
+		// Stationize
+		matrix.multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(180));
+		matrix.multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(camera.getYaw()));
+		matrix.multiply(Vec3f.NEGATIVE_X.getDegreesQuaternion(camera.getPitch()));
+
+		matrix.multiply(matrices.peek().getPositionMatrix().copy());
+
+		RenderSystem.disableTexture();
+		RenderSystem.depthMask(true);
+		RenderSystem.enableBlend();
+		RenderSystem.enableDepthTest();
+		RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
+		RenderSystem.polygonOffset(this.renderBehind() ? 3.0F : -3.0F, this.renderBehind() ? 3.0F : -3.0F);
+		RenderSystem.enablePolygonOffset();
+		BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+		bufferBuilder.begin(drawMode(), vertexFormat());
+
 		for (Pair<BakedQuad, Optional<Direction>> quadPair : quads) {
 			BakedQuad quad = quadPair.getFirst();
-
-			Matrix4f matrix = matrices.peek().getPositionMatrix().copy();
-			matrix.loadIdentity();
-			matrix.multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(180));
-			matrix.multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(camera.getYaw()));
-			matrix.multiply(Vec3f.NEGATIVE_X.getDegreesQuaternion(camera.getPitch()));
-			matrix.multiply(matrices.peek().getPositionMatrix().copy());
-
-			RenderSystem.depthMask(true);
-			RenderSystem.enableBlend();
-			RenderSystem.enableDepthTest();
-			RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
-			RenderSystem.polygonOffset(this.renderBehind() ? 3.0F : -3.0F, this.renderBehind() ? 3.0F : -3.0F);
-			RenderSystem.enablePolygonOffset();
-			BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-			bufferBuilder.begin(drawMode(), vertexFormat());
-
 			if (quadPair.getSecond().isPresent()) {
 				if (Block.shouldDrawSide(state, world, pos, quadPair.getSecond().get(), pos.offset(quadPair.getSecond().get()))) {
 					this.renderQuad(quad, bufferBuilder, matrix, camera, world, matrices, quads);
@@ -68,12 +70,13 @@ public abstract class LiminalQuadRenderer {
 			} else {
 				this.renderQuad(quad, bufferBuilder, matrix, camera, world, matrices, quads);
 			}
-
-			BufferRenderer.drawWithShader(bufferBuilder.end());
-			RenderSystem.polygonOffset(0.0F, 0.0F);
-			RenderSystem.disablePolygonOffset();
-			RenderSystem.disableBlend();
 		}
+
+		BufferRenderer.drawWithShader(bufferBuilder.end());
+		RenderSystem.polygonOffset(0.0F, 0.0F);
+		RenderSystem.disablePolygonOffset();
+		RenderSystem.disableBlend();
+		RenderSystem.enableTexture();
 	}
 
 	public void renderItemQuads(List<Pair<BakedQuad, Optional<Direction>>> quads, World world, ItemStack stack, MatrixStack matrices, Camera camera) {
@@ -86,25 +89,23 @@ public abstract class LiminalQuadRenderer {
 
 		matrix.multiply(matrices.peek().getPositionMatrix().copy());
 
-		for (Pair<BakedQuad, Optional<Direction>> quadPair : quads) {
-			BakedQuad quad = quadPair.getFirst();
+		RenderSystem.disableTexture();
+		RenderSystem.depthMask(true);
+		RenderSystem.enableBlend();
+		RenderSystem.enableDepthTest();
+		RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
+		RenderSystem.polygonOffset(this.renderBehind() ? 3.0F : -3.0F, this.renderBehind() ? 3.0F : -3.0F);
+		RenderSystem.enablePolygonOffset();
+		BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
+		bufferBuilder.begin(drawMode(), vertexFormat());
 
-			RenderSystem.depthMask(true);
-			RenderSystem.enableBlend();
-			RenderSystem.enableDepthTest();
-			RenderSystem.blendFuncSeparate(GlStateManager.SrcFactor.SRC_ALPHA, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SrcFactor.ONE, GlStateManager.DstFactor.ONE_MINUS_SRC_ALPHA);
-			RenderSystem.polygonOffset(this.renderBehind() ? 3.0F : -3.0F, this.renderBehind() ? 3.0F : -3.0F);
-			RenderSystem.enablePolygonOffset();
-			BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-			bufferBuilder.begin(drawMode(), vertexFormat());
+		quads.forEach((pair) -> this.renderQuad(pair.getFirst(), bufferBuilder, matrix, camera, world, matrices, quads));
 
-			this.renderQuad(quad, bufferBuilder, matrix, camera, world, matrices, quads);
-
-			BufferRenderer.drawWithShader(bufferBuilder.end());
-			RenderSystem.polygonOffset(0.0F, 0.0F);
-			RenderSystem.disablePolygonOffset();
-			RenderSystem.disableBlend();
-		}
+		BufferRenderer.drawWithShader(bufferBuilder.end());
+		RenderSystem.polygonOffset(0.0F, 0.0F);
+		RenderSystem.disablePolygonOffset();
+		RenderSystem.disableBlend();
+		RenderSystem.enableTexture();
 	}
 
 	public static void quad(Consumer<Vec3f> consumer, Matrix4f matrix4f, BakedQuad quad) {
