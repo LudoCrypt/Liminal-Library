@@ -10,7 +10,9 @@
 		"DimensionTypeRegistrarMixin",
 		"LevelStorageMixin",
 		"RegistryOpsMixin",
-		"ServerPlayerEntityMixin"
+		"ServerPlayerEntityMixin",
+		"WorldPresetAccessor",
+		"WorldPresetsRegistrarMixin"
 	],
 	"client": [
 		"BakedModelMixin",
@@ -18,19 +20,18 @@
 		"ChunkBuilderBuiltChunkRebuildTaskMixin",
 		"ChunkInfoAccessor",
 		"DimensionEffectsMixin",
+		"GameRendererAccessor",
 		"GameRendererMixin",
 		"GeneralBakedModelMixin",
-		"HandRenderTypeAccessor",
-		"HeldItemRendererAccessor",
-		"HeldItemRendererMixin",
+		"ItemRendererMixin",
 		"JsonUnbakedModelDeserializerMixin",
 		"JsonUnbakedModelMixin",
 		"MinecraftClientMixin",
 		"RenderDataMixin",
 		"SoundSystemMixin",
 		"SourceAccessor",
-		"WorldPresetAccessor",
-		"WorldPresetsRegistrarMixin",
+		"WorldRendererAfterMixin",
+		"WorldRendererBeforeMixin",
 		"WorldRendererMixin"
 	],
 	"injectors": {

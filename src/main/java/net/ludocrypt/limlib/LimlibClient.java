@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.datafixers.util.Either;
 import com.mojang.datafixers.util.Pair;
 
 import ladysnake.satin.api.event.ShaderEffectRenderCallback;
@@ -26,7 +25,6 @@ import net.minecraft.client.render.VertexFormat.DrawMode;
 import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.model.BakedQuad;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
@@ -67,7 +65,7 @@ public class LimlibClient implements ClientModInitializer {
 		Registry.register(LimlibRegistries.LIMINAL_QUAD_RENDERER, new Identifier("limlib", "black"), new LiminalQuadRenderer() {
 
 			@Override
-			public void renderQuad(BakedQuad quad, BufferBuilder bufferBuilder, Matrix4f matrix, Camera camera, World world, Optional<BlockPos> pos, Either<BlockState, ItemStack> item, MatrixStack matrices, List<Pair<BakedQuad, Optional<Direction>>> quads, boolean renderInGui) {
+			public void renderQuad(BakedQuad quad, BufferBuilder bufferBuilder, Matrix4f matrix, Camera camera, World world, MatrixStack matrices, List<Pair<BakedQuad, Optional<Direction>>> quads) {
 				RenderSystem.setShader(core::getShader);
 
 				for (int i = 0; i < 6; i++) {
@@ -92,6 +90,7 @@ public class LimlibClient implements ClientModInitializer {
 				return DrawMode.QUADS;
 			}
 		});
+
 	}
 
 }

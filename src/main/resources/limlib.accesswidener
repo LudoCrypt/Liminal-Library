@@ -2,4 +2,3 @@ accessWidener v1 named
 accessible class net/minecraft/client/render/WorldRenderer$ChunkInfo
 accessible class net/minecraft/client/render/chunk/ChunkBuilder$BuiltChunk$RebuildTask
 accessible class net/minecraft/client/render/chunk/ChunkBuilder$BuiltChunk$RebuildTask$RenderData
-accessible class net/minecraft/client/render/item/HeldItemRenderer$HandRenderType
