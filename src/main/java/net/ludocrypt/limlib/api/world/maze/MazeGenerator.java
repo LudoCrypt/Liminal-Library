@@ -44,7 +44,7 @@ public abstract class MazeGenerator<C extends ChunkGenerator, M extends MazeComp
 					if (this.mazes.containsKey(mazePos)) {
 						maze = this.mazes.get(mazePos);
 					} else {
-						maze = this.newMaze(mazePos, region, chunk, chunkGenerator, redundancy ? width + 4 : width, redundancy ? height + 4 : height, Random.create(blockSeed(mazePos.getX(), mazePos.getZ(), seedModifier)));
+						maze = this.newMaze(mazePos, region, chunk, chunkGenerator, redundancy ? width + 4 : width, redundancy ? height + 4 : height, Random.create(blockSeed(mazePos.getX(), mazePos.getZ(), region.getSeed() + seedModifier)));
 						this.mazes.put(mazePos, maze);
 					}
 
