@@ -1,11 +1,10 @@
 package net.ludocrypt.limlib.api.world.maze;
 
-import java.util.Random;
-
 import com.mojang.datafixers.util.Pair;
 
 import net.ludocrypt.limlib.api.world.maze.MazeComponent.CellState;
 import net.minecraft.util.BlockRotation;
+import net.minecraft.util.math.random.Random;
 
 public enum MazePiece {
 	T_PIECE, F_PIECE, I_PIECE, L_PIECE, NUB, BLANK;

@@ -1,10 +1,11 @@
 package net.ludocrypt.limlib.api.world.maze;
 
 import java.util.List;
-import java.util.Random;
 import java.util.Stack;
 
 import com.google.common.collect.Lists;
+
+import net.minecraft.util.math.random.Random;
 
 public class DepthFirstMaze extends MazeComponent {
 

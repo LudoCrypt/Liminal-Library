@@ -1,7 +1,6 @@
 package net.ludocrypt.limlib.api.world.maze;
 
 import java.util.HashMap;
-import java.util.Random;
 import java.util.function.Function;
 
 import com.mojang.serialization.Codec;
@@ -9,6 +8,7 @@ import com.mojang.serialization.Codec;
 import net.ludocrypt.limlib.api.world.maze.MazeComponent.CellState;
 import net.ludocrypt.limlib.impl.LimlibRegistries;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
@@ -44,7 +44,7 @@ public abstract class MazeGenerator<C extends ChunkGenerator, M extends MazeComp
 					if (this.mazes.containsKey(mazePos)) {
 						maze = this.mazes.get(mazePos);
 					} else {
-						maze = this.newMaze(mazePos, region, chunk, chunkGenerator, redundancy ? width + 4 : width, redundancy ? height + 4 : height, new Random(blockSeed(mazePos.getX(), mazePos.getZ(), seedModifier)));
+						maze = this.newMaze(mazePos, region, chunk, chunkGenerator, redundancy ? width + 4 : width, redundancy ? height + 4 : height, Random.create(blockSeed(mazePos.getX(), mazePos.getZ(), seedModifier)));
 						this.mazes.put(mazePos, maze);
 					}
 
