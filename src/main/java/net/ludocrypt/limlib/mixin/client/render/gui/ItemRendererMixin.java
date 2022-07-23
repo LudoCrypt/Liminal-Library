@@ -31,18 +31,20 @@ public class ItemRendererMixin implements ItemRendererAccess {
 
 	@Inject(method = "Lnet/minecraft/client/render/item/ItemRenderer;renderBakedItemModel(Lnet/minecraft/client/render/model/BakedModel;Lnet/minecraft/item/ItemStack;IILnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;)V", at = @At("HEAD"))
 	private void limlib$renderBakedItemModel(BakedModel model, ItemStack stack, int light, int overlay, MatrixStack matrices, VertexConsumer vertices, CallbackInfo ci) {
-		MinecraftClient client = MinecraftClient.getInstance();
+		if (((ModelAccess) model).getLiminalQuadRenderer().isPresent()) {
+			MinecraftClient client = MinecraftClient.getInstance();
 
-		boolean isHandRendering = ((WorldRendererAccess) client.worldRenderer).isRenderingHands() || (FabricLoader.getInstance().isModLoaded("iris") && ((IrisClientAccess) client).isHandRenderingActive());
-		boolean isItemRendering = ((WorldRendererAccess) client.worldRenderer).isRenderingItems();
+			boolean isHandRendering = ((WorldRendererAccess) client.worldRenderer).isRenderingHands() || (FabricLoader.getInstance().isModLoaded("iris") && ((IrisClientAccess) client).isHandRenderingActive());
+			boolean isItemRendering = ((WorldRendererAccess) client.worldRenderer).isRenderingItems();
 
-		if (isHandRendering || isItemRendering || inGui) {
-			MatrixStack matrixStack = new MatrixStack();
-			matrixStack.multiplyPositionMatrix(matrices.peek().getPositionMatrix().copy());
-			List<Runnable> immediateRenderer = Lists.newArrayList();
-			LimlibRendering.LIMINAL_QUAD_RENDERER.get(((ModelAccess) model).getLiminalQuadRenderer().get()).renderItemModel(model, client.world, stack.copy(), matrixStack, client.gameRenderer.getCamera(), inGui);
-			immediateRenderer.forEach(Runnable::run);
-			immediateRenderer.clear();
+			if (isHandRendering || isItemRendering || inGui) {
+				MatrixStack matrixStack = new MatrixStack();
+				matrixStack.multiplyPositionMatrix(matrices.peek().getPositionMatrix().copy());
+				List<Runnable> immediateRenderer = Lists.newArrayList();
+				LimlibRendering.LIMINAL_QUAD_RENDERER.get(((ModelAccess) model).getLiminalQuadRenderer().get()).renderItemModel(model, client.world, stack.copy(), matrixStack, client.gameRenderer.getCamera(), inGui);
+				immediateRenderer.forEach(Runnable::run);
+				immediateRenderer.clear();
+			}
 		}
 	}
 
