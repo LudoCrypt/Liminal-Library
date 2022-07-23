@@ -16,8 +16,8 @@ import com.mojang.datafixers.util.Pair;
 
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.fabricmc.loader.api.FabricLoader;
-import net.ludocrypt.limlib.access.BakedModelAccess;
 import net.ludocrypt.limlib.access.DimensionTypeAccess;
+import net.ludocrypt.limlib.access.ModelAccess;
 import net.ludocrypt.limlib.access.RenderDataAccess;
 import net.ludocrypt.limlib.access.WorldRendererAccess;
 import net.ludocrypt.limlib.api.LiminalEffects;
@@ -35,6 +35,7 @@ import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.render.WorldRenderer.ChunkInfo;
+import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
@@ -177,7 +178,8 @@ public abstract class WorldRendererMixin implements WorldRendererAccess {
 			matrices.push();
 			matrices.translate(pos.getX() - camera.getPos().getX(), pos.getY() - camera.getPos().getY(), pos.getZ() - camera.getPos().getZ());
 
-			((BakedModelAccess) MinecraftClient.getInstance().getBlockRenderManager().getModel(state)).getSubQuads().forEach((id, quads) -> LimlibRendering.LIMINAL_QUAD_RENDERER.get(id).renderQuads(quads, world, pos, state, matrices, camera));
+			BakedModel model = MinecraftClient.getInstance().getBlockRenderManager().getModel(state);
+			LimlibRendering.LIMINAL_QUAD_RENDERER.get(((ModelAccess) model).getLiminalQuadRenderer().get()).renderModel(model, world, pos, state, matrices, camera);
 
 			matrices.pop();
 		});

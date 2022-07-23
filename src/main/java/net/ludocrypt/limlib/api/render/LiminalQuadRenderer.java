@@ -3,15 +3,14 @@ package net.ludocrypt.limlib.api.render;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
 
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.system.MemoryStack;
 
 import com.google.common.collect.Lists;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.datafixers.util.Pair;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -24,6 +23,7 @@ import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexFormat;
 import net.minecraft.client.render.VertexFormat.DrawMode;
 import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.BakedQuad;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
@@ -32,6 +32,7 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Matrix4f;
 import net.minecraft.util.math.Vec3f;
 import net.minecraft.util.math.Vector4f;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 
 @Environment(EnvType.CLIENT)
@@ -41,31 +42,31 @@ public abstract class LiminalQuadRenderer {
 
 	public List<Runnable> itemRenderQueue = Lists.newArrayList();
 
-	public abstract void renderQuad(BakedQuad quad, BufferBuilder bufferBuilder, Matrix4f matrix, Camera camera, World world, MatrixStack matrices, List<Pair<BakedQuad, Optional<Direction>>> quads);
+	public abstract void renderQuad(BakedQuad quad, BufferBuilder bufferBuilder, Matrix4f matrix, Camera camera, World world, MatrixStack matrices, BakedModel model, @Nullable BlockState state, @Nullable Direction dir, Random random);
 
-	public void renderQuads(List<Pair<BakedQuad, Optional<Direction>>> quads, World world, BlockPos pos, BlockState state, MatrixStack matrices, Camera camera) {
+	public void renderModel(BakedModel model, World world, BlockPos pos, BlockState state, MatrixStack matrices, Camera camera) {
 		Matrix4f matrix = setupMatrix(matrices, camera, true);
 		BufferBuilder bufferBuilder = setupRenderer(matrices, camera);
 
-		for (Pair<BakedQuad, Optional<Direction>> quadPair : quads) {
-			BakedQuad quad = quadPair.getFirst();
-			if (quadPair.getSecond().isPresent()) {
-				if (Block.shouldDrawSide(state, world, pos, quadPair.getSecond().get(), pos.offset(quadPair.getSecond().get()))) {
-					this.renderQuad(quad, bufferBuilder, matrix, camera, world, matrices, quads);
-				}
-			} else {
-				this.renderQuad(quad, bufferBuilder, matrix, camera, world, matrices, quads);
-			}
+		Random random = Random.create(state.getRenderingSeed(pos));
+
+		for (Direction dir : Direction.values()) {
+			model.getQuads(state, dir, random).stream().filter((quad) -> Block.shouldDrawSide(state, world, pos, dir, pos)).forEach((quad) -> this.renderQuad(quad, bufferBuilder, matrix, camera, world, matrices, model, state, dir, random));
 		}
+		model.getQuads(state, null, random).forEach((quad) -> this.renderQuad(quad, bufferBuilder, matrix, camera, world, matrices, model, state, null, random));
 
 		this.endRenderer(bufferBuilder, matrices, camera);
 	}
 
-	public void renderItemQuads(List<Pair<BakedQuad, Optional<Direction>>> quads, World world, ItemStack stack, MatrixStack matrices, Camera camera, boolean inGui) {
+	public void renderItemModel(BakedModel model, World world, ItemStack stack, MatrixStack matrices, Camera camera, boolean inGui) {
 		Matrix4f matrix = setupMatrix(matrices, camera, !inGui);
 		BufferBuilder bufferBuilder = setupRenderer(matrices, camera);
 
-		quads.forEach((pair) -> this.renderQuad(pair.getFirst(), bufferBuilder, matrix, camera, world, matrices, quads));
+		Random random = Random.create(42L);
+		for (Direction dir : Direction.values()) {
+			model.getQuads(null, dir, random).forEach((quad) -> this.renderQuad(quad, bufferBuilder, matrix, camera, world, matrices, model, null, dir, random));
+		}
+		model.getQuads(null, null, random).forEach((quad) -> this.renderQuad(quad, bufferBuilder, matrix, camera, world, matrices, model, null, null, random));
 
 		this.endRenderer(bufferBuilder, matrices, camera);
 	}

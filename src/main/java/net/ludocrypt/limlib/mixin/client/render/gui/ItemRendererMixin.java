@@ -11,9 +11,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import com.google.common.collect.Lists;
 
 import net.fabricmc.loader.api.FabricLoader;
-import net.ludocrypt.limlib.access.BakedModelAccess;
 import net.ludocrypt.limlib.access.IrisClientAccess;
 import net.ludocrypt.limlib.access.ItemRendererAccess;
+import net.ludocrypt.limlib.access.ModelAccess;
 import net.ludocrypt.limlib.access.WorldRendererAccess;
 import net.ludocrypt.limlib.impl.LimlibRendering;
 import net.minecraft.client.MinecraftClient;
@@ -40,7 +40,7 @@ public class ItemRendererMixin implements ItemRendererAccess {
 			MatrixStack matrixStack = new MatrixStack();
 			matrixStack.multiplyPositionMatrix(matrices.peek().getPositionMatrix().copy());
 			List<Runnable> immediateRenderer = Lists.newArrayList();
-			((BakedModelAccess) model).getSubQuads().forEach((id, quads) -> (isHandRendering ? LimlibRendering.LIMINAL_QUAD_RENDERER.get(id).heldItemRenderQueue : isItemRendering ? LimlibRendering.LIMINAL_QUAD_RENDERER.get(id).itemRenderQueue : immediateRenderer).add(() -> LimlibRendering.LIMINAL_QUAD_RENDERER.get(id).renderItemQuads(quads, client.world, stack.copy(), matrixStack, client.gameRenderer.getCamera(), inGui)));
+			LimlibRendering.LIMINAL_QUAD_RENDERER.get(((ModelAccess) model).getLiminalQuadRenderer().get()).renderItemModel(model, client.world, stack.copy(), matrixStack, client.gameRenderer.getCamera(), inGui);
 			immediateRenderer.forEach(Runnable::run);
 			immediateRenderer.clear();
 		}
