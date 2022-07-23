@@ -41,11 +41,6 @@ public abstract class JsonUnbakedModelMixin implements UnbakedModelAccess {
 
 	@Inject(method = "Lnet/minecraft/client/render/model/json/JsonUnbakedModel;bake(Lnet/minecraft/client/render/model/ModelLoader;Lnet/minecraft/client/render/model/json/JsonUnbakedModel;Ljava/util/function/Function;Lnet/minecraft/client/render/model/ModelBakeSettings;Lnet/minecraft/util/Identifier;Z)Lnet/minecraft/client/render/model/BakedModel;", at = @At("RETURN"), cancellable = true)
 	private void limlib$bake(ModelLoader loader, JsonUnbakedModel parent, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings settings, Identifier id, boolean hasDepth, CallbackInfoReturnable<BakedModel> ci) {
-		((BakedModelAccess) ci.getReturnValue()).getSubQuads().putAll(this.bakeQuads(loader, parent, textureGetter, settings, id, hasDepth));
-	}
-
-	@Override
-	public Map<Identifier, List<Pair<BakedQuad, Optional<Direction>>>> bakeQuads(ModelLoader loader, JsonUnbakedModel parent, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings settings, Identifier id, boolean hasDepth) {
 		Map<Identifier, List<Pair<BakedQuad, Optional<Direction>>>> subQuads = Maps.newHashMap();
 
 		this.getSubElements().forEach((subElementId, subElement) -> {
@@ -53,7 +48,7 @@ public abstract class JsonUnbakedModelMixin implements UnbakedModelAccess {
 			subElement.forEach((modelElement) -> {
 				for (Direction direction : modelElement.faces.keySet()) {
 					ModelElementFace modelElementFace = modelElement.faces.get(direction);
-					Sprite sprite2 = textureGetter.apply(((JsonUnbakedModel) (Object) this).resolveSprite(modelElementFace.textureId));
+					Sprite sprite2 = textureGetter.apply(parent.resolveSprite(modelElementFace.textureId));
 					if (modelElementFace.cullFace == null) {
 						quads.add(Pair.of(createQuad(modelElement, modelElementFace, sprite2, direction, settings, id), Optional.empty()));
 						continue;
@@ -65,11 +60,7 @@ public abstract class JsonUnbakedModelMixin implements UnbakedModelAccess {
 			subQuads.put(subElementId, quads);
 		});
 
-		if (((UnbakedModelAccess) parent).getParent() != null) {
-			subQuads.putAll(((UnbakedModelAccess) ((UnbakedModelAccess) parent).getParent()).bakeQuads(loader, ((UnbakedModelAccess) parent).getParent(), textureGetter, settings, id, hasDepth));
-		}
-
-		return subQuads;
+		((BakedModelAccess) ci.getReturnValue()).getSubQuads().putAll(subQuads);
 	}
 
 	@Shadow
@@ -77,7 +68,15 @@ public abstract class JsonUnbakedModelMixin implements UnbakedModelAccess {
 
 	@Override
 	public Map<Identifier, List<ModelElement>> getSubElements() {
-		return subElements;
+		Map<Identifier, List<ModelElement>> conjoinedElements = Maps.newHashMap();
+
+		conjoinedElements.putAll(this.subElements);
+
+		if (this.parent != null) {
+			conjoinedElements.putAll(((UnbakedModelAccess) this.parent).getSubElements());
+		}
+
+		return conjoinedElements;
 	}
 
 	@Override
