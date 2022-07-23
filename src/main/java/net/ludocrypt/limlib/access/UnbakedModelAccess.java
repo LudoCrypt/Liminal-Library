@@ -11,6 +11,8 @@ public interface UnbakedModelAccess {
 
 	public Map<Identifier, List<ModelElement>> getSubElements();
 
+	public void putSubElements(Map<Identifier, List<ModelElement>> map);
+
 	public JsonUnbakedModel getParent();
 
 }

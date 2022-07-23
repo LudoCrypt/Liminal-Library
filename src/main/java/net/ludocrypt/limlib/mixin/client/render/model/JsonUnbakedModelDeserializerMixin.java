@@ -35,7 +35,7 @@ public abstract class JsonUnbakedModelDeserializerMixin {
 				}
 			});
 		}
-		((UnbakedModelAccess) ci.getReturnValue()).getSubElements().putAll(map);
+		((UnbakedModelAccess) ci.getReturnValue()).putSubElements(map);
 	}
 
 	@Shadow

@@ -73,7 +73,7 @@ public abstract class JsonUnbakedModelMixin implements UnbakedModelAccess {
 			subElement.forEach((modelElement) -> {
 				for (Direction direction : modelElement.faces.keySet()) {
 					ModelElementFace modelElementFace = modelElement.faces.get(direction);
-					Sprite sprite2 = textureGetter.apply(parent.resolveSprite(modelElementFace.textureId));
+					Sprite sprite2 = textureGetter.apply(this.resolveSprite(modelElementFace.textureId));
 					if (modelElementFace.cullFace == null) {
 						quads.add(Pair.of(createQuad(modelElement, modelElementFace, sprite2, direction, settings, id), Optional.empty()));
 						continue;
@@ -105,6 +105,11 @@ public abstract class JsonUnbakedModelMixin implements UnbakedModelAccess {
 		}
 
 		return conjoinedElements;
+	}
+
+	@Override
+	public void putSubElements(Map<Identifier, List<ModelElement>> map) {
+		this.subElements.putAll(map);
 	}
 
 	@Override
