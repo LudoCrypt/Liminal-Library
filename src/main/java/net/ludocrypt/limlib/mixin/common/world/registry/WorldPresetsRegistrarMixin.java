@@ -18,7 +18,7 @@ import net.minecraft.world.gen.WorldPreset;
 public class WorldPresetsRegistrarMixin {
 
 	@Inject(method = "Lnet/minecraft/world/gen/WorldPresets$Registrar;createPreset(Lnet/minecraft/world/dimension/DimensionOptions;)Lnet/minecraft/world/gen/WorldPreset;", at = @At("RETURN"))
-	private void limlib$CreatePreset(DimensionOptions dimensionOptions, CallbackInfoReturnable<WorldPreset> ci) {
+	private void limlib$createPreset(DimensionOptions dimensionOptions, CallbackInfoReturnable<WorldPreset> ci) {
 		Map<RegistryKey<DimensionOptions>, DimensionOptions> map = Maps.newHashMap();
 		map.putAll(((WorldPresetAccessor) ci.getReturnValue()).getDimensions());
 		LimlibRegistries.LIMINAL_WORLD.forEach((world) -> map.put(world.getDimensionKey(), world.getDimensionOptions()));

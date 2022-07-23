@@ -16,7 +16,7 @@ import net.minecraft.world.dimension.DimensionTypeRegistrar;
 public class DimensionTypeRegistrarMixin {
 
 	@Inject(method = "Lnet/minecraft/world/dimension/DimensionTypeRegistrar;initAndGetDefault(Lnet/minecraft/util/registry/Registry;)Lnet/minecraft/util/registry/RegistryEntry;", at = @At("RETURN"))
-	private static void limlib$InitAndGetDefault(Registry<DimensionType> registry, CallbackInfoReturnable<RegistryEntry<DimensionType>> ci) {
+	private static void limlib$initAndGetDefault(Registry<DimensionType> registry, CallbackInfoReturnable<RegistryEntry<DimensionType>> ci) {
 		LimlibRegistries.LIMINAL_WORLD.forEach((world) -> BuiltinRegistries.add(registry, world.getDimensionTypeKey(), world.getDimensionType()));
 	}
 

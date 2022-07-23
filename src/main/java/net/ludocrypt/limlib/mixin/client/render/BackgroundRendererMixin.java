@@ -13,7 +13,7 @@ import net.minecraft.client.render.BackgroundRenderer;
 public abstract class BackgroundRendererMixin {
 
 	@ModifyVariable(method = "render", at = @At(value = "STORE", ordinal = 4), ordinal = 2)
-	private static float corners$modifySkyColor(float in) {
+	private static float limlib$modifySkyColor(float in) {
 		MinecraftClient client = MinecraftClient.getInstance();
 
 		LiminalEffects effects = ((DimensionTypeAccess) (Object) client.world.getDimension()).getLiminalEffects();

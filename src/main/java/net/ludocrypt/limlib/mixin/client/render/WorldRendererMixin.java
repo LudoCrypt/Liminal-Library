@@ -136,10 +136,18 @@ public abstract class WorldRendererMixin implements WorldRendererAccess {
 			client.getFramebuffer().beginWrite(true);
 		}
 
+		framebuffer.clear(MinecraftClient.IS_SYSTEM_MAC);
+		framebuffer.beginWrite(true);
+
 		LimlibRendering.LIMINAL_QUAD_RENDERER.forEach((renderer) -> {
 			renderer.heldItemRenderQueue.forEach(Runnable::run);
 			renderer.heldItemRenderQueue.clear();
 		});
+
+		framebuffer.endWrite();
+		client.getFramebuffer().beginWrite(true);
+
+		framebuffer.draw(framebuffer.textureWidth, framebuffer.textureHeight);
 
 		RenderSystem.setProjectionMatrix(projectionMatrix);
 	}
