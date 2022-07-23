@@ -37,8 +37,8 @@ public class LiminalUtil {
 				throw new UnsupportedOperationException("Position " + blockPos.toString() + " is out of this world!");
 			}
 
-			float f = MathHelper.wrapDegrees(target.pitch);
-			float g = MathHelper.wrapDegrees(target.yaw);
+			float f = MathHelper.wrapDegrees(target.yaw);
+			float g = MathHelper.wrapDegrees(target.pitch);
 
 			if (teleported instanceof ServerPlayerEntity) {
 				ChunkPos chunkPos = new ChunkPos(blockPos);
