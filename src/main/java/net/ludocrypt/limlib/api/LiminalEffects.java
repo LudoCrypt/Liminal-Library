@@ -20,6 +20,8 @@ public class LiminalEffects {
 			return liminalEffects.getShader();
 		}), LiminalSkyRenderer.CODEC.optionalFieldOf("sky").stable().forGetter((liminalEffects) -> {
 			return liminalEffects.getSky();
+		}), Codec.FLOAT.optionalFieldOf("sky_shading").stable().forGetter((liminalEffects) -> {
+			return liminalEffects.getSkyShading();
 		}), MusicSound.CODEC.optionalFieldOf("music").stable().forGetter((liminalEffects) -> {
 			return liminalEffects.getMusic();
 		}), ReverbSettings.CODEC.optionalFieldOf("reverb").stable().forGetter((liminalEffects) -> {
@@ -30,39 +32,21 @@ public class LiminalEffects {
 	private Optional<LiminalBaseEffects> effects;
 	private Optional<LiminalShaderApplier> shader;
 	private Optional<LiminalSkyRenderer> skyRenderer;
+	private Optional<Float> skyShading;
 	private Optional<MusicSound> music;
 	private Optional<ReverbSettings> reverb;
 
 	public LiminalEffects() {
-		this(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
+		this(Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty(), Optional.empty());
 	}
 
-	public LiminalEffects(Optional<LiminalBaseEffects> effects, Optional<LiminalShaderApplier> shader, Optional<LiminalSkyRenderer> skyRenderer, Optional<MusicSound> music, Optional<ReverbSettings> reverb) {
+	public LiminalEffects(Optional<LiminalBaseEffects> effects, Optional<LiminalShaderApplier> shader, Optional<LiminalSkyRenderer> skyRenderer, Optional<Float> skyShading, Optional<MusicSound> music, Optional<ReverbSettings> reverb) {
 		this.effects = effects;
 		this.shader = shader;
 		this.skyRenderer = skyRenderer;
+		this.skyShading = skyShading;
 		this.music = music;
 		this.reverb = reverb;
-	}
-
-	public void setEffects(Optional<LiminalBaseEffects> effects) {
-		this.effects = effects;
-	}
-
-	public void setMusic(Optional<MusicSound> music) {
-		this.music = music;
-	}
-
-	public void setReverb(Optional<ReverbSettings> reverb) {
-		this.reverb = reverb;
-	}
-
-	public void setShader(Optional<LiminalShaderApplier> shader) {
-		this.shader = shader;
-	}
-
-	public void setSky(Optional<LiminalSkyRenderer> sky) {
-		this.skyRenderer = sky;
 	}
 
 	public Optional<LiminalBaseEffects> getEffects() {
@@ -83,6 +67,15 @@ public class LiminalEffects {
 
 	public Optional<LiminalSkyRenderer> getSky() {
 		return skyRenderer;
+	}
+
+	public Optional<Float> getSkyShading() {
+		return skyShading;
+	}
+
+	@Override
+	public String toString() {
+		return "LiminalBaseEffects: " + effects.toString() + ", LiminalShaderApplier: " + shader.toString() + ", LiminalSkyRenderer: " + skyRenderer.toString() + ", SkyShading: " + skyShading.toString() + ", MusicSound: " + music.toString() + ", ReverbSettings: " + reverb.toString();
 	}
 
 }

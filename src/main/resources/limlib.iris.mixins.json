@@ -1,8 +1,8 @@
 {
 	"required": true,
 	"minVersion": "0.8",
-	"package": "net.ludocrypt.limlib.mixin.iris",
-	"plugin": "net.ludocrypt.limlib.mixin.iris.IrisMixinPlugin",
+	"package": "net.ludocrypt.limlib.mixin.client.render.iris",
+	"plugin": "net.ludocrypt.limlib.mixin.client.render.iris.IrisMixinPlugin",
 	"compatibilityLevel": "JAVA_16",
 	"injectors": {
 		"defaultRequire": 1

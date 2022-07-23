@@ -3,7 +3,7 @@ package net.ludocrypt.limlib.api.world;
 import java.util.HashMap;
 import java.util.Optional;
 
-import net.ludocrypt.limlib.mixin.BlockEntityAccessor;
+import net.ludocrypt.limlib.mixin.common.BlockEntityAccessor;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;

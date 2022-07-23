@@ -5,7 +5,7 @@ import java.util.Optional;
 import ladysnake.satin.api.event.ShaderEffectRenderCallback;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.ludocrypt.limlib.access.DimensionEffectsAccess;
+import net.ludocrypt.limlib.access.DimensionTypeAccess;
 import net.ludocrypt.limlib.api.render.LiminalShaderApplier;
 import net.ludocrypt.limlib.api.sound.SoundEmitter;
 import net.minecraft.block.BlockState;
@@ -19,7 +19,7 @@ public class LimlibClient implements ClientModInitializer {
 	public void onInitializeClient() {
 		ShaderEffectRenderCallback.EVENT.register(tickDelta -> {
 			MinecraftClient client = MinecraftClient.getInstance();
-			Optional<LiminalShaderApplier> shader = ((DimensionEffectsAccess) (Object) client.world.getDimension()).getLiminalEffects().getShader();
+			Optional<LiminalShaderApplier> shader = ((DimensionTypeAccess) (Object) client.world.getDimension()).getLiminalEffects().getShader();
 			if (shader.isPresent()) {
 				if (shader.get().shouldRender(client, tickDelta)) {
 					shader.get().getShader(client, tickDelta).render(tickDelta);
