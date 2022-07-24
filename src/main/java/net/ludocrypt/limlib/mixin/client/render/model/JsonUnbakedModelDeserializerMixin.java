@@ -30,8 +30,7 @@ public abstract class JsonUnbakedModelDeserializerMixin {
 			LimlibRendering.LIMINAL_QUAD_RENDERER.getEntrySet().forEach((entry) -> {
 				JsonObject limlibExtra = jsonObject.get("limlib_extra").getAsJsonObject();
 				if (limlibExtra.has(entry.getKey().getValue().toString())) {
-					JsonObject renderer = limlibExtra.get(entry.getKey().getValue().toString()).getAsJsonObject();
-					map.put(entry.getKey().getValue(), new ModelIdentifier(renderer.getAsString()));
+					map.put(entry.getKey().getValue(), new ModelIdentifier(limlibExtra.get(entry.getKey().getValue().toString()).getAsString()));
 				}
 			});
 		}
