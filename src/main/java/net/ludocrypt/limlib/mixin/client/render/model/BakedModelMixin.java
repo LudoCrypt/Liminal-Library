@@ -1,24 +1,21 @@
 package net.ludocrypt.limlib.mixin.client.render.model;
 
-import java.util.Optional;
+import java.util.Map;
 
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 
-import net.ludocrypt.limlib.access.ModelAccess;
+import com.google.common.collect.Maps;
+
+import net.ludocrypt.limlib.access.BakedModelAccess;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.util.Identifier;
 
 @Mixin(BakedModel.class)
-public interface BakedModelMixin extends ModelAccess {
+public interface BakedModelMixin extends BakedModelAccess {
 
 	@Override
-	default Optional<Identifier> getLiminalQuadRenderer() {
-		return Optional.empty();
-	}
-
-	@Override
-	default void setLiminalQuadRenderer(@Nullable Identifier id) {
+	default Map<Identifier, BakedModel> getSubModels() {
+		return Maps.newHashMap();
 	}
 
 }

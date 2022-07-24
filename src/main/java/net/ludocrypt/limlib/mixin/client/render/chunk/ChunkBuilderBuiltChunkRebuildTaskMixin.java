@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
-import net.ludocrypt.limlib.access.ModelAccess;
+import net.ludocrypt.limlib.access.BakedModelAccess;
 import net.ludocrypt.limlib.access.RenderDataAccess;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.render.RenderLayer;
@@ -40,7 +40,7 @@ public class ChunkBuilderBuiltChunkRebuildTaskMixin {
 	@Inject(method = "Lnet/minecraft/client/render/chunk/ChunkBuilder$BuiltChunk$RebuildTask;render(FFFLnet/minecraft/client/render/chunk/BlockBufferBuilderStorage;)Lnet/minecraft/client/render/chunk/ChunkBuilder$BuiltChunk$RebuildTask$RenderData;", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/chunk/ChunkRendererRegion;getBlockState(Lnet/minecraft/util/math/BlockPos;)Lnet/minecraft/block/BlockState;", ordinal = 0, shift = Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void limlib$render(float cameraX, float cameraY, float cameraZ, BlockBufferBuilderStorage blockBufferBuilderStorage, CallbackInfoReturnable<RenderData> ci, RenderData renderData, int i, BlockPos blockPos, BlockPos blockPos2, ChunkOcclusionDataBuilder chunkOcclusionDataBuilder, ChunkRendererRegion chunkRendererRegion, MatrixStack matrixStack, Set<RenderLayer> set, Random random, BlockRenderManager blockRenderManager, Iterator<BlockPos> var15, BlockPos blockPos3) {
 		BlockState blockState = chunkRendererRegion.getBlockState(blockPos3);
-		if (((ModelAccess) blockRenderManager.getModel(blockState)).getLiminalQuadRenderer().isPresent()) {
+		if (!((BakedModelAccess) blockRenderManager.getModel(blockState)).getSubModels().isEmpty()) {
 			((RenderDataAccess) (Object) renderData).getCustomQuadData().put(blockPos3.toImmutable(), blockState);
 		}
 	}
