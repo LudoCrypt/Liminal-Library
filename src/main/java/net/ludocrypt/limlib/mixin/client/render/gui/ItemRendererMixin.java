@@ -40,7 +40,9 @@ public class ItemRendererMixin implements ItemRendererAccess {
 			MatrixStack matrixStack = new MatrixStack();
 			matrixStack.multiplyPositionMatrix(matrices.peek().getPositionMatrix().copy());
 			List<Runnable> immediateRenderer = Lists.newArrayList();
-			((BakedModelAccess) model).getSubModels().forEach((id, subModel) -> (isHandRendering ? LimlibRendering.LIMINAL_QUAD_RENDERER.get(id).heldItemRenderQueue : isItemRendering ? LimlibRendering.LIMINAL_QUAD_RENDERER.get(id).itemRenderQueue : immediateRenderer).add(() -> LimlibRendering.LIMINAL_QUAD_RENDERER.get(id).renderItemModel(subModel, client.world, stack.copy(), matrixStack, client.gameRenderer.getCamera(), inGui)));
+
+			((BakedModelAccess) model).getModels(null).forEach((renderPair) -> (isHandRendering ? LimlibRendering.LIMINAL_QUAD_RENDERER.get(renderPair.getFirst()).heldItemRenderQueue : isItemRendering ? LimlibRendering.LIMINAL_QUAD_RENDERER.get(renderPair.getFirst()).itemRenderQueue : immediateRenderer).add(() -> LimlibRendering.LIMINAL_QUAD_RENDERER.get(renderPair.getFirst()).renderItemModel(renderPair.getSecond(), client.world, stack.copy(), matrixStack, client.gameRenderer.getCamera(), inGui)));
+
 			immediateRenderer.forEach(Runnable::run);
 			immediateRenderer.clear();
 		}

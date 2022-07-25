@@ -177,7 +177,7 @@ public abstract class WorldRendererMixin implements WorldRendererAccess {
 			matrices.push();
 			matrices.translate(pos.getX() - camera.getPos().getX(), pos.getY() - camera.getPos().getY(), pos.getZ() - camera.getPos().getZ());
 
-			((BakedModelAccess) MinecraftClient.getInstance().getBlockRenderManager().getModel(state)).getSubModels().forEach((id, quads) -> LimlibRendering.LIMINAL_QUAD_RENDERER.get(id).renderModel(quads, world, pos, state, matrices, camera));
+			((BakedModelAccess) MinecraftClient.getInstance().getBlockRenderManager().getModel(state)).getModels(state).forEach((renderPair) -> LimlibRendering.LIMINAL_QUAD_RENDERER.get(renderPair.getFirst()).renderModel(renderPair.getSecond(), world, pos, state, matrices, camera));
 
 			matrices.pop();
 		});

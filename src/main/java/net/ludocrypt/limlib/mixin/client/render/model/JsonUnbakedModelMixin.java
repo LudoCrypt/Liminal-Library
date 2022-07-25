@@ -1,7 +1,6 @@
 package net.ludocrypt.limlib.mixin.client.render.model;
 
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -19,7 +18,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
 import com.mojang.datafixers.util.Pair;
 
 import net.ludocrypt.limlib.access.BakedModelAccess;
@@ -30,7 +28,6 @@ import net.minecraft.client.render.model.ModelLoader;
 import net.minecraft.client.render.model.UnbakedModel;
 import net.minecraft.client.render.model.json.JsonUnbakedModel;
 import net.minecraft.client.texture.Sprite;
-import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
 
@@ -42,21 +39,7 @@ public abstract class JsonUnbakedModelMixin implements UnbakedModelAccess {
 	private static Logger LOGGER;
 
 	@Unique
-	private Map<Identifier, ModelIdentifier> subModels = Maps.newHashMap();
-
-	@Shadow
-	public String id;
-
-	@Shadow
-	protected JsonUnbakedModel parent;
-
-	@Inject(method = "Lnet/minecraft/client/render/model/json/JsonUnbakedModel;getModelDependencies()Ljava/util/Collection;", at = @At("RETURN"), cancellable = true)
-	private void limlib$getModelDependencies(CallbackInfoReturnable<Collection<Identifier>> ci) {
-		HashSet<Identifier> set = Sets.newHashSet();
-		set.addAll(ci.getReturnValue());
-		set.addAll(subModels.values());
-		ci.setReturnValue(set);
-	}
+	private Map<Identifier, Identifier> subModels = Maps.newHashMap();
 
 	@Inject(method = "Lnet/minecraft/client/render/model/json/JsonUnbakedModel;getTextureDependencies(Ljava/util/function/Function;Ljava/util/Set;)Ljava/util/Collection;", at = @At(value = "INVOKE", target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V", ordinal = 0, shift = Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void limlib$getTextureDependencies(Function<Identifier, UnbakedModel> unbakedModelGetter, Set<Pair<String, String>> unresolvedTextureReferences, CallbackInfoReturnable<Collection<SpriteIdentifier>> ci, Set<JsonUnbakedModel> set, JsonUnbakedModel jsonUnbakedModel, Set<SpriteIdentifier> set2) {
@@ -70,13 +53,17 @@ public abstract class JsonUnbakedModelMixin implements UnbakedModelAccess {
 
 	@Inject(method = "Lnet/minecraft/client/render/model/json/JsonUnbakedModel;bake(Lnet/minecraft/client/render/model/ModelLoader;Lnet/minecraft/client/render/model/json/JsonUnbakedModel;Ljava/util/function/Function;Lnet/minecraft/client/render/model/ModelBakeSettings;Lnet/minecraft/util/Identifier;Z)Lnet/minecraft/client/render/model/BakedModel;", at = @At("RETURN"), cancellable = true)
 	private void limlib$bake(ModelLoader loader, JsonUnbakedModel parent, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings settings, Identifier id, boolean hasDepth, CallbackInfoReturnable<BakedModel> ci) {
-		Map<Identifier, BakedModel> subModels = Maps.newHashMap();
-		this.getSubModels().forEach((rendererId, modelId) -> subModels.put(rendererId, loader.getOrLoadModel(modelId).bake(loader, textureGetter, settings, modelId)));
-		((BakedModelAccess) ci.getReturnValue()).getSubModels().putAll(subModels);
+		this.getSubModels().forEach((rendererId, modelId) -> {
+			if (!modelId.equals(id)) {
+				((BakedModelAccess) ci.getReturnValue()).addModel(rendererId, null, loader.bake(modelId, settings));
+			} else {
+				LOGGER.warn("Model '{}' caught in chain! Renderer '{}' caught model '{}'", id, rendererId, modelId);
+			}
+		});
 	}
 
 	@Override
-	public Map<Identifier, ModelIdentifier> getSubModels() {
+	public Map<Identifier, Identifier> getSubModels() {
 		return subModels;
 	}
 

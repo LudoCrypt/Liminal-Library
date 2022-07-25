@@ -34,6 +34,7 @@
 		"client.render.model.GeneralBakedModelMixin",
 		"client.render.model.JsonUnbakedModelDeserializerMixin",
 		"client.render.model.JsonUnbakedModelMixin",
+		"client.render.model.MultipartBakedModelMixin",
 		"client.sound.SoundSystemMixin",
 		"client.sound.SourceAccessor"
 	],

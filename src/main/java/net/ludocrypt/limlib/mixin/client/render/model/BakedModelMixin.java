@@ -1,12 +1,15 @@
 package net.ludocrypt.limlib.mixin.client.render.model;
 
-import java.util.Map;
+import java.util.List;
 
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.Lists;
+import com.mojang.datafixers.util.Pair;
 
 import net.ludocrypt.limlib.access.BakedModelAccess;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.util.Identifier;
 
@@ -14,8 +17,12 @@ import net.minecraft.util.Identifier;
 public interface BakedModelMixin extends BakedModelAccess {
 
 	@Override
-	default Map<Identifier, BakedModel> getSubModels() {
-		return Maps.newHashMap();
+	default List<Pair<Identifier, BakedModel>> getModels(@Nullable BlockState state) {
+		return Lists.newArrayList();
+	}
+
+	@Override
+	default void addModel(Identifier rendererId, @Nullable BlockState state, BakedModel model) {
 	}
 
 }

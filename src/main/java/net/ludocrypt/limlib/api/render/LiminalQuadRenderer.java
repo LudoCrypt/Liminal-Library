@@ -51,7 +51,7 @@ public abstract class LiminalQuadRenderer {
 		Random random = Random.create(state.getRenderingSeed(pos));
 
 		for (Direction dir : Direction.values()) {
-			model.getQuads(state, dir, random).stream().filter((quad) -> Block.shouldDrawSide(state, world, pos, dir, pos)).forEach((quad) -> this.renderQuad(quad, bufferBuilder, matrix, camera, world, matrices, model, state, dir, random));
+			model.getQuads(state, dir, random).stream().filter((quad) -> Block.shouldDrawSide(state, world, pos, dir, pos.offset(dir))).forEach((quad) -> this.renderQuad(quad, bufferBuilder, matrix, camera, world, matrices, model, state, dir, random));
 		}
 		model.getQuads(state, null, random).forEach((quad) -> this.renderQuad(quad, bufferBuilder, matrix, camera, world, matrices, model, state, null, random));
 
