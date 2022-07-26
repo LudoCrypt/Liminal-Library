@@ -29,15 +29,11 @@ public abstract class WorldRendererAfterMixin implements WorldRendererAccess {
 	@Inject(method = "Lnet/minecraft/client/render/WorldRenderer;render(Lnet/minecraft/client/util/math/MatrixStack;FJZLnet/minecraft/client/render/Camera;Lnet/minecraft/client/render/GameRenderer;Lnet/minecraft/client/render/LightmapTextureManager;Lnet/minecraft/util/math/Matrix4f;)V", at = @At(value = "RETURN", shift = Shift.BEFORE))
 	private void limlib$render$return(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f positionMatrix, CallbackInfo ci) {
 		if (FabricLoader.getInstance().isModLoaded("iris")) {
-			if (!((IrisClientAccess) client).areShadersInUse()) {
-				return;
+			if (((IrisClientAccess) client).areShadersInUse()) {
+				this.renderSky(matrices, positionMatrix, tickDelta);
+				this.renderQuads(tickDelta, matrices, camera);
 			}
-		} else if (MinecraftClient.isFabulousGraphicsOrBetter()) {
-			return;
 		}
-
-		this.renderSky(matrices, positionMatrix, tickDelta);
-		this.renderQuads(tickDelta, matrices, camera);
 	}
 
 }

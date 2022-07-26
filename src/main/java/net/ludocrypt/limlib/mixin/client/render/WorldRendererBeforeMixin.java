@@ -31,8 +31,6 @@ public abstract class WorldRendererBeforeMixin implements WorldRendererAccess {
 			if (((IrisClientAccess) client).areShadersInUse()) {
 				return;
 			}
-		} else if (!MinecraftClient.isFabulousGraphicsOrBetter()) {
-			return;
 		}
 
 		this.renderSky(matrices, positionMatrix, tickDelta);
