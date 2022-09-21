@@ -1,0 +1,32 @@
+[versions]
+minecraft = "1.19.2"
+quilt_mappings = "1.19.2+build.3"
+quilt_loader = "0.17.1"
+
+quilted_fabric_api = "4.0.0-beta.7+0.59.0-1.19.2"
+ladysnake_satin = "1.9.0"
+modrinth_iris = "1.19.x-v1.2.8"
+modrinth_sodium = "mc1.19.2-0.4.4"
+joml_joml = "1.10.4"
+anarres_jcpp = "1.4.14"
+
+[libraries]
+minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
+quilt_mappings = { module = "org.quiltmc:quilt-mappings", version.ref = "quilt_mappings" }
+quilt_loader = { module = "org.quiltmc:quilt-loader", version.ref = "quilt_loader" }
+
+quilted_fabric_api = { module = "org.quiltmc.quilted-fabric-api:quilted-fabric-api", version.ref = "quilted_fabric_api" }
+quilted_fabric_api_deprecated = { module = "org.quiltmc.quilted-fabric-api:quilted-fabric-api-deprecated", version.ref = "quilted_fabric_api" }
+
+ladysnake_satin = { module = "io.github.ladysnake:satin", version.ref = "ladysnake_satin" }
+modrinth_iris = { module = "maven.modrinth:iris", version.ref = "modrinth_iris" }
+modrinth_sodium = { module = "maven.modrinth:sodium", version.ref = "modrinth_sodium" }
+
+joml_joml = { module = "org.joml:joml", version.ref = "joml_joml" }
+anarres_jcpp = { module = "org.anarres:jcpp", version.ref = "anarres_jcpp" }
+
+[bundles]
+quilted_fabric_api = ["quilted_fabric_api", "quilted_fabric_api_deprecated"]
+
+[plugins]
+quilt_loom = { id = "org.quiltmc.loom", version = "0.12.+" }

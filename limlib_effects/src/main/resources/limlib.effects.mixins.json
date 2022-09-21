@@ -1,0 +1,23 @@
+{
+	"required": true,
+	"minVersion": "0.8",
+	"package": "net.ludocrypt.limlib.effects.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+		"BuiltinRegistriesAccessor",
+		"DynamicRegistryManagerMixin",
+		"RegistryAccessor"
+	],
+	"client": [
+		"BackgroundRendererMixin",
+		"ClientWorldMixin",
+		"GameRendererMixin",
+		"MinecraftClientMixin",
+		"SkyPropertiesMixin",
+		"SoundSystemMixin",
+		"SourceAccessor"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

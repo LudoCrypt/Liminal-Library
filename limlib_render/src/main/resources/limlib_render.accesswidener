@@ -1,0 +1,8 @@
+accessWidener v1 named
+accessible class net/minecraft/util/registry/BuiltinRegistries$RegistryBootstrap
+accessible class net/minecraft/client/render/WorldRenderer$ChunkInfo
+accessible field net/minecraft/client/render/WorldRenderer$ChunkInfo chunk Lnet/minecraft/client/render/chunk/ChunkBuilder$BuiltChunk;
+accessible class net/minecraft/client/render/chunk/ChunkBuilder$Result
+accessible class net/minecraft/client/render/chunk/ChunkBuilder$BuiltChunk$SortTask
+accessible class net/minecraft/client/render/chunk/ChunkBuilder$BuiltChunk$RebuildTask
+accessible class net/minecraft/client/render/chunk/ChunkBuilder$BuiltChunk$RebuildTask$class_7435

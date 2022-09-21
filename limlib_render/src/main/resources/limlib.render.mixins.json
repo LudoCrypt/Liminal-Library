@@ -1,0 +1,34 @@
+{
+	"required": true,
+	"minVersion": "0.8",
+	"package": "net.ludocrypt.limlib.render.mixin",
+	"compatibilityLevel": "JAVA_17",
+	"mixins": [
+		"registry.BuiltinRegistriesAccessor",
+		"registry.DynamicRegistryManagerMixin",
+		"registry.RegistryAccessor"
+	],
+	"client": [
+		"chunk.ChunkBuilderBuiltChunkAccessor",
+		"chunk.ChunkBuilderBuiltChunkRebuildTaskClass_7435Mixin",
+		"chunk.ChunkBuilderBuiltChunkRebuildTaskMixin",
+		"chunk.ChunkBuilderChunkDataMixin",
+		"chunk.ChunkBuilderMixin",
+		"model.BakedModelMixin",
+		"model.GeneralBakedModelMixin",
+		"model.JsonUnbakedModelDeserializerMixin",
+		"model.JsonUnbakedModelMixin",
+		"model.MultipartBakedModelMixin",
+		"render.gui.GameRendererAccessor",
+		"render.gui.GameRendererAccessorTwo",
+		"render.gui.InventoryScreenMixin",
+		"render.GameRendererMixin",
+		"render.ItemRendererMixin",
+		"render.WorldRendererAfterMixin",
+		"render.WorldRendererBeforeMixin",
+		"render.WorldRendererMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	}
+}

@@ -1,10 +1,19 @@
 pluginManagement {
-    repositories {
-        jcenter()
-        maven {
-            name = 'Fabric'
-            url = 'https://maven.fabricmc.net/'
-        }
-        gradlePluginPortal()
-    }
+	repositories {
+		maven {
+			name = 'Quilt'
+			url = 'https://maven.quiltmc.org/repository/release'
+		}
+		// Currently needed for Intermediary and other temporary dependencies
+		maven {
+			name = 'Fabric'
+			url = 'https://maven.fabricmc.net/'
+		}
+		gradlePluginPortal()
+	}
 }
+
+include(":limlib_registry")
+include(":limlib_effects")
+include(":limlib_world")
+include(":limlib_render")
