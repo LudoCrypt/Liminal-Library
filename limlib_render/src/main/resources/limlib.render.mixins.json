@@ -6,7 +6,8 @@
 	"mixins": [
 		"registry.BuiltinRegistriesAccessor",
 		"registry.DynamicRegistryManagerMixin",
-		"registry.RegistryAccessor"
+		"registry.RegistryAccessor",
+		"render.BufferBuilderAccessor"
 	],
 	"client": [
 		"chunk.ChunkBuilderBuiltChunkAccessor",
@@ -19,14 +20,14 @@
 		"model.JsonUnbakedModelDeserializerMixin",
 		"model.JsonUnbakedModelMixin",
 		"model.MultipartBakedModelMixin",
-		"render.gui.GameRendererAccessor",
-		"render.gui.GameRendererAccessorTwo",
-		"render.gui.InventoryScreenMixin",
 		"render.GameRendererMixin",
 		"render.ItemRendererMixin",
 		"render.WorldRendererAfterMixin",
 		"render.WorldRendererBeforeMixin",
-		"render.WorldRendererMixin"
+		"render.WorldRendererMixin",
+		"render.gui.GameRendererAccessor",
+		"render.gui.GameRendererAccessorTwo",
+		"render.gui.InventoryScreenMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

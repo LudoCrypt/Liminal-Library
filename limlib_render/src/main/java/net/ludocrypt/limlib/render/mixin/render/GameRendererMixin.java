@@ -16,13 +16,12 @@ import com.mojang.blaze3d.vertex.VertexFormats;
 import com.mojang.datafixers.util.Pair;
 
 import net.ludocrypt.limlib.render.LimlibRender;
-import net.ludocrypt.limlib.render.access.GameRendererAccess;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.ShaderProgram;
 import net.minecraft.resource.ResourceManager;
 
 @Mixin(GameRenderer.class)
-public class GameRendererMixin implements GameRendererAccess {
+public class GameRendererMixin {
 
 	@Inject(method = "loadShaders", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 54, shift = Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void limlib$loadShaders(ResourceManager manager, CallbackInfo ci, List<ShaderStage> list, List<Pair<ShaderProgram, Consumer<ShaderProgram>>> list2) {

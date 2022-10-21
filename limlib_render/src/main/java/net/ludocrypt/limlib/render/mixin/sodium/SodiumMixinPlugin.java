@@ -30,7 +30,7 @@ public class SodiumMixinPlugin implements IMixinConfigPlugin {
 
 	@Override
 	public List<String> getMixins() {
-		return QuiltLoader.isModLoaded("sodium") ? List.of("ChunkRenderRebuildTaskMixin", "WorldRendererMixin") : null;
+		return QuiltLoader.isModLoaded("sodium") ? List.of("BlockRendererAccessor", "ChunkBuildResultMixin", "ChunkRenderRebuildTaskMixin", "RenderRegionAccessor", "RenderRegionManagerMixin", "RenderSectionAccessor", "RenderSectionManagerAccessor", "RenderSectionMixin", "WorldRendererMixin") : null;
 	}
 
 	@Override

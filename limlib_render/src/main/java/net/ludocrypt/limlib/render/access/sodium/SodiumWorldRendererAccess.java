@@ -1,4 +1,4 @@
-package net.ludocrypt.limlib.render.access;
+package net.ludocrypt.limlib.render.access.sodium;
 
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.Matrix4f;

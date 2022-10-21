@@ -69,18 +69,12 @@ public class ItemRendererMixin implements ItemRendererAccess {
 			Matrix4f matrixPositionClone = matrices.peek().getPosition().copy();
 			List<Runnable> immediateRenderer = Lists.newArrayList();
 
-//			((BakedModelAccess) model).getModels(null).forEach((renderPair) -> (isHandRendering ? LimlibRendering.LIMINAL_QUAD_RENDERER.get(renderPair.getFirst()).heldItemRenderQueue : isItemRendering ? LimlibRendering.LIMINAL_QUAD_RENDERER.get(renderPair.getFirst()).itemRenderQueue : immediateRenderer).add(() -> LimlibRendering.LIMINAL_QUAD_RENDERER.get(renderPair.getFirst()).renderItemModel(renderPair.getSecond(), client.world, stack.copy(), matrixStack, client.gameRenderer.getCamera(), inGui)));
-
 			(isHandRendering ? LimlibRender.HAND_RENDER_QUEUE : isItemRendering ? LimlibRender.ITEM_RENDER_QUEUE : immediateRenderer).add(() -> {
 				List<Pair<Identifier, BakedModel>> models = ((BakedModelAccess) model).getModels(null);
 				if (!models.isEmpty()) {
 					models.forEach((renderPair) -> {
 						ShaderProgram shader = LimlibRender.LOADED_SHADERS.get(renderPair.getFirst());
 						if (shader != null) {
-
-							if (isHandRendering) {
-
-							}
 
 							RenderSystem.enableBlend();
 							RenderSystem.enableDepthTest();

@@ -21,6 +21,9 @@ repositories {
 			includeGroup "maven.modrinth"
 		}
     }
+	maven {
+		url "https://jitpack.io"
+	}
 }
 
 dependencies {
@@ -35,7 +38,7 @@ dependencies {
 	modImplementation libs.ladysnake.satin
 
 	modImplementation libs.modrinth.iris
-	modImplementation libs.modrinth.sodium
+	modImplementation libs.jitpack.sodium
 
 	modImplementation libs.joml.joml
 	modImplementation libs.anarres.jcpp
