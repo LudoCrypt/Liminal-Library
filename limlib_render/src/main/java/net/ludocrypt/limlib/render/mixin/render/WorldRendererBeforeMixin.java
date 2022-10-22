@@ -26,7 +26,7 @@ public abstract class WorldRendererBeforeMixin implements WorldRendererAccess {
 	private MinecraftClient client;
 
 	@Inject(method = "Lnet/minecraft/client/render/WorldRenderer;render(Lnet/minecraft/client/util/math/MatrixStack;FJZLnet/minecraft/client/render/Camera;Lnet/minecraft/client/render/GameRenderer;Lnet/minecraft/client/render/LightmapTextureManager;Lnet/minecraft/util/math/Matrix4f;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V", ordinal = 10, shift = At.Shift.BEFORE))
-	private void limlib$render$clear(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f positionMatrix, CallbackInfo ci) {
+	private void limlib$render$drawLayer(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f positionMatrix, CallbackInfo ci) {
 		if (QuiltLoader.isModLoaded("iris")) {
 			if (((IrisClientAccess) client).areShadersInUse()) {
 				return;
@@ -34,6 +34,17 @@ public abstract class WorldRendererBeforeMixin implements WorldRendererAccess {
 		}
 
 		this.render(matrices, positionMatrix, tickDelta, camera);
+	}
+
+	@Inject(method = "Lnet/minecraft/client/render/WorldRenderer;render(Lnet/minecraft/client/util/math/MatrixStack;FJZLnet/minecraft/client/render/Camera;Lnet/minecraft/client/render/GameRenderer;Lnet/minecraft/client/render/LightmapTextureManager;Lnet/minecraft/util/math/Matrix4f;)V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;clear(IZ)V", ordinal = 0, shift = At.Shift.AFTER))
+	private void limlib$render$clear(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f positionMatrix, CallbackInfo ci) {
+		if (QuiltLoader.isModLoaded("iris")) {
+			if (((IrisClientAccess) client).areShadersInUse()) {
+				return;
+			}
+		}
+
+		this.renderSkyboxes(matrices, positionMatrix, tickDelta);
 	}
 
 }

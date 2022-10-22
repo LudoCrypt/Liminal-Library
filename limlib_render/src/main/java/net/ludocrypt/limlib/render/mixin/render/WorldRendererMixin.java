@@ -76,7 +76,6 @@ public abstract class WorldRendererMixin implements WorldRendererAccess {
 
 	@Override
 	public void render(MatrixStack matrices, Matrix4f positionMatrix, float tickDelta, Camera camera) {
-		this.renderSkyboxes(matrices, positionMatrix, tickDelta);
 		this.renderBlocks(matrices, positionMatrix);
 
 		MatrixStack modelViewStack = RenderSystem.getModelViewStack();

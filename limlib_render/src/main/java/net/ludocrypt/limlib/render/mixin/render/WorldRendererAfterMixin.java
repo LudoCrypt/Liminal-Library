@@ -29,6 +29,7 @@ public abstract class WorldRendererAfterMixin implements WorldRendererAccess {
 	private void limlib$render$clear(MatrixStack matrices, float tickDelta, long limitTime, boolean renderBlockOutline, Camera camera, GameRenderer gameRenderer, LightmapTextureManager lightmapTextureManager, Matrix4f positionMatrix, CallbackInfo ci) {
 		if (QuiltLoader.isModLoaded("iris")) {
 			if (((IrisClientAccess) client).areShadersInUse()) {
+				this.renderSkyboxes(matrices, positionMatrix, tickDelta);
 				this.render(matrices, positionMatrix, tickDelta, camera);
 			}
 		}
