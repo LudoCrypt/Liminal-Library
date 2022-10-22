@@ -26,7 +26,7 @@ import net.minecraft.util.Identifier;
 @Mixin(RenderRegionManager.class)
 public class RenderRegionManagerMixin {
 
-	@Inject(method = "Lme/jellysquid/mods/sodium/client/render/chunk/region/RenderRegionManager;upload(Lme/jellysquid/mods/sodium/client/gl/device/CommandList;Lme/jellysquid/mods/sodium/client/render/chunk/region/RenderRegion;Ljava/util/List;)V", at = @At(value = "INVOKE", target = "Lme/jellysquid/mods/sodium/client/gl/arena/GlBufferArena;upload(Lme/jellysquid/mods/sodium/client/gl/device/CommandList;Ljava/util/stream/Stream;)Z", ordinal = 1, shift = Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
+	@Inject(method = "Lme/jellysquid/mods/sodium/client/render/chunk/region/RenderRegionManager;upload(Lme/jellysquid/mods/sodium/client/gl/device/CommandList;Lme/jellysquid/mods/sodium/client/render/chunk/region/RenderRegion;Ljava/util/List;)V", at = @At(value = "INVOKE", target = "Lme/jellysquid/mods/sodium/client/gl/arena/GlBufferArena;upload(Lme/jellysquid/mods/sodium/client/gl/device/CommandList;Ljava/util/stream/Stream;)Z", ordinal = 1, shift = Shift.AFTER, remap = false), locals = LocalCapture.CAPTURE_FAILHARD, remap = false)
 	private void limlib$upload(CommandList commandList, RenderRegion region, List<ChunkBuildResult> results, CallbackInfo ci, List<?> sectionUploads, RenderRegion.RenderRegionArenas arenas, boolean bufferChanged) {
 		results.forEach((result) -> {
 			Map<BakedQuad, Pair<BufferBuilder, Identifier>> chunkBufferBuilderMap = ((ChunkBuildResultAccess) result).getBufferMap();

@@ -10,7 +10,7 @@ import java.util.Set;
 @Mixin(RenderRegion.class)
 public interface RenderRegionAccessor {
 
-	@Accessor
+	@Accessor(remap = false)
 	Set<RenderSection> getChunks();
 
 }

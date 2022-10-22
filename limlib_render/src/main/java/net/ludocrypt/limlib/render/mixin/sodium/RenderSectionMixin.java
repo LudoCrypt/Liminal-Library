@@ -23,7 +23,7 @@ public class RenderSectionMixin implements RenderSectionAccess {
 	@Unique
 	private Map<BakedQuad, Pair<VertexBuffer, Identifier>> vertexBufferMap = Maps.newHashMap();
 
-	@Inject(method = "Lme/jellysquid/mods/sodium/client/render/chunk/RenderSection;deleteGraphicsState()V", at = @At("HEAD"))
+	@Inject(method = "Lme/jellysquid/mods/sodium/client/render/chunk/RenderSection;deleteGraphicsState()V", at = @At("HEAD"), remap = false)
 	private void limlib$deleteGraphicsState(CallbackInfo ci) {
 		this.getVertexBufferMap().forEach((quad, renderPair) -> renderPair.getFirst().close());
 		this.getVertexBufferMap().clear();

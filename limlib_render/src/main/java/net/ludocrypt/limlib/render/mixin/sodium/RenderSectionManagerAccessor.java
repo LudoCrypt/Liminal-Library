@@ -10,7 +10,7 @@ import me.jellysquid.mods.sodium.client.render.chunk.RenderSectionManager;
 @Mixin(RenderSectionManager.class)
 public interface RenderSectionManagerAccessor {
 
-	@Accessor
+	@Accessor(remap = false)
 	Long2ReferenceMap<RenderSection> getSections();
 
 }

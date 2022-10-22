@@ -10,7 +10,7 @@
 		"render.BufferBuilderAccessor"
 	],
 	"client": [
-		"chunk.ChunkBuilderBuiltChunkAccessor",
+		"chunk.ChunkBuilderBuiltChunkMixin",
 		"chunk.ChunkBuilderBuiltChunkRebuildTaskClass_7435Mixin",
 		"chunk.ChunkBuilderBuiltChunkRebuildTaskMixin",
 		"chunk.ChunkBuilderChunkDataMixin",

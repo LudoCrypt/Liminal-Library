@@ -28,6 +28,7 @@ import com.mojang.datafixers.util.Pair;
 
 import net.ludocrypt.limlib.render.access.BakedModelAccess;
 import net.ludocrypt.limlib.render.access.ChunkBuilderAccess;
+import net.ludocrypt.limlib.render.access.ChunkBuilderBuiltChunkAccessor;
 import net.ludocrypt.limlib.render.access.RenderMapAccess;
 import net.ludocrypt.limlib.render.util.SingleQuadBakedModel;
 import net.minecraft.block.Block;

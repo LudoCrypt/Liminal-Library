@@ -9,7 +9,7 @@ import me.jellysquid.mods.sodium.client.render.pipeline.BlockRenderer;
 @Mixin(BlockRenderer.class)
 public interface BlockRendererAccessor {
 
-	@Accessor
+	@Accessor(remap = false)
 	BlockOcclusionCache getOcclusionCache();
 
 }

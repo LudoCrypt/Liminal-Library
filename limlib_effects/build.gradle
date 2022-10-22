@@ -34,7 +34,7 @@ dependencies {
 	modImplementation libs.quilt.loader
 
 	modImplementation libs.quilted.fabric.api
-	
+
 	modImplementation libs.ladysnake.satin
 }
 

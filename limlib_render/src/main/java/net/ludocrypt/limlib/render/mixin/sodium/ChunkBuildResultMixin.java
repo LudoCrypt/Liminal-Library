@@ -28,7 +28,7 @@ public class ChunkBuildResultMixin implements ChunkBuildResultAccess {
 		return bufferMap;
 	}
 
-	@Inject(method = "Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildResult;delete()V", at = @At("HEAD"))
+	@Inject(method = "Lme/jellysquid/mods/sodium/client/render/chunk/compile/ChunkBuildResult;delete()V", at = @At("HEAD"), remap = false)
 	private void delete(CallbackInfo ci) {
 		this.getBufferMap().forEach((quad, renderPair) -> renderPair.getFirst().clear());
 		this.getBufferMap().clear();

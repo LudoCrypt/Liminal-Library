@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 @Mixin(RenderSection.class)
 public interface RenderSectionAccessor {
 
-	@Accessor
+	@Accessor(remap = false)
 	RenderRegion getRegion();
 
 }
