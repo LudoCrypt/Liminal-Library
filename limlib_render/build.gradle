@@ -39,7 +39,7 @@ dependencies {
 	modImplementation libs.ladysnake.satin
 
 	modImplementation libs.modrinth.iris
-	modImplementation libs.jitpack.sodium
+	modImplementation libs.modrinth.sodium
 
 	modImplementation libs.joml.joml
 	modImplementation libs.anarres.jcpp

@@ -7,6 +7,7 @@ quilted_fabric_api = "4.0.0-beta.7+0.59.0-1.19.2"
 ladysnake_satin = "1.9.0"
 modrinth_iris = "1.19.x-v1.4.0"
 jitpack_sodium = "mc1.19.2-0.4.4"
+modrinth_sodium = "mc1.19.2-0.4.4"
 joml_joml = "1.10.4"
 anarres_jcpp = "1.4.14"
 douira_glsltransformer = "1.0.1"
@@ -22,6 +23,7 @@ quilted_fabric_api_deprecated = { module = "org.quiltmc.quilted-fabric-api:quilt
 ladysnake_satin = { module = "io.github.ladysnake:satin", version.ref = "ladysnake_satin" }
 modrinth_iris = { module = "maven.modrinth:iris", version.ref = "modrinth_iris" }
 jitpack_sodium = { module = "com.github.CaffeineMC:sodium-fabric", version.ref = "jitpack_sodium" }
+modrinth_sodium = { module = "maven.modrinth:sodium", version.ref = "modrinth_sodium" }
 
 joml_joml = { module = "org.joml:joml", version.ref = "joml_joml" }
 anarres_jcpp = { module = "org.anarres:jcpp", version.ref = "anarres_jcpp" }
