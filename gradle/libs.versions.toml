@@ -5,10 +5,11 @@ quilt_loader = "0.17.1"
 
 quilted_fabric_api = "4.0.0-beta.7+0.59.0-1.19.2"
 ladysnake_satin = "1.9.0"
-modrinth_iris = "1.19.x-v1.2.8"
+modrinth_iris = "1.19.x-v1.4.0"
 jitpack_sodium = "mc1.19.2-0.4.4"
 joml_joml = "1.10.4"
 anarres_jcpp = "1.4.14"
+douira_glsltransformer = "1.0.1"
 
 [libraries]
 minecraft = { module = "com.mojang:minecraft", version.ref = "minecraft" }
@@ -24,6 +25,7 @@ jitpack_sodium = { module = "com.github.CaffeineMC:sodium-fabric", version.ref =
 
 joml_joml = { module = "org.joml:joml", version.ref = "joml_joml" }
 anarres_jcpp = { module = "org.anarres:jcpp", version.ref = "anarres_jcpp" }
+douira_glsltransformer = { module = "io.github.douira:glsl-transformer", version.ref = "douira_glsltransformer" }
 
 [bundles]
 quilted_fabric_api = ["quilted_fabric_api", "quilted_fabric_api_deprecated"]

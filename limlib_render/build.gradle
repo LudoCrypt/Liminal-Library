@@ -12,6 +12,7 @@ loom {
 }
 
 repositories {
+	mavenCentral()
 	maven {
 		url 'https://ladysnake.jfrog.io/artifactory/mods'
     }
@@ -42,6 +43,7 @@ dependencies {
 
 	modImplementation libs.joml.joml
 	modImplementation libs.anarres.jcpp
+	modImplementation libs.douira.glsltransformer
 }
 
 processResources {
