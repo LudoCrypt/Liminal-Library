@@ -10,7 +10,7 @@ import net.minecraft.client.render.chunk.ChunkBuilder;
 @Mixin(ChunkBuilder.BuiltChunk.class)
 public class ChunkBuilderBuiltChunkMixin implements ChunkBuilderBuiltChunkAccessor {
 
-	@Shadow
+	@Shadow(remap = false)
 	@Final
 	ChunkBuilder field_20833;
 

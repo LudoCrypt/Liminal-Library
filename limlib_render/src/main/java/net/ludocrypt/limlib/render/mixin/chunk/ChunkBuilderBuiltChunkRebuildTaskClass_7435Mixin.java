@@ -10,7 +10,6 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 import com.mojang.datafixers.util.Pair;
 
-import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
 import net.ludocrypt.limlib.render.access.RenderMapAccess;
 import net.minecraft.client.render.chunk.ChunkBuilder;
 import net.minecraft.client.render.model.BakedQuad;
@@ -20,18 +19,24 @@ import net.minecraft.util.Identifier;
 public class ChunkBuilderBuiltChunkRebuildTaskClass_7435Mixin implements RenderMapAccess {
 
 	@Unique
-	public final Map<BakedQuad, Pair<BufferBuilder.RenderedBuffer, Identifier>> renderMap = new Reference2ObjectArrayMap<>();
+	public Map<BakedQuad, Pair<BufferBuilder.RenderedBuffer, Identifier>> renderMap;
 
 	@Unique
-	private final Map<BakedQuad, Pair<VertexBuffer, Identifier>> shaderBuffers = Maps.newHashMap();
+	private Map<BakedQuad, Pair<VertexBuffer, Identifier>> shaderBuffers;
 
 	@Override
 	public Map<BakedQuad, Pair<BufferBuilder.RenderedBuffer, Identifier>> getRenderMap() {
+		if (renderMap == null) {
+			renderMap = Maps.newHashMap();
+		}
 		return renderMap;
 	}
 
 	@Override
 	public Map<BakedQuad, Pair<VertexBuffer, Identifier>> getShaderBuffers() {
+		if (shaderBuffers == null) {
+			shaderBuffers = Maps.newHashMap();
+		}
 		return shaderBuffers;
 	}
 

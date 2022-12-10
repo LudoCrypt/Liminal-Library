@@ -31,5 +31,16 @@
 	],
 	"injectors": {
 		"defaultRequire": 1
-	}
+	},
+	"totallyRealOptionThatIsNotJustHereSoIDontHaveToTypeTheMixinNamesAgain": [
+		"sodium.BlockRendererAccessor",
+		"sodium.ChunkBuildResultMixin",
+		"sodium.ChunkRenderRebuildTaskMixin",
+		"sodium.RenderRegionAccessor",
+		"sodium.RenderRegionManagerMixin",
+		"sodium.RenderSectionAccessor",
+		"sodium.RenderSectionManagerAccessor",
+		"sodium.RenderSectionMixin",
+		"sodium.WorldRendererMixin"
+	]
 }

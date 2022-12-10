@@ -10,12 +10,16 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Pair;
 
+import net.fabricmc.fabric.api.renderer.v1.model.ForwardingBakedModel;
 import net.ludocrypt.limlib.render.access.BakedModelAccess;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.render.model.BakedModel;
+import net.minecraft.client.render.model.BasicBakedModel;
+import net.minecraft.client.render.model.BuiltinBakedModel;
+import net.minecraft.client.render.model.WeightedBakedModel;
 import net.minecraft.util.Identifier;
 
-@Mixin(targets = { "net/minecraft/client/render/model/BasicBakedModel", "net/minecraft/client/render/model/BuiltinBakedModel", "net/minecraft/client/render/model/WeightedBakedModel", "net/fabricmc/fabric/api/renderer/v1/model/ForwardingBakedModel" })
+@Mixin(value = { BasicBakedModel.class, BuiltinBakedModel.class, WeightedBakedModel.class, ForwardingBakedModel.class })
 public class GeneralBakedModelMixin implements BakedModelAccess {
 
 	private final Map<BlockState, List<Pair<Identifier, BakedModel>>> modelsMap = Maps.newHashMap();

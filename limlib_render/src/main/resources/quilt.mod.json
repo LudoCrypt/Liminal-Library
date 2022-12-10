@@ -37,9 +37,7 @@
 		]
 	},
 	"mixin": [
-		"limlib.render.mixins.json",
-		"limlib.render.iris.mixins.json",
-		"limlib.render.sodium.mixins.json"
+		"limlib.render.mixins.json"
 	],
 	"access_widener": "limlib_render.accesswidener",
 	"modmenu": {

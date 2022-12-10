@@ -22,7 +22,7 @@ public class GameRendererMixin {
 	private MinecraftClient client;
 
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/WorldRenderer;drawEntityOutlinesFramebuffer()V", shift = Shift.AFTER))
-	private void movementVision$render(float tickDelta, long nanoTime, boolean renderLevel, CallbackInfo info) {
+	private void limlib$render(float tickDelta, long nanoTime, boolean renderLevel, CallbackInfo info) {
 		Optional<PostEffect> optionalPostEffect = PostEffect.POST_EFFECT.getOrEmpty(client.world.getRegistryKey().getValue());
 		if (optionalPostEffect.isPresent()) {
 			PostEffect postEffect = optionalPostEffect.get();

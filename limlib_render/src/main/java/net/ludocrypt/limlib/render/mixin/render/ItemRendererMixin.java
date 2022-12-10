@@ -3,7 +3,6 @@ package net.ludocrypt.limlib.render.mixin.render;
 import java.util.List;
 import java.util.Set;
 
-import org.quiltmc.loader.api.QuiltLoader;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -26,9 +25,9 @@ import com.mojang.datafixers.util.Pair;
 
 import net.ludocrypt.limlib.render.LimlibRender;
 import net.ludocrypt.limlib.render.access.BakedModelAccess;
-import net.ludocrypt.limlib.render.access.IrisClientAccess;
 import net.ludocrypt.limlib.render.access.ItemRendererAccess;
 import net.ludocrypt.limlib.render.access.WorldRendererAccess;
+import net.ludocrypt.limlib.render.compat.iris.IrisBridge;
 import net.ludocrypt.limlib.render.util.RenderSetup;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.color.item.ItemColors;
@@ -60,7 +59,7 @@ public class ItemRendererMixin implements ItemRendererAccess {
 	private void limlib$renderBakedItemModel(BakedModel model, ItemStack stack, int light, int overlay, MatrixStack matrices, VertexConsumer vertices, CallbackInfo ci) {
 		MinecraftClient client = MinecraftClient.getInstance();
 
-		boolean isHandRendering = ((WorldRendererAccess) client.worldRenderer).isRenderingHands() || (QuiltLoader.isModLoaded("iris") && ((IrisClientAccess) client).isHandRenderingActive());
+		boolean isHandRendering = ((WorldRendererAccess) client.worldRenderer).isRenderingHands() || (IrisBridge.IRIS_LOADED && IrisBridge.isHandRenderingActive());
 		boolean isItemRendering = ((WorldRendererAccess) client.worldRenderer).isRenderingItems();
 
 		if (isHandRendering || isItemRendering || inGui) {

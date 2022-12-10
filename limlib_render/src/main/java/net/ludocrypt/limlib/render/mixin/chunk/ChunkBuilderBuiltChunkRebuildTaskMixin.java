@@ -52,7 +52,7 @@ import net.minecraft.util.random.RandomGenerator;
 @Mixin(ChunkBuilder.BuiltChunk.RebuildTask.class)
 public class ChunkBuilderBuiltChunkRebuildTaskMixin {
 
-	@Shadow
+	@Shadow(remap = false)
 	@Final
 	ChunkBuilder.BuiltChunk field_20839;
 
@@ -125,7 +125,7 @@ public class ChunkBuilderBuiltChunkRebuildTaskMixin {
 
 	}
 
-	@Inject(method = "method_23619(Lnet/minecraft/client/render/chunk/ChunkBuilder$ChunkData;Ljava/util/List;Ljava/lang/Throwable;)Lnet/minecraft/client/render/chunk/ChunkBuilder$Result;", at = @At(value = "INVOKE", target = "Ljava/util/concurrent/atomic/AtomicReference;set(Ljava/lang/Object;)V", shift = Shift.BEFORE))
+	@Inject(method = "method_23619(Lnet/minecraft/client/render/chunk/ChunkBuilder$ChunkData;Ljava/util/List;Ljava/lang/Throwable;)Lnet/minecraft/client/render/chunk/ChunkBuilder$Result;", at = @At(value = "INVOKE", target = "Ljava/util/concurrent/atomic/AtomicReference;set(Ljava/lang/Object;)V", shift = Shift.BEFORE, remap = false))
 	private void limlib$releaseVertexBuffers(ChunkBuilder.ChunkData data, List<CompletableFuture<Void>> list, Throwable throwable, CallbackInfoReturnable<ChunkBuilder.Result> ci) {
 		((RenderMapAccess) this.field_20839.data.get()).getShaderBuffers().values().stream().map(Pair::getFirst).forEach(VertexBuffer::close);
 	}
