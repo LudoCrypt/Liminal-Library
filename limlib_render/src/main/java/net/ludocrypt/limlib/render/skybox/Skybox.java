@@ -1,4 +1,4 @@
-package net.ludocrypt.limlib.render.util.skybox;
+package net.ludocrypt.limlib.render.skybox;
 
 import java.util.function.Function;
 

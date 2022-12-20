@@ -2,6 +2,7 @@ package net.ludocrypt.limlib.render.mixin.render;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import org.spongepowered.asm.mixin.Mixin;
@@ -16,9 +17,11 @@ import com.mojang.blaze3d.vertex.VertexFormats;
 import com.mojang.datafixers.util.Pair;
 
 import net.ludocrypt.limlib.render.LimlibRender;
+import net.ludocrypt.limlib.render.special.SpecialModelRenderer;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.ShaderProgram;
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.util.registry.RegistryKey;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
@@ -26,7 +29,7 @@ public class GameRendererMixin {
 	@Inject(method = "loadShaders", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 54, shift = Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void limlib$loadShaders(ResourceManager manager, CallbackInfo ci, List<ShaderStage> list, List<Pair<ShaderProgram, Consumer<ShaderProgram>>> list2) {
 		LimlibRender.LOADED_SHADERS.clear();
-		LimlibRender.SHADERS_TO_LOAD.forEach((id) -> {
+		SpecialModelRenderer.SPECIAL_MODEL_RENDERER_CODEC.getEntries().stream().map(Entry::getKey).map(RegistryKey::getValue).forEach((id) -> {
 			try {
 				list2.add(Pair.of(new ShaderProgram(manager, "rendertype_" + id.getNamespace() + "_" + id.getPath(), VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL), (shader) -> LimlibRender.LOADED_SHADERS.put(id, shader)));
 			} catch (IOException e) {
@@ -36,7 +39,6 @@ public class GameRendererMixin {
 				throw new RuntimeException();
 			}
 		});
-		LimlibRender.SHADERS_TO_LOAD.clear();
 	}
 
 }

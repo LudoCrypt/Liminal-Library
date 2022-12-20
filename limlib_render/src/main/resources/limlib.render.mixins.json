@@ -6,22 +6,22 @@
 	"mixins": [
 		"registry.BuiltinRegistriesAccessor",
 		"registry.DynamicRegistryManagerMixin",
-		"registry.RegistryAccessor",
-		"render.BufferBuilderAccessor"
+		"registry.RegistryAccessor"
 	],
 	"client": [
-		"chunk.ChunkBuilderBuiltChunkMixin",
-		"chunk.ChunkBuilderBuiltChunkRebuildTaskClass_7435Mixin",
-		"chunk.ChunkBuilderBuiltChunkRebuildTaskMixin",
-		"chunk.ChunkBuilderChunkDataMixin",
-		"chunk.ChunkBuilderMixin",
+		"chunk.BlockBufferBuilderStorageMixin",
+		"chunk.BuiltChunkMixin",
+		"chunk.ChunkDataClass_7435Mixin",
+		"chunk.RebuildTaskMixin",
 		"model.BakedModelMixin",
 		"model.GeneralBakedModelMixin",
 		"model.JsonUnbakedModelDeserializerMixin",
 		"model.JsonUnbakedModelMixin",
 		"model.MultipartBakedModelMixin",
+		"model.ReloadableResourceManagerMixin",
 		"render.GameRendererMixin",
 		"render.ItemRendererMixin",
+		"render.VertexBufferAccessor",
 		"render.WorldRendererAfterMixin",
 		"render.WorldRendererBeforeMixin",
 		"render.WorldRendererMixin",
@@ -31,16 +31,5 @@
 	],
 	"injectors": {
 		"defaultRequire": 1
-	},
-	"totallyRealOptionThatIsNotJustHereSoIDontHaveToTypeTheMixinNamesAgain": [
-		"sodium.BlockRendererAccessor",
-		"sodium.ChunkBuildResultMixin",
-		"sodium.ChunkRenderRebuildTaskMixin",
-		"sodium.RenderRegionAccessor",
-		"sodium.RenderRegionManagerMixin",
-		"sodium.RenderSectionAccessor",
-		"sodium.RenderSectionManagerAccessor",
-		"sodium.RenderSectionMixin",
-		"sodium.WorldRendererMixin"
-	]
+	}
 }

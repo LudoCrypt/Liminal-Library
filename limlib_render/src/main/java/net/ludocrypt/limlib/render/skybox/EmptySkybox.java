@@ -1,4 +1,4 @@
-package net.ludocrypt.limlib.render.util.skybox;
+package net.ludocrypt.limlib.render.skybox;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

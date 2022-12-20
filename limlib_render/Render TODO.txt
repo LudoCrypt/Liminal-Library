@@ -1,0 +1,32 @@
+Block Model:
+```json
+{
+	"parent": "minecraft:block/cube_all",
+	"textures": {
+		"all": "minecraft:block/glass"
+	},
+	"limlib_extra": {
+		"skybox:block/skybox_glass": {
+			"type": "backrooms:skybox",
+			"texture": "backrooms:skybox/creepy_skybox"
+		}
+	}
+}
+```
+
+It would grab the SpecialModelRenderSetup:
+```json
+{
+	"type": "backrooms:skybox",
+	"texture": "backrooms:skybox/creepy_skybox"
+}
+```
+and register the it. If, when registering it, its already registered, or rather an entry in the registry thats equal to it, it skips registering it.
+
+In code, you would register a SpecialModelRenderer as "backrooms:skybox", and have a codec for it with a field "texture".
+
+When building the chunks, it would grab the model, and grab all of its RenderSetup's, then render each of those to a VertexBuffer corresponding to the specific RenderSetup.
+
+Mixing into BlockBufferBuilderStorage, it will add a map for RenderSetup's to BufferBuilders. This will then be used to render all the RenderSetup's.
+
+For sodium, give ChunkBuildResult another map for RenderSetup's to ChunkMeshData. In RenderRegionManager, upload the meshes to a new map inside RenderSection for RenderSetup's to ChunkGraphicsState. Inside SodiumWorldRenderer, mixin into drawChunkLayer, and render the meshes there.

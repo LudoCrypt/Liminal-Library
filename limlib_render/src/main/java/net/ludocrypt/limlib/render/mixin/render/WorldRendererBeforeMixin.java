@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.ludocrypt.limlib.render.access.WorldRendererAccess;
-import net.ludocrypt.limlib.render.compat.iris.IrisBridge;
+import net.ludocrypt.limlib.render.compat.IrisBridge;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;

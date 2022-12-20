@@ -22,6 +22,7 @@ import com.mojang.datafixers.util.Pair;
 
 import net.ludocrypt.limlib.render.access.BakedModelAccess;
 import net.ludocrypt.limlib.render.access.UnbakedModelAccess;
+import net.ludocrypt.limlib.render.special.SpecialModelRenderer;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.ModelBakeSettings;
 import net.minecraft.client.render.model.ModelLoader;
@@ -39,11 +40,11 @@ public abstract class JsonUnbakedModelMixin implements UnbakedModelAccess {
 	private static Logger LOGGER;
 
 	@Unique
-	private Map<Identifier, Identifier> subModels = Maps.newHashMap();
+	private Map<Identifier, SpecialModelRenderer> subModels = Maps.newHashMap();
 
 	@Inject(method = "Lnet/minecraft/client/render/model/json/JsonUnbakedModel;getTextureDependencies(Ljava/util/function/Function;Ljava/util/Set;)Ljava/util/Collection;", at = @At(value = "INVOKE", target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V", ordinal = 0, shift = Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void limlib$getTextureDependencies(Function<Identifier, UnbakedModel> unbakedModelGetter, Set<Pair<String, String>> unresolvedTextureReferences, CallbackInfoReturnable<Collection<SpriteIdentifier>> ci, Set<JsonUnbakedModel> set, JsonUnbakedModel jsonUnbakedModel, Set<SpriteIdentifier> set2) {
-		this.getSubModels().values().forEach(subModel -> {
+		this.getSubModels().keySet().forEach(subModel -> {
 			UnbakedModel unbakedModel = (UnbakedModel) unbakedModelGetter.apply(subModel);
 			if (!Objects.equals(unbakedModel, (JsonUnbakedModel) (Object) this)) {
 				set2.addAll(unbakedModel.getTextureDependencies(unbakedModelGetter, unresolvedTextureReferences));
@@ -53,17 +54,17 @@ public abstract class JsonUnbakedModelMixin implements UnbakedModelAccess {
 
 	@Inject(method = "Lnet/minecraft/client/render/model/json/JsonUnbakedModel;bake(Lnet/minecraft/client/render/model/ModelLoader;Lnet/minecraft/client/render/model/json/JsonUnbakedModel;Ljava/util/function/Function;Lnet/minecraft/client/render/model/ModelBakeSettings;Lnet/minecraft/util/Identifier;Z)Lnet/minecraft/client/render/model/BakedModel;", at = @At("RETURN"), cancellable = true)
 	private void limlib$bake(ModelLoader loader, JsonUnbakedModel parent, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings settings, Identifier id, boolean hasDepth, CallbackInfoReturnable<BakedModel> ci) {
-		this.getSubModels().forEach((rendererId, modelId) -> {
+		this.getSubModels().forEach((modelId, modelRenderer) -> {
 			if (!modelId.equals(id)) {
-				((BakedModelAccess) ci.getReturnValue()).addModel(rendererId, null, loader.bake(modelId, settings));
+				((BakedModelAccess) ci.getReturnValue()).addModel(modelRenderer, null, loader.bake(modelId, settings));
 			} else {
-				LOGGER.warn("Model '{}' caught in chain! Renderer '{}' caught model '{}'", id, rendererId, modelId);
+				LOGGER.warn("Model '{}' caught in chain! Renderer '{}' caught model '{}'", id, modelRenderer, modelId);
 			}
 		});
 	}
 
 	@Override
-	public Map<Identifier, Identifier> getSubModels() {
+	public Map<Identifier, SpecialModelRenderer> getSubModels() {
 		return subModels;
 	}
 

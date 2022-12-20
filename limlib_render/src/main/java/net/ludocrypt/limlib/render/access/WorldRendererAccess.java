@@ -3,10 +3,9 @@ package net.ludocrypt.limlib.render.access;
 import com.mojang.blaze3d.framebuffer.Framebuffer;
 import com.mojang.blaze3d.vertex.VertexBuffer;
 
+import net.ludocrypt.limlib.render.special.SpecialModelRenderer;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.model.BakedQuad;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Matrix4f;
 
@@ -22,7 +21,7 @@ public interface WorldRendererAccess {
 
 	public void renderBlocks(MatrixStack matrices, Matrix4f positionMatrix);
 
-	public void renderBuffer(MatrixStack matrices, Matrix4f positionMatrix, Identifier shaderId, VertexBuffer buffer, BakedQuad quad, BlockPos origin);
+	public void renderBuffer(MatrixStack matrices, Matrix4f positionMatrix, SpecialModelRenderer modelRenderer, VertexBuffer vertexBuffer, BlockPos origin);
 
 	public boolean isRenderingHands();
 

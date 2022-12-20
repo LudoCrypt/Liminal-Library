@@ -9,20 +9,20 @@ import com.google.common.collect.Lists;
 import com.mojang.datafixers.util.Pair;
 
 import net.ludocrypt.limlib.render.access.BakedModelAccess;
+import net.ludocrypt.limlib.render.special.SpecialModelRenderer;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.util.Identifier;
 
 @Mixin(BakedModel.class)
 public interface BakedModelMixin extends BakedModelAccess {
 
 	@Override
-	default List<Pair<Identifier, BakedModel>> getModels(@Nullable BlockState state) {
+	default List<Pair<SpecialModelRenderer, BakedModel>> getModels(@Nullable BlockState state) {
 		return Lists.newArrayList();
 	}
 
 	@Override
-	default void addModel(Identifier rendererId, @Nullable BlockState state, BakedModel model) {
+	default void addModel(SpecialModelRenderer modelRenderer, @Nullable BlockState state, BakedModel model) {
 	}
 
 }
