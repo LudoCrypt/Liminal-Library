@@ -4,7 +4,6 @@ import java.util.function.Function;
 
 import javax.annotation.Nullable;
 
-import com.google.common.base.Supplier;
 import com.mojang.serialization.Codec;
 
 import net.fabricmc.api.EnvType;
@@ -44,7 +43,7 @@ public abstract class SkyEffects {
 	public abstract Codec<? extends SkyEffects> getCodec();
 
 	@Environment(EnvType.CLIENT)
-	public abstract Supplier<SkyProperties> getMemoizedSkyProperties();
+	public abstract SkyProperties getSkyProperties();
 
 	public abstract float getSkyShading();
 

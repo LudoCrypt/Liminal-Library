@@ -22,7 +22,7 @@ public class SkyPropertiesMixin {
 			if (key.isPresent()) {
 				Optional<SkyEffects> sky = SkyEffects.SKY_EFFECTS.getOrEmpty(key.get().getValue());
 				if (sky.isPresent()) {
-					ci.setReturnValue(sky.get().getMemoizedSkyProperties().get());
+					ci.setReturnValue(sky.get().getSkyProperties());
 				}
 			}
 		}
