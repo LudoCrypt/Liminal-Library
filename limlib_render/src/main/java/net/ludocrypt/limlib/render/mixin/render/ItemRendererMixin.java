@@ -27,7 +27,6 @@ import net.ludocrypt.limlib.render.LimlibRender;
 import net.ludocrypt.limlib.render.access.BakedModelAccess;
 import net.ludocrypt.limlib.render.access.ItemRendererAccess;
 import net.ludocrypt.limlib.render.access.WorldRendererAccess;
-import net.ludocrypt.limlib.render.compat.IrisBridge;
 import net.ludocrypt.limlib.render.special.SpecialModelRenderer;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.color.item.ItemColors;
@@ -58,7 +57,7 @@ public class ItemRendererMixin implements ItemRendererAccess {
 	private void limlib$renderBakedItemModel(BakedModel model, ItemStack stack, int light, int overlay, MatrixStack matrices, VertexConsumer vertices, CallbackInfo ci) {
 		MinecraftClient client = MinecraftClient.getInstance();
 
-		boolean isHandRendering = ((WorldRendererAccess) client.worldRenderer).isRenderingHands() || (IrisBridge.IRIS_LOADED && IrisBridge.isHandRenderingActive());
+		boolean isHandRendering = ((WorldRendererAccess) client.worldRenderer).isRenderingHands();
 		boolean isItemRendering = ((WorldRendererAccess) client.worldRenderer).isRenderingItems();
 
 		if (isHandRendering || isItemRendering || inGui) {
@@ -71,7 +70,7 @@ public class ItemRendererMixin implements ItemRendererAccess {
 				List<Pair<SpecialModelRenderer, BakedModel>> models = ((BakedModelAccess) model).getModels(null);
 				if (!models.isEmpty()) {
 					models.forEach((renderPair) -> {
-						ShaderProgram shader = LimlibRender.LOADED_SHADERS.get(LimlibRender.SPECIAL_MODEL_RENDERERS.get(renderPair.getFirst()));
+						ShaderProgram shader = LimlibRender.LOADED_SHADERS.get(renderPair.getFirst());
 						if (shader != null) {
 							RenderSystem.enableBlend();
 							RenderSystem.enableDepthTest();

@@ -11,7 +11,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.blaze3d.vertex.BufferBuilder;
 
-import net.ludocrypt.limlib.render.LimlibRender;
 import net.ludocrypt.limlib.render.access.BlockBufferBuilderStorageAccess;
 import net.ludocrypt.limlib.render.special.SpecialModelRenderer;
 import net.minecraft.client.render.chunk.BlockBufferBuilderStorage;
@@ -20,7 +19,7 @@ import net.minecraft.client.render.chunk.BlockBufferBuilderStorage;
 public class BlockBufferBuilderStorageMixin implements BlockBufferBuilderStorageAccess {
 
 	@Unique
-	private final Map<SpecialModelRenderer, BufferBuilder> specialModelBuffers = LimlibRender.SPECIAL_MODEL_RENDERERS.keySet().stream().collect(Collectors.toMap(renderer -> renderer, renderer -> new BufferBuilder(256)));
+	private final Map<SpecialModelRenderer, BufferBuilder> specialModelBuffers = SpecialModelRenderer.SPECIAL_MODEL_RENDERER.getEntries().stream().collect(Collectors.toMap(entry -> entry.getValue(), entry -> new BufferBuilder(256)));
 
 	@Override
 	public BufferBuilder get(SpecialModelRenderer modelRenderer) {

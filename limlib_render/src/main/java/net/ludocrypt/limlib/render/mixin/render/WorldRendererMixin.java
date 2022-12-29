@@ -169,7 +169,7 @@ public abstract class WorldRendererMixin implements WorldRendererAccess {
 
 	@Override
 	public void renderBuffer(MatrixStack matrices, Matrix4f positionMatrix, SpecialModelRenderer modelRenderer, VertexBuffer vertexBuffer, BlockPos origin) {
-		ShaderProgram shader = LimlibRender.LOADED_SHADERS.get(LimlibRender.SPECIAL_MODEL_RENDERERS.get(modelRenderer));
+		ShaderProgram shader = LimlibRender.LOADED_SHADERS.get(modelRenderer);
 		if (shader != null && ((VertexBufferAccessor) vertexBuffer).getIndexCount() > 0) {
 			RenderSystem.depthMask(true);
 			RenderSystem.enableBlend();

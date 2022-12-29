@@ -37,13 +37,6 @@ dependencies {
 	modImplementation libs.quilted.fabric.api
 
 	modImplementation libs.ladysnake.satin
-
-//	modImplementation libs.modrinth.iris
-//	modImplementation libs.modrinth.sodium
-
-//	modImplementation libs.joml.joml
-//	modImplementation libs.anarres.jcpp
-//	modImplementation libs.douira.glsltransformer
 }
 
 processResources {

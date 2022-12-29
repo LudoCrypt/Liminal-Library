@@ -13,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.blaze3d.vertex.VertexBuffer;
 
-import net.ludocrypt.limlib.render.LimlibRender;
 import net.ludocrypt.limlib.render.access.BuiltChunkAccess;
 import net.ludocrypt.limlib.render.special.SpecialModelRenderer;
 import net.minecraft.client.render.chunk.ChunkBuilder;
@@ -27,7 +26,7 @@ public class BuiltChunkMixin implements BuiltChunkAccess {
 	ChunkBuilder field_20833;
 
 	@Unique
-	private final Map<SpecialModelRenderer, VertexBuffer> specialModelBuffers = LimlibRender.SPECIAL_MODEL_RENDERERS.keySet().stream().collect(Collectors.toMap(renderer -> renderer, renderer -> new VertexBuffer()));
+	private final Map<SpecialModelRenderer, VertexBuffer> specialModelBuffers = SpecialModelRenderer.SPECIAL_MODEL_RENDERER.getEntries().stream().collect(Collectors.toMap(entry -> entry.getValue(), entry -> new VertexBuffer()));
 
 	@Override
 	public VertexBuffer getBuffer(SpecialModelRenderer modelRenderer) {

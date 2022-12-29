@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableMap.Builder;
 import com.mojang.serialization.Codec;
 
 import net.ludocrypt.limlib.render.skybox.Skybox;
-import net.ludocrypt.limlib.render.special.SpecialModelRenderer;
 import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.RegistryKey;
@@ -24,7 +23,6 @@ public interface DynamicRegistryManagerMixin {
 	@Inject(method = "Lnet/minecraft/util/registry/DynamicRegistryManager;method_30531()Lcom/google/common/collect/ImmutableMap;", at = @At(value = "RETURN", shift = Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILHARD)
 	private static void limlib$addRegistries(CallbackInfoReturnable<ImmutableMap<RegistryKey<? extends Registry<?>>, DynamicRegistryManager.Info<?>>> ci, Builder<RegistryKey<? extends Registry<?>>, DynamicRegistryManager.Info<?>> builder) {
 		register(builder, Skybox.SKYBOX_KEY, Skybox.CODEC);
-		register(builder, SpecialModelRenderer.SPECIAL_MODEL_RENDERER_KEY, SpecialModelRenderer.CODEC);
 	}
 
 	@Shadow

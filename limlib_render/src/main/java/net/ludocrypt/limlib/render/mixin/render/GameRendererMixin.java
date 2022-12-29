@@ -29,9 +29,9 @@ public class GameRendererMixin {
 	@Inject(method = "loadShaders", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 54, shift = Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void limlib$loadShaders(ResourceManager manager, CallbackInfo ci, List<ShaderStage> list, List<Pair<ShaderProgram, Consumer<ShaderProgram>>> list2) {
 		LimlibRender.LOADED_SHADERS.clear();
-		SpecialModelRenderer.SPECIAL_MODEL_RENDERER_CODEC.getEntries().stream().map(Entry::getKey).map(RegistryKey::getValue).forEach((id) -> {
+		SpecialModelRenderer.SPECIAL_MODEL_RENDERER.getEntries().stream().map(Entry::getKey).map(RegistryKey::getValue).forEach((id) -> {
 			try {
-				list2.add(Pair.of(new ShaderProgram(manager, "rendertype_" + id.getNamespace() + "_" + id.getPath(), VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL), (shader) -> LimlibRender.LOADED_SHADERS.put(id, shader)));
+				list2.add(Pair.of(new ShaderProgram(manager, "rendertype_" + id.getNamespace() + "_" + id.getPath(), VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL), (shader) -> LimlibRender.LOADED_SHADERS.put(SpecialModelRenderer.SPECIAL_MODEL_RENDERER.get(id), shader)));
 			} catch (IOException e) {
 				list2.forEach((pair) -> pair.getFirst().close());
 				LimlibRender.LOGGER.error("Could not reload shader: {}", id);

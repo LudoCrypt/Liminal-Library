@@ -18,7 +18,6 @@
 		"model.JsonUnbakedModelDeserializerMixin",
 		"model.JsonUnbakedModelMixin",
 		"model.MultipartBakedModelMixin",
-		"model.ReloadableResourceManagerMixin",
 		"render.GameRendererMixin",
 		"render.ItemRendererMixin",
 		"render.VertexBufferAccessor",

@@ -40,11 +40,11 @@ public abstract class JsonUnbakedModelMixin implements UnbakedModelAccess {
 	private static Logger LOGGER;
 
 	@Unique
-	private Map<Identifier, SpecialModelRenderer> subModels = Maps.newHashMap();
+	private Map<SpecialModelRenderer, Identifier> subModels = Maps.newHashMap();
 
 	@Inject(method = "Lnet/minecraft/client/render/model/json/JsonUnbakedModel;getTextureDependencies(Ljava/util/function/Function;Ljava/util/Set;)Ljava/util/Collection;", at = @At(value = "INVOKE", target = "Ljava/util/List;forEach(Ljava/util/function/Consumer;)V", ordinal = 0, shift = Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILHARD)
 	private void limlib$getTextureDependencies(Function<Identifier, UnbakedModel> unbakedModelGetter, Set<Pair<String, String>> unresolvedTextureReferences, CallbackInfoReturnable<Collection<SpriteIdentifier>> ci, Set<JsonUnbakedModel> set, JsonUnbakedModel jsonUnbakedModel, Set<SpriteIdentifier> set2) {
-		this.getSubModels().keySet().forEach(subModel -> {
+		this.getSubModels().values().forEach(subModel -> {
 			UnbakedModel unbakedModel = (UnbakedModel) unbakedModelGetter.apply(subModel);
 			if (!Objects.equals(unbakedModel, (JsonUnbakedModel) (Object) this)) {
 				set2.addAll(unbakedModel.getTextureDependencies(unbakedModelGetter, unresolvedTextureReferences));
@@ -54,7 +54,7 @@ public abstract class JsonUnbakedModelMixin implements UnbakedModelAccess {
 
 	@Inject(method = "Lnet/minecraft/client/render/model/json/JsonUnbakedModel;bake(Lnet/minecraft/client/render/model/ModelLoader;Lnet/minecraft/client/render/model/json/JsonUnbakedModel;Ljava/util/function/Function;Lnet/minecraft/client/render/model/ModelBakeSettings;Lnet/minecraft/util/Identifier;Z)Lnet/minecraft/client/render/model/BakedModel;", at = @At("RETURN"), cancellable = true)
 	private void limlib$bake(ModelLoader loader, JsonUnbakedModel parent, Function<SpriteIdentifier, Sprite> textureGetter, ModelBakeSettings settings, Identifier id, boolean hasDepth, CallbackInfoReturnable<BakedModel> ci) {
-		this.getSubModels().forEach((modelId, modelRenderer) -> {
+		this.getSubModels().forEach((modelRenderer, modelId) -> {
 			if (!modelId.equals(id)) {
 				((BakedModelAccess) ci.getReturnValue()).addModel(modelRenderer, null, loader.bake(modelId, settings));
 			} else {
@@ -64,7 +64,7 @@ public abstract class JsonUnbakedModelMixin implements UnbakedModelAccess {
 	}
 
 	@Override
-	public Map<Identifier, SpecialModelRenderer> getSubModels() {
+	public Map<SpecialModelRenderer, Identifier> getSubModels() {
 		return subModels;
 	}
 
