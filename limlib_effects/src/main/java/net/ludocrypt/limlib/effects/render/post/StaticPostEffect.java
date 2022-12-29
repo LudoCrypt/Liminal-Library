@@ -5,10 +5,9 @@ import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import ladysnake.satin.api.managed.ManagedShaderEffect;
-import ladysnake.satin.api.managed.ShaderEffectManager;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.ludocrypt.limlib.effects.render.post.holder.ShaderHolder;
 import net.minecraft.util.Identifier;
 
 public class StaticPostEffect extends PostEffect {
@@ -22,7 +21,7 @@ public class StaticPostEffect extends PostEffect {
 	private final Identifier shaderName;
 
 	@Environment(EnvType.CLIENT)
-	private final Supplier<ManagedShaderEffect> memoizedShaderEffect = Suppliers.memoize(() -> ShaderEffectManager.getInstance().manage(this.getShaderLocation()));
+	private final Supplier<ShaderHolder> memoizedShaderEffect = Suppliers.memoize(() -> new ShaderHolder(this.getShaderLocation()));
 
 	public StaticPostEffect(Identifier shaderLocation) {
 		this.shaderName = shaderLocation;
@@ -50,7 +49,7 @@ public class StaticPostEffect extends PostEffect {
 
 	@Override
 	@Environment(EnvType.CLIENT)
-	public Supplier<ManagedShaderEffect> getMemoizedShaderEffect() {
+	public Supplier<ShaderHolder> getMemoizedShaderEffect() {
 		return memoizedShaderEffect;
 	}
 

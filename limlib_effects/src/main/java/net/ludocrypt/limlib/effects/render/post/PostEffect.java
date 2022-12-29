@@ -5,13 +5,13 @@ import java.util.function.Function;
 import com.google.common.base.Supplier;
 import com.mojang.serialization.Codec;
 
-import ladysnake.satin.api.managed.ManagedShaderEffect;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.ludocrypt.limlib.effects.mixin.BuiltinRegistriesAccessor;
 import net.ludocrypt.limlib.effects.mixin.RegistryAccessor;
+import net.ludocrypt.limlib.effects.render.post.holder.ShaderHolder;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.BuiltinRegistries;
 import net.minecraft.util.registry.Registry;
@@ -36,5 +36,5 @@ public abstract class PostEffect {
 	public abstract Identifier getShaderLocation();
 
 	@Environment(EnvType.CLIENT)
-	public abstract Supplier<ManagedShaderEffect> getMemoizedShaderEffect();
+	public abstract Supplier<ShaderHolder> getMemoizedShaderEffect();
 }

@@ -4,7 +4,7 @@ import com.google.common.base.Supplier;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import ladysnake.satin.api.managed.ManagedShaderEffect;
+import net.ludocrypt.limlib.effects.render.post.holder.ShaderHolder;
 
 public class EmptyPostEffect extends StaticPostEffect {
 
@@ -25,7 +25,7 @@ public class EmptyPostEffect extends StaticPostEffect {
 	}
 
 	@Override
-	public Supplier<ManagedShaderEffect> getMemoizedShaderEffect() {
+	public Supplier<ShaderHolder> getMemoizedShaderEffect() {
 		return () -> null;
 	}
 

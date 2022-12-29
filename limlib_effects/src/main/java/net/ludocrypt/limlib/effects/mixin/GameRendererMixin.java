@@ -28,7 +28,7 @@ public class GameRendererMixin {
 			PostEffect postEffect = optionalPostEffect.get();
 			if (postEffect.shouldRender() && postEffect.getShaderLocation() != null && postEffect.getMemoizedShaderEffect().get() != null) {
 				postEffect.beforeRender();
-				postEffect.getMemoizedShaderEffect().get().render(tickDelta);
+				postEffect.getMemoizedShaderEffect().get().getShader().render(tickDelta);
 			}
 		}
 	}
