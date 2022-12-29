@@ -164,9 +164,6 @@ public abstract class WorldRendererMixin implements WorldRendererAccess {
 				ChunkBuilder.BuiltChunk builtChunk = chunkInfo.chunk;
 				((BuiltChunkAccess) builtChunk).getSpecialModelBuffers().forEach((modelRenderer, vertexBuffer) -> renderBuffer(matrices, positionMatrix, modelRenderer, vertexBuffer, builtChunk.getOrigin()));
 			}
-
-		} else {
-//			((SodiumWorldRendererAccess) (Object) this).renderSodiumBlocks(matrices, positionMatrix);
 		}
 	}
 
