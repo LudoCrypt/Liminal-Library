@@ -1,18 +1,13 @@
-package net.ludocrypt.limlib.effects.render.post;
+package net.ludocrypt.limlib.effects.post;
 
-import com.google.common.base.Supplier;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.ludocrypt.limlib.effects.render.post.holder.ShaderHolder;
+import net.minecraft.util.Identifier;
 
-public class EmptyPostEffect extends StaticPostEffect {
+public class EmptyPostEffect extends PostEffect {
 
 	public static final Codec<EmptyPostEffect> CODEC = RecordCodecBuilder.create((instance) -> instance.stable(new EmptyPostEffect()));
-
-	public EmptyPostEffect() {
-		super(null);
-	}
 
 	@Override
 	public Codec<? extends PostEffect> getCodec() {
@@ -25,8 +20,13 @@ public class EmptyPostEffect extends StaticPostEffect {
 	}
 
 	@Override
-	public Supplier<ShaderHolder> getMemoizedShaderEffect() {
-		return () -> null;
+	public void beforeRender() {
+
+	}
+
+	@Override
+	public Identifier getShaderLocation() {
+		return null;
 	}
 
 }

@@ -6,9 +6,6 @@ package net.ludocrypt.limlib.registry.registration;
  * In {@code quilt.mod.json}, the entrypoint is defined with
  * {@value #ENTRYPOINT_KEY} key.
  * <p>
- * Currently, it is executed in {@link BuiltinRegistries}, before the static
- * block, ie before all default registry values are set.
- *
  */
 public interface PreRegistration {
 

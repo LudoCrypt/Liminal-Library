@@ -8,10 +8,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import net.ludocrypt.limlib.effects.LimlibEffects;
 import net.ludocrypt.limlib.effects.sound.SoundEffects;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.sound.MusicSound;
 
 @Mixin(MinecraftClient.class)
@@ -26,7 +28,7 @@ public class MinecraftClientMixin {
 	@Inject(method = "getMusicType", at = @At("HEAD"), cancellable = true)
 	private void limlib$getMusicType(CallbackInfoReturnable<MusicSound> ci) {
 		if (this.player != null) {
-			Optional<SoundEffects> soundEffects = SoundEffects.SOUND_EFFECTS.getOrEmpty(world.getRegistryKey().getValue());
+			Optional<SoundEffects> soundEffects = LimlibEffects.snatch(world.getRegistryManager().getLookup(SoundEffects.SOUND_EFFECTS_KEY).get(), RegistryKey.of(SoundEffects.SOUND_EFFECTS_KEY, world.getRegistryKey().getValue()));
 			if (soundEffects.isPresent()) {
 				Optional<MusicSound> musicSound = soundEffects.get().getMusic();
 				if (musicSound.isPresent()) {

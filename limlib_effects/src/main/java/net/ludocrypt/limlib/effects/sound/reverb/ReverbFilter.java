@@ -6,15 +6,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.openal.AL11;
 import org.lwjgl.openal.EXTEfx;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import net.ludocrypt.limlib.effects.LimlibEffects;
 import net.ludocrypt.limlib.effects.sound.SoundEffects;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.SoundInstance;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.math.MathHelper;
 
-@Environment(EnvType.CLIENT)
+@ClientOnly
 public class ReverbFilter {
 
 	public static final Logger LOGGER = LogManager.getLogger("LimLib | Reverb");
@@ -62,7 +63,7 @@ public class ReverbFilter {
 		MinecraftClient client = MinecraftClient.getInstance();
 
 		if (!(client == null || client.world == null)) {
-			Optional<SoundEffects> soundEffects = SoundEffects.SOUND_EFFECTS.getOrEmpty(client.world.getRegistryKey().getValue());
+			Optional<SoundEffects> soundEffects = LimlibEffects.snatch(client.world.getRegistryManager().getLookup(SoundEffects.SOUND_EFFECTS_KEY).get(), RegistryKey.of(SoundEffects.SOUND_EFFECTS_KEY, client.world.getRegistryKey().getValue()));
 			if (soundEffects.isPresent()) {
 				Optional<ReverbEffect> reverb = soundEffects.get().getReverb();
 				if (reverb.isPresent()) {

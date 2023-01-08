@@ -6,9 +6,11 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-import net.ludocrypt.limlib.effects.render.sky.SkyEffects;
+import net.ludocrypt.limlib.effects.LimlibEffects;
+import net.ludocrypt.limlib.effects.sky.DimensionEffects;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BackgroundRenderer;
+import net.minecraft.registry.RegistryKey;
 
 @Mixin(BackgroundRenderer.class)
 public abstract class BackgroundRendererMixin {
@@ -17,9 +19,9 @@ public abstract class BackgroundRendererMixin {
 	private static float limlib$modifySkyColor(float in) {
 		MinecraftClient client = MinecraftClient.getInstance();
 
-		Optional<SkyEffects> sky = SkyEffects.SKY_EFFECTS.getOrEmpty(client.world.getRegistryKey().getValue());
-		if (sky.isPresent()) {
-			return sky.get().getSkyShading();
+		Optional<DimensionEffects> dimensionEffects = LimlibEffects.snatch(client.world.getRegistryManager().getLookup(DimensionEffects.DIMENSION_EFFECTS_KEY).get(), RegistryKey.of(DimensionEffects.DIMENSION_EFFECTS_KEY, client.world.getRegistryKey().getValue()));
+		if (dimensionEffects.isPresent()) {
+			return dimensionEffects.get().getSkyShading();
 		}
 
 		return in;

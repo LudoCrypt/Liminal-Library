@@ -1,6 +1,6 @@
 package net.ludocrypt.limlib.effects.access;
 
-import javax.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;

@@ -1,7 +1,6 @@
 package net.ludocrypt.limlib.world.chunk;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
@@ -15,12 +14,11 @@ import net.minecraft.server.world.ServerLightingProvider;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.StructureManager;
 import net.minecraft.structure.StructureTemplateManager;
-import net.minecraft.util.HolderSet;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.HeightLimitView;
 import net.minecraft.world.Heightmap.Type;
+import net.minecraft.world.biome.GenerationSettings;
 import net.minecraft.world.biome.source.BiomeAccess;
 import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.chunk.Chunk;
@@ -30,15 +28,14 @@ import net.minecraft.world.gen.RandomState;
 import net.minecraft.world.gen.chunk.Blender;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.VerticalBlockSample;
-import net.minecraft.world.gen.structure.StructureSet;
 
 /**
  * A simplification of {@link ChunkGenerator}
  */
 public abstract class LiminalChunkGenerator extends ChunkGenerator {
 
-	public LiminalChunkGenerator(Registry<StructureSet> registry, Optional<HolderSet<StructureSet>> optional, BiomeSource biomeSource) {
-		super(registry, optional, biomeSource);
+	public LiminalChunkGenerator(BiomeSource biomeSource) {
+		super(biomeSource, (biome) -> GenerationSettings.INSTANCE);
 	}
 
 	@Override

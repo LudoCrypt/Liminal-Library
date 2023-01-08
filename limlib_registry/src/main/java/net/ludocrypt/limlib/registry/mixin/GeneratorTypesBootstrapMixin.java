@@ -11,8 +11,8 @@ import com.google.common.collect.Maps;
 
 import net.ludocrypt.limlib.registry.registration.LimlibWorld;
 import net.minecraft.client.world.GeneratorType;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.world.dimension.DimensionOptions;
 
 @Mixin(targets = "net/minecraft/client/world/GeneratorTypes$Bootstrap")
@@ -22,7 +22,7 @@ public class GeneratorTypesBootstrapMixin {
 	private void limlib$createPreset(DimensionOptions dimensionOptions, CallbackInfoReturnable<GeneratorType> ci) {
 		Map<RegistryKey<DimensionOptions>, DimensionOptions> map = Maps.newHashMap();
 		map.putAll(((GeneratorTypeAccessor) ci.getReturnValue()).getDimensions());
-		LimlibWorld.LIMLIB_WORLD.getEntries().forEach((entry) -> map.put(RegistryKey.of(Registry.DIMENSION_KEY, entry.getKey().getValue()), entry.getValue().getDimensionOptionsSupplier().get()));
+		LimlibWorld.LIMLIB_WORLD.getEntries().forEach((entry) -> map.put(RegistryKey.of(RegistryKeys.DIMENSION, entry.getKey().getValue()), entry.getValue().getDimensionOptionsSupplier().get()));
 		((GeneratorTypeAccessor) ci.getReturnValue()).setDimensions(map);
 	}
 

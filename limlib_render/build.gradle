@@ -25,13 +25,16 @@ repositories {
 	maven {
 		url "https://jitpack.io"
 	}
+	flatDir {
+		dirs 'mappings'
+	}
 }
 
 dependencies {
 	minecraft libs.minecraft
-	mappings loom.layered {
-		addLayer quiltMappings.mappings("org.quiltmc:quilt-mappings:${libs.versions.quilt.mappings.get()}:v2")
-	}
+	mappings "mappings:quilt-mappings-1.19.3+build.16:intermediary-v2"
+	
+
 	modImplementation libs.quilt.loader
 
 	modImplementation libs.quilted.fabric.api

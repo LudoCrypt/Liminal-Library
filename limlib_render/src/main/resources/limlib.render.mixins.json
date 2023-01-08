@@ -4,29 +4,30 @@
 	"package": "net.ludocrypt.limlib.render.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
-		"registry.BuiltinRegistriesAccessor",
-		"registry.DynamicRegistryManagerMixin",
-		"registry.RegistryAccessor"
+		"registry.RegistriesAccessor",
+		"registry.RegistryLoaderMixin",
+		"registry.ServerRegistryMixin",
+		"registry.VanillaDynamicRegistriesMixin"
 	],
 	"client": [
 		"chunk.BlockBufferBuilderStorageMixin",
 		"chunk.BuiltChunkMixin",
-		"chunk.ChunkDataClass_7435Mixin",
+		"chunk.ChunkRenderDataMixin",
 		"chunk.RebuildTaskMixin",
 		"model.BakedModelMixin",
 		"model.GeneralBakedModelMixin",
 		"model.JsonUnbakedModelDeserializerMixin",
 		"model.JsonUnbakedModelMixin",
 		"model.MultipartBakedModelMixin",
+		"render.gui.GameRendererAccessor",
+		"render.gui.GameRendererAccessorTwo",
+		"render.gui.InventoryScreenMixin",
 		"render.GameRendererMixin",
 		"render.ItemRendererMixin",
 		"render.VertexBufferAccessor",
 		"render.WorldRendererAfterMixin",
 		"render.WorldRendererBeforeMixin",
-		"render.WorldRendererMixin",
-		"render.gui.GameRendererAccessor",
-		"render.gui.GameRendererAccessorTwo",
-		"render.gui.InventoryScreenMixin"
+		"render.WorldRendererMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

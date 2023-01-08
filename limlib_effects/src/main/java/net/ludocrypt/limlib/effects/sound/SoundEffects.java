@@ -5,20 +5,16 @@ import java.util.Optional;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.ludocrypt.limlib.effects.mixin.BuiltinRegistriesAccessor;
-import net.ludocrypt.limlib.effects.mixin.RegistryAccessor;
 import net.ludocrypt.limlib.effects.sound.distortion.DistortionEffect;
 import net.ludocrypt.limlib.effects.sound.reverb.ReverbEffect;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.sound.MusicSound;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.RegistryKey;
 
 public class SoundEffects {
 
-	public static final RegistryKey<Registry<SoundEffects>> SOUND_EFFECTS_KEY = RegistryAccessor.callCreateRegistryKey("limlib/sound_effects");
-	public static final Registry<SoundEffects> SOUND_EFFECTS = BuiltinRegistriesAccessor.callAddRegistry(SOUND_EFFECTS_KEY, (registry) -> BuiltinRegistries.register(registry, RegistryKey.of(SOUND_EFFECTS_KEY, new Identifier("limlib", "default")), new SoundEffects()));
+	public static final RegistryKey<Registry<SoundEffects>> SOUND_EFFECTS_KEY = RegistryKey.ofRegistry(new Identifier("limlib/sound_effects"));
 
 	public static final Codec<SoundEffects> CODEC = RecordCodecBuilder.create((instance) -> {
 		return instance.group(ReverbEffect.CODEC.optionalFieldOf("reverb").stable().forGetter((soundEffects) -> {

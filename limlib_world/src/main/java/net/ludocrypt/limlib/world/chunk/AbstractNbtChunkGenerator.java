@@ -1,7 +1,6 @@
 package net.ludocrypt.limlib.world.chunk;
 
 import java.util.HashMap;
-import java.util.Optional;
 
 import net.ludocrypt.limlib.world.mixin.BlockEntityAccessor;
 import net.ludocrypt.limlib.world.nbt.NbtPlacerUtil;
@@ -14,22 +13,19 @@ import net.minecraft.loot.LootTables;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.BlockRotation;
-import net.minecraft.util.HolderSet;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.biome.source.BiomeSource;
-import net.minecraft.world.gen.structure.StructureSet;
 
 public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 
 	public final HashMap<String, NbtPlacerUtil> loadedStructures = new HashMap<String, NbtPlacerUtil>(30);
 	public final Identifier nbtId;
 
-	public AbstractNbtChunkGenerator(Registry<StructureSet> registry, Optional<HolderSet<StructureSet>> optional, BiomeSource biomeSource, Identifier nbtId) {
-		super(registry, optional, biomeSource);
+	public AbstractNbtChunkGenerator(BiomeSource biomeSource, Identifier nbtId) {
+		super(biomeSource);
 		this.nbtId = nbtId;
 	}
 

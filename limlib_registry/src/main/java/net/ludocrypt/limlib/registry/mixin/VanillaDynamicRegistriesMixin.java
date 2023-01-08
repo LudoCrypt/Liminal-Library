@@ -8,12 +8,12 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.ludocrypt.limlib.registry.registration.PreRegistration;
-import net.minecraft.util.registry.BuiltinRegistries;
+import net.minecraft.registry.VanillaDynamicRegistries;
 
-@Mixin(BuiltinRegistries.class)
-public class BuiltinRegistriesMixin {
+@Mixin(VanillaDynamicRegistries.class)
+public class VanillaDynamicRegistriesMixin {
 
-	@Inject(method = "<clinit>", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/registry/BuiltinRegistries;addRegistry(Lnet/minecraft/util/registry/RegistryKey;Lnet/minecraft/util/registry/BuiltinRegistries$RegistryBootstrap;)Lnet/minecraft/util/registry/Registry;", ordinal = 0, shift = Shift.BEFORE))
+	@Inject(method = "<clinit>", at = @At(value = "NEW", target = "net/minecraft/registry/RegistrySetBuilder", shift = Shift.BEFORE, ordinal = 0))
 	private static void limlib$clinit(CallbackInfo ci) {
 		QuiltLoader.getEntrypoints(PreRegistration.ENTRYPOINT_KEY, PreRegistration.class).forEach(PreRegistration::register);
 	}

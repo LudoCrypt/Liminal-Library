@@ -3,21 +3,22 @@ package net.ludocrypt.limlib.effects.sound.reverb;
 import java.util.function.Function;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.Lifecycle;
 
-import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
-import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
+import net.ludocrypt.limlib.effects.mixin.RegistriesAccessor;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.sound.SoundInstance;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.SimpleRegistry;
 
 /**
  * A Reverb effect controls
  */
 public abstract class ReverbEffect {
 
-	@SuppressWarnings("unchecked")
-	public static final SimpleRegistry<Codec<? extends ReverbEffect>> REVERB_EFFECT_CODEC = (SimpleRegistry<Codec<? extends ReverbEffect>>) (Object) FabricRegistryBuilder.createSimple(Codec.class, new Identifier("limlib", "limlib_reverb_effect")).attribute(RegistryAttribute.SYNCED).buildAndRegister();
+	public static final RegistryKey<Registry<Codec<? extends ReverbEffect>>> REVERB_EFFECT_CODEC_KEY = RegistryKey.ofRegistry(new Identifier("limlib/codec/reverb_effect"));
+	public static final Registry<Codec<? extends ReverbEffect>> REVERB_EFFECT_CODEC = RegistriesAccessor.callRegisterSimple(REVERB_EFFECT_CODEC_KEY, Lifecycle.stable(), (registry) -> StaticReverbEffect.CODEC);
 	public static final Codec<ReverbEffect> CODEC = REVERB_EFFECT_CODEC.getCodec().dispatchStable(ReverbEffect::getCodec, Function.identity());
 
 	public abstract Codec<? extends ReverbEffect> getCodec();

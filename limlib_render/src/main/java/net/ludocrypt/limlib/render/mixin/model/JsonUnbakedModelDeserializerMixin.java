@@ -31,7 +31,6 @@ public abstract class JsonUnbakedModelDeserializerMixin {
 			for (Entry<String, JsonElement> entry : limlibExtra.entrySet()) {
 				map.put(SpecialModelRenderer.SPECIAL_MODEL_RENDERER.get(new Identifier(entry.getKey())), new Identifier(entry.getValue().getAsString()));
 			}
-
 		}
 		((UnbakedModelAccess) ci.getReturnValue()).getSubModels().putAll(map);
 	}

@@ -13,7 +13,6 @@ import com.mojang.authlib.GameProfile;
 import net.ludocrypt.limlib.registry.util.LimlibUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.network.encryption.PlayerPublicKey;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -27,8 +26,8 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 	@Shadow
 	public ServerPlayNetworkHandler networkHandler;
 
-	public ServerPlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile, PlayerPublicKey publicKey) {
-		super(world, pos, yaw, gameProfile, publicKey);
+	public ServerPlayerEntityMixin(World world, BlockPos pos, float f, GameProfile gameProfile) {
+		super(world, pos, f, gameProfile);
 	}
 
 	@Inject(method = "moveToWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/Packet;)V", ordinal = 5, shift = Shift.AFTER))

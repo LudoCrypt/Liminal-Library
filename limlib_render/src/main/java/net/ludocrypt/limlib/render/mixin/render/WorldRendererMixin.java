@@ -3,6 +3,7 @@ package net.ludocrypt.limlib.render.mixin.render;
 import java.util.List;
 import java.util.Optional;
 
+import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -49,9 +50,9 @@ import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.decoration.ItemFrameEntity;
 import net.minecraft.entity.passive.FoxEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.util.math.Axis;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Vec3f;
 import net.minecraft.util.random.RandomGenerator;
 
 @Mixin(value = WorldRenderer.class, priority = 900)
@@ -87,9 +88,9 @@ public abstract class WorldRendererMixin implements WorldRendererAccess {
 
 		MatrixStack modelViewStack = RenderSystem.getModelViewStack();
 		modelViewStack.push();
-		modelViewStack.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(camera.getPitch()));
-		modelViewStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(camera.getYaw()));
-		modelViewStack.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180));
+		modelViewStack.multiply(Axis.X_POSITIVE.rotationDegrees(camera.getPitch()));
+		modelViewStack.multiply(Axis.Y_POSITIVE.rotationDegrees(camera.getYaw()));
+		modelViewStack.multiply(Axis.Y_POSITIVE.rotationDegrees(180));
 		RenderSystem.applyModelViewMatrix();
 
 		SimpleFramebuffer frameBuffer = new SimpleFramebuffer(client.getFramebuffer().viewportWidth, client.getFramebuffer().viewportHeight, false, false);
@@ -106,7 +107,7 @@ public abstract class WorldRendererMixin implements WorldRendererAccess {
 
 	@Override
 	public void renderHands(Framebuffer framebuffer, float tickDelta, MatrixStack matrices, Camera camera) {
-		Matrix4f projectionMatrix = RenderSystem.getProjectionMatrix().copy();
+		Matrix4f projectionMatrix = new Matrix4f(RenderSystem.getProjectionMatrix());
 
 		if (((GameRendererAccessor) client.gameRenderer).isRenderHand()) {
 			framebuffer.beginWrite(true);
@@ -114,9 +115,9 @@ public abstract class WorldRendererMixin implements WorldRendererAccess {
 			this.isRenderingHands = true;
 			matrices.push();
 
-			matrices.multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(180));
-			matrices.multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(camera.getYaw()));
-			matrices.multiply(Vec3f.NEGATIVE_X.getDegreesQuaternion(camera.getPitch()));
+			matrices.multiply(Axis.Y_NEGATIVE.rotationDegrees(180));
+			matrices.multiply(Axis.Y_NEGATIVE.rotationDegrees(camera.getYaw()));
+			matrices.multiply(Axis.X_NEGATIVE.rotationDegrees(camera.getPitch()));
 
 			((GameRendererAccessorTwo) client.gameRenderer).callRenderHand(matrices, camera, tickDelta);
 
@@ -161,7 +162,7 @@ public abstract class WorldRendererMixin implements WorldRendererAccess {
 	public void renderSkyboxes(MatrixStack matrices, Matrix4f positionMatrix, float tickDelta) {
 		MinecraftClient client = MinecraftClient.getInstance();
 
-		Optional<Skybox> sky = Skybox.SKYBOX.getOrEmpty(client.world.getRegistryKey().getValue());
+		Optional<Skybox> sky = LimlibRender.snatch(client.world.getRegistryManager().getLookup(Skybox.SKYBOX_KEY).get(), RegistryKey.of(Skybox.SKYBOX_KEY, client.world.getRegistryKey().getValue()));
 		if (sky.isPresent()) {
 			sky.get().renderSky(((WorldRenderer) (Object) this), client, matrices, positionMatrix, tickDelta);
 		}
@@ -192,13 +193,13 @@ public abstract class WorldRendererMixin implements WorldRendererAccess {
 						matrices.translate(pos.getX() - camera.getPos().getX(), pos.getY() - camera.getPos().getY(), pos.getZ() - camera.getPos().getZ());
 
 						MatrixStack matrix = new MatrixStack();
-						matrix.multiplyMatrix(matrices.peek().getPosition().copy());
+						matrix.multiplyMatrix(new Matrix4f(matrices.peek().getModel()));
 
 						RenderSystem.disableTexture();
 						RenderSystem.depthMask(true);
 						RenderSystem.enableBlend();
 						RenderSystem.enableDepthTest();
-						RenderSystem.blendFuncSeparate(GlStateManager.class_4535.SRC_ALPHA, GlStateManager.class_4534.ONE_MINUS_SRC_ALPHA, GlStateManager.class_4535.ONE, GlStateManager.class_4534.ONE_MINUS_SRC_ALPHA);
+						RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 						RenderSystem.polygonOffset(3.0F, 3.0F);
 						RenderSystem.enablePolygonOffset();
 						client.gameRenderer.getLightmapTextureManager().enable();
@@ -247,7 +248,7 @@ public abstract class WorldRendererMixin implements WorldRendererAccess {
 			RenderSystem.depthMask(true);
 			RenderSystem.enableBlend();
 			RenderSystem.enableDepthTest();
-			RenderSystem.blendFuncSeparate(GlStateManager.class_4535.SRC_ALPHA, GlStateManager.class_4534.ONE_MINUS_SRC_ALPHA, GlStateManager.class_4535.ONE, GlStateManager.class_4534.ONE_MINUS_SRC_ALPHA);
+			RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 			RenderSystem.polygonOffset(3.0F, 3.0F);
 			RenderSystem.enablePolygonOffset();
 			RenderSystem.setShader(() -> shader);
@@ -271,7 +272,7 @@ public abstract class WorldRendererMixin implements WorldRendererAccess {
 				shader.getUniform("renderAsEntity").setFloat(0.0F);
 			}
 
-			vertexBuffer.setShader(matrices.peek().getPosition(), positionMatrix, shader);
+			vertexBuffer.draw(matrices.peek().getModel(), positionMatrix, shader);
 
 			VertexBuffer.unbind();
 

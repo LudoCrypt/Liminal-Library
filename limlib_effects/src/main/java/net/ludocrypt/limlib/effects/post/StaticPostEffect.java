@@ -1,13 +1,8 @@
-package net.ludocrypt.limlib.effects.render.post;
+package net.ludocrypt.limlib.effects.post;
 
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.ludocrypt.limlib.effects.render.post.holder.ShaderHolder;
 import net.minecraft.util.Identifier;
 
 public class StaticPostEffect extends PostEffect {
@@ -20,9 +15,6 @@ public class StaticPostEffect extends PostEffect {
 
 	private final Identifier shaderName;
 
-	@Environment(EnvType.CLIENT)
-	private final Supplier<ShaderHolder> memoizedShaderEffect = Suppliers.memoize(() -> new ShaderHolder(this.getShaderLocation()));
-
 	public StaticPostEffect(Identifier shaderLocation) {
 		this.shaderName = shaderLocation;
 	}
@@ -34,7 +26,7 @@ public class StaticPostEffect extends PostEffect {
 
 	@Override
 	public boolean shouldRender() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -45,12 +37,6 @@ public class StaticPostEffect extends PostEffect {
 	@Override
 	public Identifier getShaderLocation() {
 		return new Identifier(shaderName.getNamespace(), "shaders/post/" + shaderName.getPath() + ".json");
-	}
-
-	@Override
-	@Environment(EnvType.CLIENT)
-	public Supplier<ShaderHolder> getMemoizedShaderEffect() {
-		return memoizedShaderEffect;
 	}
 
 }

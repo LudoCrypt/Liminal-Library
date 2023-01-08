@@ -20,14 +20,14 @@ import net.ludocrypt.limlib.render.LimlibRender;
 import net.ludocrypt.limlib.render.special.SpecialModelRenderer;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.ShaderProgram;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.resource.ResourceFactory;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
 
 	@Inject(method = "loadShaders", at = @At(value = "INVOKE", target = "Ljava/util/List;add(Ljava/lang/Object;)Z", ordinal = 54, shift = Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
-	private void limlib$loadShaders(ResourceManager manager, CallbackInfo ci, List<ShaderStage> list, List<Pair<ShaderProgram, Consumer<ShaderProgram>>> list2) {
+	private void limlib$loadShaders(ResourceFactory manager, CallbackInfo ci, List<ShaderStage> list, List<Pair<ShaderProgram, Consumer<ShaderProgram>>> list2) {
 		LimlibRender.LOADED_SHADERS.clear();
 		SpecialModelRenderer.SPECIAL_MODEL_RENDERER.getEntries().stream().map(Entry::getKey).map(RegistryKey::getValue).forEach((id) -> {
 			try {

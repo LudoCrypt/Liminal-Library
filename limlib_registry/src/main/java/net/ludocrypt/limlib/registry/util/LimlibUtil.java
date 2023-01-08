@@ -91,7 +91,7 @@ public class LimlibUtil implements ModInitializer {
 					ServerWorld world = DimensionArgumentType.getDimensionArgument(source, "destination");
 					Vec3d pos = Vec3ArgumentType.getVec3(source, "location");
 					Vec2f vec = RotationArgumentType.getRotation(source, "angle").toAbsoluteRotation(source.getSource());
-					SoundEvent sound = new SoundEvent(IdentifierArgumentType.getIdentifier(source, "sound"));
+					SoundEvent sound = SoundEvent.createVariableRangeEvent(IdentifierArgumentType.getIdentifier(source, "sound"));
 					float volume = 0.25F;
 					float pitch = 1.0F;
 					travelTo(entity, world, new TeleportTarget(pos, entity.getVelocity(), vec.y, vec.x), sound, volume, pitch);
@@ -103,7 +103,7 @@ public class LimlibUtil implements ModInitializer {
 					ServerWorld world = DimensionArgumentType.getDimensionArgument(source, "destination");
 					Vec3d pos = Vec3ArgumentType.getVec3(source, "location");
 					Vec2f vec = RotationArgumentType.getRotation(source, "angle").toAbsoluteRotation(source.getSource());
-					SoundEvent sound = new SoundEvent(IdentifierArgumentType.getIdentifier(source, "sound"));
+					SoundEvent sound = SoundEvent.createVariableRangeEvent(IdentifierArgumentType.getIdentifier(source, "sound"));
 					float volume = FloatArgumentType.getFloat(source, "volume");
 					float pitch = 1.0F;
 					travelTo(entity, world, new TeleportTarget(pos, entity.getVelocity(), vec.y, vec.x), sound, volume, pitch);
@@ -115,7 +115,7 @@ public class LimlibUtil implements ModInitializer {
 					ServerWorld world = DimensionArgumentType.getDimensionArgument(source, "destination");
 					Vec3d pos = Vec3ArgumentType.getVec3(source, "location");
 					Vec2f vec = RotationArgumentType.getRotation(source, "angle").toAbsoluteRotation(source.getSource());
-					SoundEvent sound = new SoundEvent(IdentifierArgumentType.getIdentifier(source, "sound"));
+					SoundEvent sound = SoundEvent.createVariableRangeEvent(IdentifierArgumentType.getIdentifier(source, "sound"));
 					float volume = FloatArgumentType.getFloat(source, "volume");
 					float pitch = FloatArgumentType.getFloat(source, "pitch");
 					travelTo(entity, world, new TeleportTarget(pos, entity.getVelocity(), vec.y, vec.x), sound, volume, pitch);

@@ -3,6 +3,8 @@ package net.ludocrypt.limlib.render.mixin.render;
 import java.util.List;
 import java.util.Set;
 
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -37,10 +39,8 @@ import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.BakedQuad;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.math.Axis;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.math.Matrix3f;
-import net.minecraft.util.math.Matrix4f;
-import net.minecraft.util.math.Vec3f;
 import net.minecraft.util.random.RandomGenerator;
 
 @Mixin(ItemRenderer.class)
@@ -62,8 +62,8 @@ public class ItemRendererMixin implements ItemRendererAccess {
 
 		if (isHandRendering || isItemRendering || inGui) {
 			ItemStack copiedStack = stack.copy();
-			Matrix3f matrixNormalClone = matrices.peek().getNormal().copy();
-			Matrix4f matrixPositionClone = matrices.peek().getPosition().copy();
+			Matrix3f matrixNormalClone = new Matrix3f(matrices.peek().getNormal());
+			Matrix4f matrixPositionClone = new Matrix4f(matrices.peek().getModel());
 			List<Runnable> immediateRenderer = Lists.newArrayList();
 
 			(isHandRendering ? LimlibRender.HAND_RENDER_QUEUE : isItemRendering ? LimlibRender.ITEM_RENDER_QUEUE : immediateRenderer).add(() -> {
@@ -74,7 +74,7 @@ public class ItemRendererMixin implements ItemRendererAccess {
 						if (shader != null) {
 							RenderSystem.enableBlend();
 							RenderSystem.enableDepthTest();
-							RenderSystem.blendFuncSeparate(GlStateManager.class_4535.SRC_ALPHA, GlStateManager.class_4534.ONE_MINUS_SRC_ALPHA, GlStateManager.class_4535.ONE, GlStateManager.class_4534.ONE_MINUS_SRC_ALPHA);
+							RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 							RenderSystem.polygonOffset(3.0F, 3.0F);
 							RenderSystem.enablePolygonOffset();
 							RenderSystem.setShader(() -> shader);
@@ -84,12 +84,12 @@ public class ItemRendererMixin implements ItemRendererAccess {
 							Camera camera = client.gameRenderer.getCamera();
 							MatrixStack matrix = new MatrixStack();
 							if (!inGui) {
-								matrix.peek().getPosition().multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(180));
-								matrix.peek().getPosition().multiply(Vec3f.NEGATIVE_Y.getDegreesQuaternion(camera.getYaw()));
-								matrix.peek().getPosition().multiply(Vec3f.NEGATIVE_X.getDegreesQuaternion(camera.getPitch()));
+								matrix.peek().getModel().rotate(Axis.Y_NEGATIVE.rotationDegrees(180));
+								matrix.peek().getModel().rotate(Axis.Y_NEGATIVE.rotationDegrees(camera.getYaw()));
+								matrix.peek().getModel().rotate(Axis.X_NEGATIVE.rotationDegrees(camera.getPitch()));
 							}
-							matrix.peek().getPosition().multiply(matrixPositionClone);
-							matrix.peek().getNormal().multiply(matrixNormalClone);
+							matrix.peek().getModel().mul(matrixPositionClone);
+							matrix.peek().getNormal().mul(matrixNormalClone);
 
 							BufferBuilder bufferBuilder = Tessellator.getInstance().getBufferBuilder();
 							bufferBuilder.begin(DrawMode.QUADS, VertexFormats.POSITION_COLOR_TEXTURE_LIGHT_NORMAL);

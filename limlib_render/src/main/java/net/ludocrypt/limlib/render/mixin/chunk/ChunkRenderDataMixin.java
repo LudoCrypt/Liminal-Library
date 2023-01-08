@@ -9,12 +9,12 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferBuilder.RenderedBuffer;
 
 import it.unimi.dsi.fastutil.objects.Reference2ObjectArrayMap;
-import net.ludocrypt.limlib.render.access.ChunkDataClass_7435Access;
+import net.ludocrypt.limlib.render.access.ChunkRenderDataAccess;
 import net.ludocrypt.limlib.render.special.SpecialModelRenderer;
-import net.minecraft.client.render.chunk.ChunkBuilder;
+import net.minecraft.client.render.chunk.ChunkBuilder.BuiltChunk.RebuildTask.ChunkRenderData;
 
-@Mixin(ChunkBuilder.BuiltChunk.RebuildTask.class_7435.class)
-public class ChunkDataClass_7435Mixin implements ChunkDataClass_7435Access {
+@Mixin(ChunkRenderData.class)
+public class ChunkRenderDataMixin implements ChunkRenderDataAccess {
 
 	@Unique
 	public final Map<SpecialModelRenderer, BufferBuilder.RenderedBuffer> specialModelBuffers = new Reference2ObjectArrayMap<>();

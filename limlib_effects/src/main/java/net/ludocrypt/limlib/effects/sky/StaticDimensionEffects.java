@@ -1,23 +1,23 @@
-package net.ludocrypt.limlib.effects.render.sky;
+package net.ludocrypt.limlib.effects.sky;
 
 import java.util.Optional;
+
+import org.quiltmc.loader.api.minecraft.ClientOnly;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.minecraft.client.render.SkyProperties;
+import net.minecraft.client.render.DimensionVisualEffects;
 
 /**
  * A Sky effects controller
  * <p>
- * This is a simplification of the base {@link SkyEffects} class, where each
- * setting is a static, non-changing value
+ * This is a simplification of the base {@link DimensionEffects} class, where
+ * each setting is a static, non-changing value
  */
-public class StaticSkyEffects extends SkyEffects {
+public class StaticDimensionEffects extends DimensionEffects {
 
-	public static final Codec<StaticSkyEffects> CODEC = RecordCodecBuilder.create((instance) -> {
+	public static final Codec<StaticDimensionEffects> CODEC = RecordCodecBuilder.create((instance) -> {
 		return instance.group(Codec.FLOAT.optionalFieldOf("cloud_height").stable().forGetter((effects) -> {
 			return effects.cloudHeight;
 		}), Codec.BOOL.fieldOf("alternate_sky_color").stable().forGetter((effects) -> {
@@ -32,7 +32,7 @@ public class StaticSkyEffects extends SkyEffects {
 			return effects.thickFog;
 		}), Codec.FLOAT.fieldOf("sky_shading").stable().forGetter((effects) -> {
 			return effects.skyShading;
-		})).apply(instance, instance.stable(StaticSkyEffects::new));
+		})).apply(instance, instance.stable(StaticDimensionEffects::new));
 	});
 
 	private final Optional<Float> cloudHeight;
@@ -43,7 +43,7 @@ public class StaticSkyEffects extends SkyEffects {
 	private final boolean thickFog;
 	private final float skyShading;
 
-	public StaticSkyEffects(Optional<Float> cloudHeight, boolean alternateSkyColor, String skyType, boolean brightenLighting, boolean darkened, boolean thickFog, float skyShading) {
+	public StaticDimensionEffects(Optional<Float> cloudHeight, boolean alternateSkyColor, String skyType, boolean brightenLighting, boolean darkened, boolean thickFog, float skyShading) {
 		this.cloudHeight = cloudHeight;
 		this.alternateSkyColor = alternateSkyColor;
 		this.skyType = skyType;
@@ -53,7 +53,7 @@ public class StaticSkyEffects extends SkyEffects {
 		this.skyShading = skyShading;
 	}
 
-	public Codec<? extends SkyEffects> getCodec() {
+	public Codec<? extends DimensionEffects> getCodec() {
 		return CODEC;
 	}
 
@@ -82,8 +82,8 @@ public class StaticSkyEffects extends SkyEffects {
 	}
 
 	@Override
-	@Environment(EnvType.CLIENT)
-	public SkyProperties getSkyProperties() {
+	@ClientOnly
+	public DimensionVisualEffects getDimensionEffects() {
 		return SkyPropertiesCreator.create(getCloudHeight(), hasAlternateSkyColor(), getSkyType(), shouldBrightenLighting(), isDarkened(), hasThickFog());
 	}
 

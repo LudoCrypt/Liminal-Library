@@ -23,7 +23,7 @@ public class BuiltChunkMixin implements BuiltChunkAccess {
 
 	@Shadow(remap = false)
 	@Final
-	ChunkBuilder field_20833;
+	ChunkBuilder f_dssekupm;
 
 	@Unique
 	private final Map<SpecialModelRenderer, VertexBuffer> specialModelBuffers = SpecialModelRenderer.SPECIAL_MODEL_RENDERER.getEntries().stream().collect(Collectors.toMap(entry -> entry.getValue(), entry -> new VertexBuffer()));
@@ -40,7 +40,7 @@ public class BuiltChunkMixin implements BuiltChunkAccess {
 
 	@Override
 	public ChunkBuilder getSuperChunkBuilder() {
-		return this.field_20833;
+		return this.f_dssekupm;
 	}
 
 	@Inject(method = "delete", at = @At("TAIL"))

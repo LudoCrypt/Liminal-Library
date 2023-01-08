@@ -21,6 +21,7 @@ import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtInt;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.Registries;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.BlockRotation;
@@ -60,7 +61,7 @@ public class NbtPlacerUtil {
 		HashMap<Integer, BlockState> palette = new HashMap<Integer, BlockState>(paletteList.size());
 		List<NbtCompound> paletteCompoundList = paletteList.stream().filter(nbtElement -> nbtElement instanceof NbtCompound).map(element -> (NbtCompound) element).toList();
 		for (int i = 0; i < paletteCompoundList.size(); i++) {
-			palette.put(i, NbtHelper.toBlockState(paletteCompoundList.get(i)).rotate(rotation));
+			palette.put(i, NbtHelper.toBlockState(Registries.BLOCK.asLookup(), paletteCompoundList.get(i)).rotate(rotation));
 		}
 
 		NbtList sizeList = storedNbt.getList("size", 3);
@@ -85,7 +86,7 @@ public class NbtPlacerUtil {
 				HashMap<Integer, BlockState> palette = new HashMap<Integer, BlockState>(paletteList.size());
 				List<NbtCompound> paletteCompoundList = paletteList.stream().filter(nbtElement -> nbtElement instanceof NbtCompound).map(element -> (NbtCompound) element).toList();
 				for (int i = 0; i < paletteCompoundList.size(); i++) {
-					palette.put(i, NbtHelper.toBlockState(paletteCompoundList.get(i)));
+					palette.put(i, NbtHelper.toBlockState(Registries.BLOCK.asLookup(), paletteCompoundList.get(i)));
 				}
 
 				NbtList sizeList = nbt.getList("size", 3);

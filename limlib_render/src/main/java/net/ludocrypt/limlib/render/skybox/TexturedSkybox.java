@@ -1,5 +1,8 @@
 package net.ludocrypt.limlib.render.skybox;
 
+import org.joml.Matrix4f;
+import org.quiltmc.loader.api.minecraft.ClientOnly;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.BufferRenderer;
@@ -9,16 +12,13 @@ import com.mojang.blaze3d.vertex.VertexFormats;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.WorldRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Matrix4f;
+import net.minecraft.util.math.Axis;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3f;
 
 /**
  * 
@@ -40,7 +40,7 @@ public class TexturedSkybox extends Skybox {
 	}
 
 	@Override
-	@Environment(EnvType.CLIENT)
+	@ClientOnly
 	public void renderSky(WorldRenderer worldRenderer, MinecraftClient client, MatrixStack matrices, Matrix4f projectionMatrix, float tickDelta) {
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
@@ -58,30 +58,30 @@ public class TexturedSkybox extends Skybox {
 		for (int i = 0; i < 6; ++i) {
 			matrices.push();
 			if (i == 0) {
-				matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(180.0F));
-				matrices.multiply(Vec3f.POSITIVE_Y.getDegreesQuaternion(180.0F));
+				matrices.multiply(Axis.Z_POSITIVE.rotationDegrees(180.0F));
+				matrices.multiply(Axis.Y_POSITIVE.rotationDegrees(180.0F));
 			}
 
 			if (i == 1) {
-				matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(90.0F));
+				matrices.multiply(Axis.X_POSITIVE.rotationDegrees(90.0F));
 			}
 
 			if (i == 2) {
-				matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(90.0F));
-				matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(90.0F));
+				matrices.multiply(Axis.X_POSITIVE.rotationDegrees(90.0F));
+				matrices.multiply(Axis.Z_POSITIVE.rotationDegrees(90.0F));
 			}
 
 			if (i == 3) {
-				matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(90.0F));
-				matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(180.0F));
+				matrices.multiply(Axis.X_POSITIVE.rotationDegrees(90.0F));
+				matrices.multiply(Axis.Z_POSITIVE.rotationDegrees(180.0F));
 			}
 
 			if (i == 4) {
-				matrices.multiply(Vec3f.POSITIVE_X.getDegreesQuaternion(90.0F));
-				matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(-90.0F));
+				matrices.multiply(Axis.X_POSITIVE.rotationDegrees(90.0F));
+				matrices.multiply(Axis.Z_POSITIVE.rotationDegrees(-90.0F));
 			}
 
-			Matrix4f matrix4f = matrices.peek().getPosition();
+			Matrix4f matrix4f = matrices.peek().getModel();
 
 			RenderSystem.setShaderTexture(0, new Identifier(identifier.toString() + "_" + i + ".png"));
 			bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE_COLOR);

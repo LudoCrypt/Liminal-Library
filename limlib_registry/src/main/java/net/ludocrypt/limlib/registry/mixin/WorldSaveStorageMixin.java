@@ -14,16 +14,16 @@ import com.mojang.serialization.Dynamic;
 
 import net.ludocrypt.limlib.registry.registration.LimlibWorld;
 import net.minecraft.nbt.NbtOps;
-import net.minecraft.util.registry.BuiltinRegistries;
-import net.minecraft.util.registry.RegistryKey;
-import net.minecraft.util.registry.RegistryOps;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryOps;
+import net.minecraft.registry.ServerRegistryLayer;
 import net.minecraft.world.dimension.DimensionOptions;
-import net.minecraft.world.level.storage.LevelStorage;
+import net.minecraft.world.storage.WorldSaveStorage;
 
-@Mixin(LevelStorage.class)
-public class LevelStorageMixin {
+@Mixin(WorldSaveStorage.class)
+public class WorldSaveStorageMixin {
 
-	@ModifyVariable(method = "Lnet/minecraft/world/level/storage/LevelStorage;readGeneratorProperties(Lcom/mojang/serialization/Dynamic;Lcom/mojang/datafixers/DataFixer;I)Lcom/mojang/datafixers/util/Pair;", at = @At(value = "STORE"), ordinal = 1)
+	@ModifyVariable(method = "Lnet/minecraft/world/storage/WorldSaveStorage;readGeneratorProperties(Lcom/mojang/serialization/Dynamic;Lcom/mojang/datafixers/DataFixer;I)Lcom/mojang/serialization/DataResult;", at = @At(value = "STORE"), ordinal = 1)
 	private static <T> Dynamic<T> limlib$readGeneratorProperties$datafix(Dynamic<T> in, Dynamic<T> levelData, DataFixer dataFixer, int version) {
 		Dynamic<T> dynamic = in;
 		for (Entry<RegistryKey<LimlibWorld>, LimlibWorld> entry : LimlibWorld.LIMLIB_WORLD.getEntries()) {
@@ -38,7 +38,7 @@ public class LevelStorageMixin {
 		Dynamic<T> dimensions = in.get("dimensions").orElseEmptyMap();
 		if (!dimensions.get(key.getValue().toString()).result().isPresent()) {
 			Map<Dynamic<T>, Dynamic<T>> dimensionsMap = Maps.newHashMap(dimensions.getMapValues().result().get());
-			dimensionsMap.put(dimensions.createString(key.getValue().toString()), new Dynamic<T>(dimensions.getOps(), (T) DimensionOptions.CODEC.encodeStart(RegistryOps.create(NbtOps.INSTANCE, BuiltinRegistries.MANAGER), world.getDimensionOptionsSupplier().get()).result().get()));
+			dimensionsMap.put(dimensions.createString(key.getValue().toString()), new Dynamic<T>(dimensions.getOps(), (T) DimensionOptions.CODEC.encodeStart(RegistryOps.create(NbtOps.INSTANCE, ServerRegistryLayer.createLayeredManager().getCompositeManager()), world.getDimensionOptionsSupplier().get()).result().get()));
 			in = in.set("dimensions", in.createMap(dimensionsMap));
 		}
 		return in;
