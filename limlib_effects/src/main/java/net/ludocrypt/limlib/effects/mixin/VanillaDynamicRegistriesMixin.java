@@ -26,9 +26,9 @@ public class VanillaDynamicRegistriesMixin {
 
 	@Inject(method = "<clinit>", at = @At("RETURN"))
 	private static void limlib$clinit(CallbackInfo ci) {
-		BUILDER.add(PostEffect.POST_EFFECT_KEY, (context) -> QuiltLoader.getEntrypoints(PostEffectBootstrap.ENTRYPOINT_KEY, PostEffectBootstrap.class).forEach((bootstrap) -> bootstrap.register(context)));
-		BUILDER.add(DimensionEffects.DIMENSION_EFFECTS_KEY, (context) -> QuiltLoader.getEntrypoints(DimensionEffectsBootstrap.ENTRYPOINT_KEY, DimensionEffectsBootstrap.class).forEach((bootstrap) -> bootstrap.register(context)));
-		BUILDER.add(SoundEffects.SOUND_EFFECTS_KEY, (context) -> QuiltLoader.getEntrypoints(SoundEffectsBootstrap.ENTRYPOINT_KEY, SoundEffectsBootstrap.class).forEach((bootstrap) -> bootstrap.register(context)));
+		BUILDER.add(PostEffect.POST_EFFECT_KEY, (context) -> QuiltLoader.getEntrypoints(PostEffectBootstrap.ENTRYPOINT_KEY, PostEffectBootstrap.class).forEach((bootstrap) -> bootstrap.registerPostEffects(context)));
+		BUILDER.add(DimensionEffects.DIMENSION_EFFECTS_KEY, (context) -> QuiltLoader.getEntrypoints(DimensionEffectsBootstrap.ENTRYPOINT_KEY, DimensionEffectsBootstrap.class).forEach((bootstrap) -> bootstrap.registerDimensionEffects(context)));
+		BUILDER.add(SoundEffects.SOUND_EFFECTS_KEY, (context) -> QuiltLoader.getEntrypoints(SoundEffectsBootstrap.ENTRYPOINT_KEY, SoundEffectsBootstrap.class).forEach((bootstrap) -> bootstrap.registerSoundEffects(context)));
 	}
 
 }

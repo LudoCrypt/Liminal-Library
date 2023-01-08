@@ -22,7 +22,7 @@ public class VanillaDynamicRegistriesMixin {
 
 	@Inject(method = "<clinit>", at = @At("RETURN"))
 	private static void limlib$clinit(CallbackInfo ci) {
-		BUILDER.add(Skybox.SKYBOX_KEY, (context) -> QuiltLoader.getEntrypoints(SkyboxBootstrap.ENTRYPOINT_KEY, SkyboxBootstrap.class).forEach((bootstrap) -> bootstrap.register(context)));
+		BUILDER.add(Skybox.SKYBOX_KEY, (context) -> QuiltLoader.getEntrypoints(SkyboxBootstrap.ENTRYPOINT_KEY, SkyboxBootstrap.class).forEach((bootstrap) -> bootstrap.registerSkyboxes(context)));
 	}
 
 }

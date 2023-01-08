@@ -20,6 +20,6 @@ public interface SkyboxBootstrap {
 	/**
 	 * Registers everything.
 	 */
-	void register(BootstrapContext<Skybox> context);
+	void registerSkyboxes(BootstrapContext<Skybox> context);
 
 }

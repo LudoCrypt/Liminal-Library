@@ -20,6 +20,6 @@ public interface DimensionEffectsBootstrap {
 	/**
 	 * Registers everything.
 	 */
-	void register(BootstrapContext<DimensionEffects> context);
+	void registerDimensionEffects(BootstrapContext<DimensionEffects> context);
 
 }

@@ -20,6 +20,6 @@ public interface SoundEffectsBootstrap {
 	/**
 	 * Registers everything.
 	 */
-	void register(BootstrapContext<SoundEffects> context);
+	void registerSoundEffects(BootstrapContext<SoundEffects> context);
 
 }

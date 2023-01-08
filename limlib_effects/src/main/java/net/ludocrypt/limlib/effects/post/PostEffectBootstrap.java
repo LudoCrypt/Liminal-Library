@@ -20,6 +20,6 @@ public interface PostEffectBootstrap {
 	/**
 	 * Registers everything.
 	 */
-	void register(BootstrapContext<PostEffect> context);
+	void registerPostEffects(BootstrapContext<PostEffect> context);
 
 }
