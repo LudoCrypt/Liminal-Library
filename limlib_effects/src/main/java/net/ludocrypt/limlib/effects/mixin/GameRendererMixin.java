@@ -19,8 +19,8 @@ import net.ludocrypt.limlib.effects.post.PostEffect;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
-import net.minecraft.world.World;
 
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
@@ -30,15 +30,7 @@ public class GameRendererMixin {
 	private MinecraftClient client;
 
 	@Unique
-	private final Function<RegistryKey<World>, Optional<ManagedShaderEffect>> memoizedShaders = Util.memoize((world) -> {
-		Optional<PostEffect> optionalPostEffect = LimlibEffects.snatch(client.world.getRegistryManager().getLookup(PostEffect.POST_EFFECT_KEY).get(), RegistryKey.of(PostEffect.POST_EFFECT_KEY, client.world.getRegistryKey().getValue()));
-		if (optionalPostEffect.isPresent()) {
-			if (optionalPostEffect.get().getShaderLocation() != null) {
-				return Optional.of(ShaderEffectManager.getInstance().manage(optionalPostEffect.get().getShaderLocation()));
-			}
-		}
-		return Optional.empty();
-	});
+	private final Function<Identifier, ManagedShaderEffect> memoizedShaders = Util.memoize(id -> ShaderEffectManager.getInstance().manage(id));
 
 	@Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/WorldRenderer;drawEntityOutlinesFramebuffer()V", shift = Shift.AFTER))
 	private void limlib$render(float tickDelta, long nanoTime, boolean renderLevel, CallbackInfo info) {
@@ -46,11 +38,8 @@ public class GameRendererMixin {
 		if (optionalPostEffect.isPresent()) {
 			PostEffect postEffect = optionalPostEffect.get();
 			if (postEffect.shouldRender()) {
-				Optional<ManagedShaderEffect> shaderEffect = memoizedShaders.apply(client.world.getRegistryKey());
-				if (shaderEffect.isPresent()) {
-					postEffect.beforeRender();
-					shaderEffect.get().render(tickDelta);
-				}
+				postEffect.beforeRender();
+				memoizedShaders.apply(postEffect.getShaderLocation()).render(tickDelta);
 			}
 		}
 	}

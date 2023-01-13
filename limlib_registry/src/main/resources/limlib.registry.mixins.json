@@ -5,8 +5,9 @@
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
 		"BuiltinDimensionTypesMixin",
+		"DimensionOptionsC_oiwekzxoMixin",
 		"GeneratorTypeAccessor",
-		"GeneratorTypesBootstrapMixin",
+		"RegistryLoaderMixin",
 		"ServerPlayerEntityMixin",
 		"VanillaDynamicRegistriesMixin",
 		"WorldSaveStorageMixin"
