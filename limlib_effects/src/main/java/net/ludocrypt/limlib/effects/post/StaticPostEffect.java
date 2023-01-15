@@ -26,7 +26,7 @@ public class StaticPostEffect extends PostEffect {
 
 	@Override
 	public boolean shouldRender() {
-		return false;
+		return true;
 	}
 
 	@Override
