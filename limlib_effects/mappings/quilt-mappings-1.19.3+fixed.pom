@@ -4,5 +4,5 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.quiltmc</groupId>
   <artifactId>quilt-mappings</artifactId>
-  <version>1.19.3+build.16</version>
+  <version>1.19.3+fixed</version>
 </project>

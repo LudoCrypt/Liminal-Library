@@ -6,7 +6,7 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 
 import net.ludocrypt.limlib.render.special.SpecialModelRenderer;
 
-public interface ChunkRenderDataAccess {
+public interface RenderedChunkDataAccess {
 
 	public Map<SpecialModelRenderer, BufferBuilder.RenderedBuffer> getSpecialModelBuffers();
 
