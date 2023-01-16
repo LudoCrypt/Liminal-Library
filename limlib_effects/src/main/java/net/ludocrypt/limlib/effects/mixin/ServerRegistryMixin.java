@@ -22,8 +22,8 @@ import net.minecraft.unmapped.C_uhbbwvga;
 @Mixin(C_uhbbwvga.class)
 public abstract class ServerRegistryMixin {
 
-	@Inject(method = "m_moxntmzr()Lcom/google/common/collect/ImmutableMap;", at = @At(value = "INVOKE", target = "Lnet/minecraft/unmapped/C_uhbbwvga;m_dfuklmpj(Lcom/google/common/collect/ImmutableMap$Builder;Lnet/minecraft/registry/RegistryKey;Lcom/mojang/serialization/Codec;)V", ordinal = 2, shift = Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD, remap = false)
-	private static void limlib$makeMap(CallbackInfoReturnable<ImmutableMap<RegistryKey<? extends Registry<?>>, C_uhbbwvga.C_keyyzmde<?>>> ci, Builder<RegistryKey<? extends Registry<?>>, C_uhbbwvga.C_keyyzmde<?>> builder) {
+	@Inject(method = "Lnet/minecraft/unmapped/C_uhbbwvga;m_moxntmzr()Lcom/google/common/collect/ImmutableMap;", at = @At(value = "INVOKE", target = "Lnet/minecraft/unmapped/C_uhbbwvga;m_dfuklmpj(Lcom/google/common/collect/ImmutableMap$Builder;Lnet/minecraft/registry/RegistryKey;Lcom/mojang/serialization/Codec;)V", ordinal = 2, shift = Shift.AFTER), locals = LocalCapture.CAPTURE_FAILHARD)
+	private static void limlib$makeMap$mapped(CallbackInfoReturnable<ImmutableMap<RegistryKey<? extends Registry<?>>, C_uhbbwvga.C_keyyzmde<?>>> ci, Builder<RegistryKey<? extends Registry<?>>, C_uhbbwvga.C_keyyzmde<?>> builder) {
 		m_dfuklmpj(builder, PostEffect.POST_EFFECT_KEY, PostEffect.CODEC);
 		m_dfuklmpj(builder, DimensionEffects.DIMENSION_EFFECTS_KEY, DimensionEffects.CODEC);
 		m_dfuklmpj(builder, SoundEffects.SOUND_EFFECTS_KEY, SoundEffects.CODEC);

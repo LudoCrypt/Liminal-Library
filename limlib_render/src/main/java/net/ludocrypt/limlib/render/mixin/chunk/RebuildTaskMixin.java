@@ -44,7 +44,7 @@ import net.minecraft.util.random.RandomGenerator;
 @Mixin(RebuildTask.class)
 public class RebuildTaskMixin {
 
-	@Shadow(remap = false)
+	@Shadow
 	@Final
 	ChunkBuilder.BuiltChunk f_yzjdcnsj;
 

@@ -21,7 +21,7 @@ import net.minecraft.client.render.chunk.ChunkBuilder.BuiltChunk;
 @Mixin(BuiltChunk.class)
 public class BuiltChunkMixin implements BuiltChunkAccess {
 
-	@Shadow(remap = false)
+	@Shadow
 	@Final
 	ChunkBuilder f_dssekupm;
 
