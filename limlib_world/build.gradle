@@ -20,14 +20,11 @@ repositories {
 	maven {
 		url "https://jitpack.io"
 	}
-	flatDir {
-		dirs 'mappings'
-	}
 }
 
 dependencies {
 	minecraft libs.minecraft
-	mappings "mappings:quilt-mappings-1.19.3+fixed:local-v2"
+	mappings "org.quiltmc:quilt-mappings:${libs.versions.quilt.mappings.get()}:intermediary-v2"
 
 	modImplementation libs.quilt.loader
 

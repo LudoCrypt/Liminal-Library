@@ -14,11 +14,9 @@ import net.minecraft.server.world.ServerLightingProvider;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.structure.StructureManager;
 import net.minecraft.structure.StructureTemplateManager;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkRegion;
 import net.minecraft.world.HeightLimitView;
 import net.minecraft.world.Heightmap.Type;
-import net.minecraft.world.biome.GenerationSettings;
 import net.minecraft.world.biome.source.BiomeAccess;
 import net.minecraft.world.biome.source.BiomeSource;
 import net.minecraft.world.chunk.Chunk;
@@ -35,7 +33,7 @@ import net.minecraft.world.gen.chunk.VerticalBlockSample;
 public abstract class LiminalChunkGenerator extends ChunkGenerator {
 
 	public LiminalChunkGenerator(BiomeSource biomeSource) {
-		super(biomeSource, (biome) -> GenerationSettings.INSTANCE);
+		super(biomeSource);
 	}
 
 	@Override
@@ -56,17 +54,19 @@ public abstract class LiminalChunkGenerator extends ChunkGenerator {
 	}
 
 	/**
-	 * How many chunks (distance) around the currently generating chunk from the
-	 * populateNoise method should be allowed to generate into.
+	 * Radius of ring around the currently generating chunk from the
+	 * populateNoise method to be allowed to generate into.
 	 */
 	public abstract int getChunkDistance();
 
 	/**
-	 * An extention of the base populateNoise method but with more variables. Use
+	 * An extension of the base populateNoise method but with more variables. Use
 	 * ChunkRegion as opposed to world when setting blocks, as it allows you to
-	 * extend through multiple chunks in {@link getChunkDistance} away.
+	 * extend through multiple chunks in {@link LiminalChunkGenerator#getChunkDistance()} away.
 	 */
-	public abstract CompletableFuture<Chunk> populateNoise(ChunkRegion chunkRegion, ChunkStatus targetStatus, Executor executor, ServerWorld world, ChunkGenerator generator, StructureTemplateManager structureTemplateManager, ServerLightingProvider lightingProvider, Function<Chunk, CompletableFuture<Either<Chunk, ChunkHolder.Unloaded>>> fullChunkConverter, List<Chunk> chunks, Chunk chunk, boolean regenerate);
+	public abstract CompletableFuture<Chunk> populateNoise(ChunkRegion chunkRegion, ChunkStatus targetStatus, Executor executor, ServerWorld world, ChunkGenerator generator,
+			StructureTemplateManager structureTemplateManager, ServerLightingProvider lightingProvider, Function<Chunk, CompletableFuture<Either<Chunk, ChunkHolder.Unloaded>>> fullChunkConverter,
+			List<Chunk> chunks, Chunk chunk, boolean regenerate);
 
 	@Override
 	public int getSeaLevel() {
@@ -90,11 +90,6 @@ public abstract class LiminalChunkGenerator extends ChunkGenerator {
 			states[i] = Blocks.AIR.getDefaultState();
 		}
 		return new VerticalBlockSample(0, states);
-	}
-
-	@Override
-	public void m_hfetlfug(List<String> list, RandomState randomState, BlockPos pos) {
-
 	}
 
 }

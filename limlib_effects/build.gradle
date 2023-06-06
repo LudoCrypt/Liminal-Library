@@ -7,9 +7,9 @@ archivesBaseName = project.archives_base_name
 version = project.version
 group = project.maven_group
 
-loom {
-	accessWidenerPath = file("src/main/resources/limlib_effects.accesswidener")
-}
+//loom {
+//	accessWidenerPath = file("src/main/resources/limlib_effects.accesswidener")
+//}
 
 repositories {
 	maven {
@@ -24,14 +24,11 @@ repositories {
 	maven {
 		url "https://jitpack.io"
 	}
-	flatDir {
-		dirs 'mappings'
-	}
 }
 
 dependencies {
 	minecraft libs.minecraft
-	mappings "mappings:quilt-mappings-1.19.3+fixed:local-v2"
+	mappings "org.quiltmc:quilt-mappings:${libs.versions.quilt.mappings.get()}:intermediary-v2"
 
 	modImplementation libs.quilt.loader
 
