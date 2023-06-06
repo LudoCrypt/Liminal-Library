@@ -5,6 +5,7 @@ out/
 classes/
 
 # Quilt Loom
+remappedSrc/
 run/
 
 # Eclipse
@@ -15,6 +16,9 @@ run/
 *.iml
 *.ipr
 *.iws
+
+# Fleet
+.fleet/
 
 # Visual Studio Code
 .settings/

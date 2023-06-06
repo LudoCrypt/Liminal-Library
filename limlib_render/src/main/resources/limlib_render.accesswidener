@@ -1,8 +1,0 @@
-accessWidener v1 named
-accessible class net/minecraft/registry/Registries$RegistryBootstrap
-accessible class net/minecraft/unmapped/C_uhbbwvga$C_keyyzmde
-accessible class net/minecraft/client/render/chunk/ChunkBuilder$Result
-accessible class net/minecraft/client/render/chunk/ChunkBuilder$BuiltChunk$RebuildTask
-accessible class net/minecraft/client/render/chunk/ChunkBuilder$BuiltChunk$RebuildTask$RenderedChunkData
-accessible class net/minecraft/client/render/WorldRenderer$ChunkInfo
-accessible field net/minecraft/client/render/WorldRenderer$ChunkInfo chunk Lnet/minecraft/client/render/chunk/ChunkBuilder$BuiltChunk;
