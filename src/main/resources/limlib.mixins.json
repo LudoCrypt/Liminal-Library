@@ -23,7 +23,9 @@
 		"client.GameRendererMixin",
 		"client.MinecraftClientMixin",
 		"client.SoundSystemMixin",
-		"client.SourceAccessor"
+		"client.SourceAccessor",
+		"client.WorldRendererAfterMixin",
+		"client.WorldRendererBeforeMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

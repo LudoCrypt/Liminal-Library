@@ -15,6 +15,7 @@ import com.mojang.serialization.Codec;
 import net.ludocrypt.limlib.api.effects.post.PostEffect;
 import net.ludocrypt.limlib.api.effects.sky.DimensionEffects;
 import net.ludocrypt.limlib.api.effects.sound.SoundEffects;
+import net.ludocrypt.limlib.api.skybox.Skybox;
 import net.minecraft.registry.DynamicRegistrySync;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -28,6 +29,7 @@ public abstract class DynamicRegistrySyncMixin {
 		addSyncedRegistry(builder, PostEffect.POST_EFFECT_KEY, PostEffect.CODEC);
 		addSyncedRegistry(builder, DimensionEffects.DIMENSION_EFFECTS_KEY, DimensionEffects.CODEC);
 		addSyncedRegistry(builder, SoundEffects.SOUND_EFFECTS_KEY, SoundEffects.CODEC);
+		addSyncedRegistry(builder, Skybox.SKYBOX_KEY, Skybox.CODEC);
 	}
 
 	@Shadow

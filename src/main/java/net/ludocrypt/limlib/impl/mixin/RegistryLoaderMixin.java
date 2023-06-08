@@ -29,6 +29,7 @@ import net.ludocrypt.limlib.api.LimlibWorld.RegistryProvider;
 import net.ludocrypt.limlib.api.effects.post.PostEffect;
 import net.ludocrypt.limlib.api.effects.sky.DimensionEffects;
 import net.ludocrypt.limlib.api.effects.sound.SoundEffects;
+import net.ludocrypt.limlib.api.skybox.Skybox;
 import net.ludocrypt.limlib.impl.SaveStorageSupplier;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.HolderProvider;
@@ -60,6 +61,7 @@ public class RegistryLoaderMixin {
 		newRegistries.add(new RegistryLoader.DecodingData(PostEffect.POST_EFFECT_KEY, PostEffect.CODEC));
 		newRegistries.add(new RegistryLoader.DecodingData(DimensionEffects.DIMENSION_EFFECTS_KEY, DimensionEffects.CODEC));
 		newRegistries.add(new RegistryLoader.DecodingData(SoundEffects.SOUND_EFFECTS_KEY, SoundEffects.CODEC));
+		newRegistries.add(new RegistryLoader.DecodingData(Skybox.SKYBOX_KEY, Skybox.CODEC));
 		WORLDGEN_REGISTRIES = newRegistries;
 	}
 
