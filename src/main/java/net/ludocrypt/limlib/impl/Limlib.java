@@ -1,10 +1,12 @@
 package net.ludocrypt.limlib.impl;
 
 import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.loader.api.QuiltLoader;
 import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import net.ludocrypt.limlib.api.LimlibRegistrar;
 import net.ludocrypt.limlib.api.LimlibWorld;
 import net.ludocrypt.limlib.api.effects.post.EmptyPostEffect;
 import net.ludocrypt.limlib.api.effects.post.PostEffect;
@@ -33,5 +35,6 @@ public class Limlib implements ModInitializer {
 
 		Registry.register(PostEffect.POST_EFFECT_CODEC, new Identifier("limlib", "static"), StaticPostEffect.CODEC);
 		Registry.register(PostEffect.POST_EFFECT_CODEC, new Identifier("limlib", "empty"), EmptyPostEffect.CODEC);
+		QuiltLoader.getEntrypoints(LimlibRegistrar.ENTRYPOINT_KEY, LimlibRegistrar.class).forEach(LimlibRegistrar::registerHooks);
 	}
 }
