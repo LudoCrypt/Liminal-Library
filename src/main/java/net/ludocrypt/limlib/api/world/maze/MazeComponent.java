@@ -66,6 +66,10 @@ public abstract class MazeComponent {
 		return this.hasNorthNeighbor(vec) || this.hasEastNeighbor(vec) || this.hasSouthNeighbor(vec) || this.hasWestNeighbor(vec);
 	}
 
+	public boolean fits(Vec2i vec) {
+		return vec.getX() >= 0 && vec.getX() < this.width && vec.getY() >= 0 && vec.getY() < this.height;
+	}
+
 	/**
 	 * Describes the state of a particular room or 'cell' in a maze
 	 * <p>

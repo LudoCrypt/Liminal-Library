@@ -55,8 +55,8 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 	}
 
 	public void generateNbt(ChunkRegion region, BlockPos at, String id, BlockRotation rotation, BlockMirror mirror) {
-		loadedStructures.get(id).rotate(rotation).mirror(mirror).generateNbt(region, at, (pos, state, nbt) -> this.modifyStructure(region, pos, state, nbt)).spawnEntities(region, at, rotation,
-				mirror);
+		NbtPlacerUtil.mirror(NbtPlacerUtil.rotate(loadedStructures.get(id), rotation), mirror).generateNbt(region, at, (pos, state, nbt) -> this.modifyStructure(region, pos, state, nbt))
+				.spawnEntities(region, at, rotation, mirror);
 	}
 
 	@SuppressWarnings("deprecation")
