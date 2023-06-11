@@ -12,6 +12,7 @@ import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.loot.LootTables;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -42,11 +43,20 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 	}
 
 	public void generateNbt(ChunkRegion region, BlockPos at, String id) {
-		generateNbt(region, at, id, BlockRotation.NONE);
+		generateNbt(region, at, id, BlockRotation.NONE, BlockMirror.NONE);
 	}
 
 	public void generateNbt(ChunkRegion region, BlockPos at, String id, BlockRotation rotation) {
-		loadedStructures.get(id).rotate(rotation).generateNbt(region, at, (pos, state, nbt) -> this.modifyStructure(region, pos, state, nbt)).spawnEntities(region, at, rotation);
+		generateNbt(region, at, id, rotation, BlockMirror.NONE);
+	}
+
+	public void generateNbt(ChunkRegion region, BlockPos at, String id, BlockMirror mirror) {
+		generateNbt(region, at, id, BlockRotation.NONE, mirror);
+	}
+
+	public void generateNbt(ChunkRegion region, BlockPos at, String id, BlockRotation rotation, BlockMirror mirror) {
+		loadedStructures.get(id).rotate(rotation).mirror(mirror).generateNbt(region, at, (pos, state, nbt) -> this.modifyStructure(region, pos, state, nbt)).spawnEntities(region, at, rotation,
+				mirror);
 	}
 
 	@SuppressWarnings("deprecation")

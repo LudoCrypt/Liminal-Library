@@ -30,15 +30,6 @@
 	"modmenu": {
 		"badges": [
 			"library"
-		],
-		"parent": {
-			"id": "limlib",
-			"name": "Liminal Library",
-			"description": "A library to help out with all things Liminal",
-			"icon": "assets/limlib/icon.png",
-			"badges": [
-				"library"
-			]
-		}
+		]
 	}
 }

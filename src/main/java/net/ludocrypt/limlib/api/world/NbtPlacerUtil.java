@@ -24,6 +24,7 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.Registries;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
@@ -72,6 +73,30 @@ public class NbtPlacerUtil {
 		HashMap<BlockPos, Pair<BlockState, NbtCompound>> positions = new HashMap<BlockPos, Pair<BlockState, NbtCompound>>(positionsList.size());
 		List<Pair<BlockPos, Pair<BlockState, NbtCompound>>> positionsPairList = positionsList.stream().filter(nbtElement -> nbtElement instanceof NbtCompound).map(element -> (NbtCompound) element)
 				.map((nbtCompound) -> Pair.of(new BlockPos(nbtCompound.getList("pos", 3).getInt(0), nbtCompound.getList("pos", 3).getInt(1), nbtCompound.getList("pos", 3).getInt(2)).rotate(rotation),
+						Pair.of(palette.get(nbtCompound.getInt("state")), nbtCompound.getCompound("nbt"))))
+				.sorted(Comparator.comparing((pair) -> pair.getFirst().getX())).sorted(Comparator.comparing((pair) -> pair.getFirst().getY()))
+				.sorted(Comparator.comparing((pair) -> pair.getFirst().getZ())).toList();
+		positionsPairList.forEach((pair) -> positions.put(pair.getFirst().subtract(positionsPairList.get(0).getFirst()), pair.getSecond()));
+
+		return new NbtPlacerUtil(storedNbt, positions, storedNbt.getList("entities", 10), positionsPairList.get(0).getFirst(), sizeVector);
+	}
+
+	public NbtPlacerUtil mirror(BlockMirror mirror) {
+		NbtList paletteList = storedNbt.getList("palette", 10);
+		HashMap<Integer, BlockState> palette = new HashMap<Integer, BlockState>(paletteList.size());
+		List<NbtCompound> paletteCompoundList = paletteList.stream().filter(nbtElement -> nbtElement instanceof NbtCompound).map(element -> (NbtCompound) element).toList();
+		for (int i = 0; i < paletteCompoundList.size(); i++) {
+			palette.put(i, NbtHelper.toBlockState(Registries.BLOCK.asLookup(), paletteCompoundList.get(i)).mirror(mirror));
+		}
+
+		NbtList sizeList = storedNbt.getList("size", 3);
+		BlockPos sizeVectorMirrored = mirror(new BlockPos(sizeList.getInt(0), sizeList.getInt(1), sizeList.getInt(2)), mirror);
+		BlockPos sizeVector = new BlockPos(Math.abs(sizeVectorMirrored.getX()), Math.abs(sizeVectorMirrored.getY()), Math.abs(sizeVectorMirrored.getZ()));
+
+		NbtList positionsList = storedNbt.getList("blocks", 10);
+		HashMap<BlockPos, Pair<BlockState, NbtCompound>> positions = new HashMap<BlockPos, Pair<BlockState, NbtCompound>>(positionsList.size());
+		List<Pair<BlockPos, Pair<BlockState, NbtCompound>>> positionsPairList = positionsList.stream().filter(nbtElement -> nbtElement instanceof NbtCompound).map(element -> (NbtCompound) element)
+				.map((nbtCompound) -> Pair.of(mirror(new BlockPos(nbtCompound.getList("pos", 3).getInt(0), nbtCompound.getList("pos", 3).getInt(1), nbtCompound.getList("pos", 3).getInt(2)), mirror),
 						Pair.of(palette.get(nbtCompound.getInt("state")), nbtCompound.getCompound("nbt"))))
 				.sorted(Comparator.comparing((pair) -> pair.getFirst().getX())).sorted(Comparator.comparing((pair) -> pair.getFirst().getY()))
 				.sorted(Comparator.comparing((pair) -> pair.getFirst().getZ())).toList();
@@ -146,11 +171,12 @@ public class NbtPlacerUtil {
 		return this;
 	}
 
-	public NbtPlacerUtil spawnEntities(ChunkRegion region, BlockPos pos, BlockRotation rotation) {
+	public NbtPlacerUtil spawnEntities(ChunkRegion region, BlockPos pos, BlockRotation rotation, BlockMirror mirror) {
 		this.entities.forEach((nbtElement) -> {
 			NbtCompound entityCompound = (NbtCompound) nbtElement;
 			NbtList nbtPos = entityCompound.getList("blockPos", 3);
-			Vec3d realPosition = rotate(new Vec3d(nbtPos.getInt(0), nbtPos.getInt(1), nbtPos.getInt(2)), rotation).subtract(Vec3d.of(lowestPos)).add(pos.getX(), pos.getY(), pos.getZ());
+			Vec3d realPosition = mirror(rotate(new Vec3d(nbtPos.getInt(0), nbtPos.getInt(1), nbtPos.getInt(2)), rotation), mirror).subtract(Vec3d.of(lowestPos)).add(pos.getX(), pos.getY(),
+					pos.getZ());
 
 			NbtCompound nbt = entityCompound.getCompound("nbt").copy();
 			nbt.remove("Pos");
@@ -173,14 +199,14 @@ public class NbtPlacerUtil {
 
 			NbtList rotationList = new NbtList();
 			NbtList entityRotationList = nbt.getList("Rotation", 5);
-			float yawRotation = applyRotation(entityRotationList.getFloat(0), rotation);
+			float yawRotation = applyMirror(applyRotation(entityRotationList.getFloat(0), rotation), mirror);
 			rotationList.add(NbtFloat.of(yawRotation));
 			rotationList.add(NbtFloat.of(entityRotationList.getFloat(1)));
 			nbt.remove("Rotation");
 			nbt.put("Rotation", rotationList);
 
 			if (nbt.contains("facing")) {
-				Direction dir = rotation.rotate(Direction.fromHorizontal(nbt.getByte("facing")));
+				Direction dir = mirror(rotation.rotate(Direction.fromHorizontal(nbt.getByte("facing"))), mirror);
 				nbt.remove("facing");
 				nbt.putByte("facing", (byte) dir.getHorizontal());
 			}
@@ -216,6 +242,18 @@ public class NbtPlacerUtil {
 		}
 	}
 
+	public static Vec3d mirror(Vec3d in, BlockMirror mirror) {
+		switch (mirror) {
+		case NONE:
+		default:
+			return in;
+		case LEFT_RIGHT:
+			return new Vec3d(in.getX(), in.getY(), -in.getZ());
+		case FRONT_BACK:
+			return new Vec3d(-in.getX(), in.getY(), in.getZ());
+		}
+	}
+
 	public static BlockPos rotate(BlockPos in, BlockRotation rotation) {
 		switch (rotation) {
 		case NONE:
@@ -230,6 +268,37 @@ public class NbtPlacerUtil {
 		}
 	}
 
+	public static BlockPos mirror(BlockPos in, BlockMirror mirror) {
+		switch (mirror) {
+		case NONE:
+		default:
+			return in;
+		case LEFT_RIGHT:
+			return new BlockPos(in.getX(), in.getY(), -in.getZ());
+		case FRONT_BACK:
+			return new BlockPos(-in.getX(), in.getY(), in.getZ());
+		}
+	}
+
+	public Direction mirror(Direction in, BlockMirror mirror) {
+		switch (mirror) {
+		case LEFT_RIGHT:
+			if (in.getAxis().equals(Direction.Axis.Z)) {
+				return in.getOpposite();
+			}
+			break;
+		case FRONT_BACK:
+			if (in.getAxis().equals(Direction.Axis.X)) {
+				return in.getOpposite();
+			}
+			break;
+		case NONE:
+		default:
+			break;
+		}
+		return in;
+	}
+
 	public float applyRotation(float in, BlockRotation rotation) {
 		float f = MathHelper.wrapDegrees(in);
 		switch (rotation) {
@@ -239,6 +308,18 @@ public class NbtPlacerUtil {
 			return f + 270.0F;
 		case CLOCKWISE_90:
 			return f + 90.0F;
+		default:
+			return f;
+		}
+	}
+
+	public float applyMirror(float in, BlockMirror mirror) {
+		float f = MathHelper.wrapDegrees(in);
+		switch (mirror) {
+		case LEFT_RIGHT:
+			return 180.0F - f;
+		case FRONT_BACK:
+			return -f;
 		default:
 			return f;
 		}
