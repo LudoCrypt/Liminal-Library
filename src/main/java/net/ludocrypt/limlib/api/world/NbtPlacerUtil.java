@@ -1,6 +1,7 @@
 package net.ludocrypt.limlib.api.world;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtDouble;
 import net.minecraft.nbt.NbtFloat;
@@ -79,7 +81,7 @@ public class NbtPlacerUtil {
 				.sorted(Comparator.comparing((pair) -> pair.getFirst().getZ())).toList();
 		positionsPairList.forEach((pair) -> positions.put(pair.getFirst().subtract(positionsPairList.get(0).getFirst()), pair.getSecond()));
 
-		return new NbtPlacerUtil(storedNbt, positions, storedNbt.getList("entities", 10), positionsPairList.get(0).getFirst(), sizeVector);
+		return new NbtPlacerUtil(storedNbt, positions, storedNbt.getList("entities", 10), transformSize(sizeVector, rotation, mirror), sizeVector);
 	}
 
 	public static Optional<NbtPlacerUtil> load(ResourceManager manager, Identifier id) {
@@ -151,9 +153,8 @@ public class NbtPlacerUtil {
 	public NbtPlacerUtil spawnEntities(ChunkRegion region, BlockPos pos, BlockRotation rotation, BlockMirror mirror) {
 		this.entities.forEach((nbtElement) -> {
 			NbtCompound entityCompound = (NbtCompound) nbtElement;
-			NbtList nbtPos = entityCompound.getList("blockPos", 3);
-			Vec3d realPosition = mirror(rotate(new Vec3d(nbtPos.getInt(0), nbtPos.getInt(1), nbtPos.getInt(2)), rotation), mirror).subtract(Vec3d.of(lowestPos)).add(pos.getX(), pos.getY(),
-					pos.getZ());
+			NbtList nbtPos = entityCompound.getList("pos", 6);
+			Vec3d realPosition = mirror(rotate(new Vec3d(nbtPos.getDouble(0), nbtPos.getDouble(1), nbtPos.getDouble(2)), rotation), mirror).subtract(Vec3d.of(lowestPos)).add(Vec3d.of(pos));
 
 			NbtCompound nbt = entityCompound.getCompound("nbt").copy();
 			nbt.remove("Pos");
@@ -164,15 +165,6 @@ public class NbtPlacerUtil {
 			posList.add(NbtDouble.of(realPosition.y));
 			posList.add(NbtDouble.of(realPosition.z));
 			nbt.put("Pos", posList);
-
-			if (nbt.contains("TileX", 99) && nbt.contains("TileY", 99) && nbt.contains("TileZ", 99)) {
-				nbt.remove("TileX");
-				nbt.remove("TileY");
-				nbt.remove("TileZ");
-				nbt.putInt("TileX", (int) Math.floor(realPosition.x));
-				nbt.putInt("TileY", (int) Math.floor(realPosition.y));
-				nbt.putInt("TileZ", (int) Math.floor(realPosition.z));
-			}
 
 			NbtList rotationList = new NbtList();
 			NbtList entityRotationList = nbt.getList("Rotation", 5);
@@ -188,10 +180,39 @@ public class NbtPlacerUtil {
 				nbt.putByte("facing", (byte) dir.getHorizontal());
 			}
 
-			getEntity(region, nbt).ifPresent((entity) -> {
+			if (nbt.contains("TileX", 3) && nbt.contains("TileY", 3) && nbt.contains("TileZ", 3)) {
+				nbt.remove("TileX");
+				nbt.remove("TileY");
+				nbt.remove("TileZ");
+				nbt.putInt("TileX", MathHelper.floor(realPosition.x));
+				nbt.putInt("TileY", MathHelper.floor(realPosition.y));
+				nbt.putInt("TileZ", MathHelper.floor(realPosition.z));
+			}
+
+			Optional<Entity> optionalEntity = getEntity(region, nbt);
+
+			if (optionalEntity.isPresent()) {
+				Entity entity = optionalEntity.get();
 				entity.refreshPositionAndAngles(realPosition.x, realPosition.y, realPosition.z, yawRotation, entity.getPitch());
+
+				if (entity instanceof AbstractDecorationEntity deco) {
+					double newX = realPosition.getX() - (deco.getWidthPixels() % 32 == 0 ? 0.5 : 0.0) * deco.getHorizontalFacing().rotateYCounterclockwise().getOffsetX();
+					double newY = realPosition.getY() - (deco.getHeightPixels() % 32 == 0 ? 0.5 : 0.0);
+					double newZ = realPosition.getZ() - (deco.getWidthPixels() % 32 == 0 ? 0.5 : 0.0) * deco.getHorizontalFacing().rotateYCounterclockwise().getOffsetZ();
+
+					newX += deco.getHorizontalFacing().getOffsetX() * 0.46875D;
+					newZ += deco.getHorizontalFacing().getOffsetZ() * 0.46875D;
+
+					newX -= 0.5;
+					newY -= 0.5;
+					newZ -= 0.5;
+
+					deco.setPosition(newX, newY, newZ);
+				}
+
 				region.spawnEntity(entity);
-			});
+			}
+
 		});
 		return this;
 	}
@@ -255,6 +276,22 @@ public class NbtPlacerUtil {
 		case FRONT_BACK:
 			return new BlockPos(-in.getX(), in.getY(), in.getZ());
 		}
+	}
+
+	public static BlockPos transformSize(BlockPos in, BlockRotation rotation, BlockMirror mirror) {
+		BlockPos origin = BlockPos.ORIGIN;
+		BlockPos xPin = mirror(rotate(new BlockPos(in.getX(), 0, 0), rotation), mirror);
+		BlockPos zPin = mirror(rotate(new BlockPos(0, 0, in.getZ()), rotation), mirror);
+		BlockPos pin = mirror(rotate(new BlockPos(in.getX(), 0, in.getZ()), rotation), mirror);
+
+		return findBottomLeftVertex(origin, xPin, zPin, pin);
+	}
+
+	public static BlockPos findBottomLeftVertex(BlockPos v1, BlockPos v2, BlockPos v3, BlockPos v4) {
+		BlockPos[] vertices = { v1, v2, v3, v4 };
+		Arrays.sort(vertices, Comparator.comparingInt(BlockPos::getX));
+		Arrays.sort(vertices, Comparator.comparingInt(BlockPos::getZ));
+		return vertices[0];
 	}
 
 	public Direction mirror(Direction in, BlockMirror mirror) {
