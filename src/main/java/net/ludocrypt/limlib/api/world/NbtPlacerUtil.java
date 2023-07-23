@@ -18,6 +18,7 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtDouble;
+import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtFloat;
 import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtInt;
@@ -150,70 +151,100 @@ public class NbtPlacerUtil {
 		return this;
 	}
 
-	public NbtPlacerUtil spawnEntities(ChunkRegion region, BlockPos pos, BlockRotation rotation, BlockMirror mirror) {
-		this.entities.forEach((nbtElement) -> {
-			NbtCompound entityCompound = (NbtCompound) nbtElement;
-			NbtList nbtPos = entityCompound.getList("pos", 6);
-			Vec3d realPosition = mirror(rotate(new Vec3d(nbtPos.getDouble(0), nbtPos.getDouble(1), nbtPos.getDouble(2)), rotation), mirror).subtract(Vec3d.of(lowestPos)).add(Vec3d.of(pos));
-
-			NbtCompound nbt = entityCompound.getCompound("nbt").copy();
-			nbt.remove("Pos");
-			nbt.remove("UUID");
-
-			NbtList posList = new NbtList();
-			posList.add(NbtDouble.of(realPosition.x));
-			posList.add(NbtDouble.of(realPosition.y));
-			posList.add(NbtDouble.of(realPosition.z));
-			nbt.put("Pos", posList);
-
-			NbtList rotationList = new NbtList();
-			NbtList entityRotationList = nbt.getList("Rotation", 5);
-			float yawRotation = applyMirror(applyRotation(entityRotationList.getFloat(0), rotation), mirror);
-			rotationList.add(NbtFloat.of(yawRotation));
-			rotationList.add(NbtFloat.of(entityRotationList.getFloat(1)));
-			nbt.remove("Rotation");
-			nbt.put("Rotation", rotationList);
-
-			if (nbt.contains("facing")) {
-				Direction dir = mirror(rotation.rotate(Direction.fromHorizontal(nbt.getByte("facing"))), mirror);
-				nbt.remove("facing");
-				nbt.putByte("facing", (byte) dir.getHorizontal());
-			}
-
-			if (nbt.contains("TileX", 3) && nbt.contains("TileY", 3) && nbt.contains("TileZ", 3)) {
-				nbt.remove("TileX");
-				nbt.remove("TileY");
-				nbt.remove("TileZ");
-				nbt.putInt("TileX", MathHelper.floor(realPosition.x));
-				nbt.putInt("TileY", MathHelper.floor(realPosition.y));
-				nbt.putInt("TileZ", MathHelper.floor(realPosition.z));
-			}
-
-			Optional<Entity> optionalEntity = getEntity(region, nbt);
-
-			if (optionalEntity.isPresent()) {
-				Entity entity = optionalEntity.get();
-				entity.refreshPositionAndAngles(realPosition.x, realPosition.y, realPosition.z, yawRotation, entity.getPitch());
-
-				if (entity instanceof AbstractDecorationEntity deco) {
-					double newX = realPosition.getX() - (deco.getWidthPixels() % 32 == 0 ? 0.5 : 0.0) * deco.getHorizontalFacing().rotateYCounterclockwise().getOffsetX();
-					double newY = realPosition.getY() - (deco.getHeightPixels() % 32 == 0 ? 0.5 : 0.0);
-					double newZ = realPosition.getZ() - (deco.getWidthPixels() % 32 == 0 ? 0.5 : 0.0) * deco.getHorizontalFacing().rotateYCounterclockwise().getOffsetZ();
-
-					newX += deco.getHorizontalFacing().getOffsetX() * 0.46875D;
-					newZ += deco.getHorizontalFacing().getOffsetZ() * 0.46875D;
-
-					newX -= 0.5;
-					newY -= 0.5;
-					newZ -= 0.5;
-
-					deco.setPosition(newX, newY, newZ);
+	public NbtPlacerUtil generateNbt(ChunkRegion region, BlockPos offset, BlockPos from, BlockPos to, TriConsumer<BlockPos, BlockState, NbtCompound> consumer) {
+		for (int xi = from.getX(); xi <= to.getX(); xi++) {
+			for (int yi = from.getY(); yi <= to.getY(); yi++) {
+				for (int zi = from.getZ(); zi <= to.getZ(); zi++) {
+					BlockPos currentPos = new BlockPos(xi, yi, zi);
+					Pair<BlockState, NbtCompound> pair = this.positions.get(currentPos.subtract(from).add(offset));
+					BlockState state = pair.getFirst();
+					NbtCompound nbt = pair.getSecond();
+					consumer.accept(currentPos, state == null ? Blocks.BARRIER.getDefaultState() : state, nbt);
 				}
+			}
+		}
+		return this;
+	}
 
-				region.spawnEntity(entity);
+	public NbtPlacerUtil spawnEntities(ChunkRegion region, BlockPos pos, BlockRotation rotation, BlockMirror mirror) {
+		return spawnEntities(region, BlockPos.ORIGIN, pos, pos.add(this.sizeX, this.sizeY, this.sizeZ), rotation, mirror);
+	}
+
+	public NbtPlacerUtil spawnEntities(ChunkRegion region, BlockPos offset, BlockPos from, BlockPos to, BlockRotation rotation, BlockMirror mirror) {
+		this.entities.forEach((nbtElement) -> spawnEntity(nbtElement, region, offset, from, to, rotation, mirror));
+		return this;
+	}
+
+	public NbtPlacerUtil spawnEntity(NbtElement nbtElement, ChunkRegion region, BlockPos offset, BlockPos from, BlockPos to, BlockRotation rotation, BlockMirror mirror) {
+		NbtCompound entityCompound = (NbtCompound) nbtElement;
+		NbtList nbtPos = entityCompound.getList("pos", 6);
+		Vec3d relativeLocation = mirror(rotate(new Vec3d(nbtPos.getDouble(0), nbtPos.getDouble(1), nbtPos.getDouble(2)), rotation), mirror).subtract(Vec3d.of(lowestPos));
+		Vec3d realPosition = relativeLocation.add(Vec3d.of(from));
+
+		BlockPos min = offset;
+		BlockPos max = to.subtract(from).add(offset);
+
+		if (!((relativeLocation.getX() < max.getX() && relativeLocation.getX() >= min.getX()) && (relativeLocation.getY() < max.getY() && relativeLocation.getY() >= min.getY())
+				&& (relativeLocation.getZ() < max.getZ() && relativeLocation.getZ() >= min.getZ()))) {
+			return this;
+		}
+
+		NbtCompound nbt = entityCompound.getCompound("nbt").copy();
+		nbt.remove("Pos");
+		nbt.remove("UUID");
+
+		NbtList posList = new NbtList();
+		posList.add(NbtDouble.of(realPosition.x));
+		posList.add(NbtDouble.of(realPosition.y));
+		posList.add(NbtDouble.of(realPosition.z));
+		nbt.put("Pos", posList);
+
+		NbtList rotationList = new NbtList();
+		NbtList entityRotationList = nbt.getList("Rotation", 5);
+		float yawRotation = applyMirror(applyRotation(entityRotationList.getFloat(0), rotation), mirror);
+		rotationList.add(NbtFloat.of(yawRotation));
+		rotationList.add(NbtFloat.of(entityRotationList.getFloat(1)));
+		nbt.remove("Rotation");
+		nbt.put("Rotation", rotationList);
+
+		if (nbt.contains("facing")) {
+			Direction dir = mirror(rotation.rotate(Direction.fromHorizontal(nbt.getByte("facing"))), mirror);
+			nbt.remove("facing");
+			nbt.putByte("facing", (byte) dir.getHorizontal());
+		}
+
+		if (nbt.contains("TileX", 3) && nbt.contains("TileY", 3) && nbt.contains("TileZ", 3)) {
+			nbt.remove("TileX");
+			nbt.remove("TileY");
+			nbt.remove("TileZ");
+			nbt.putInt("TileX", MathHelper.floor(realPosition.x));
+			nbt.putInt("TileY", MathHelper.floor(realPosition.y));
+			nbt.putInt("TileZ", MathHelper.floor(realPosition.z));
+		}
+
+		Optional<Entity> optionalEntity = getEntity(region, nbt);
+
+		if (optionalEntity.isPresent()) {
+			Entity entity = optionalEntity.get();
+			entity.refreshPositionAndAngles(realPosition.x, realPosition.y, realPosition.z, yawRotation, entity.getPitch());
+
+			if (entity instanceof AbstractDecorationEntity deco) {
+				double newX = realPosition.getX() - (deco.getWidthPixels() % 32 == 0 ? 0.5 : 0.0) * deco.getHorizontalFacing().rotateYCounterclockwise().getOffsetX();
+				double newY = realPosition.getY() - (deco.getHeightPixels() % 32 == 0 ? 0.5 : 0.0);
+				double newZ = realPosition.getZ() - (deco.getWidthPixels() % 32 == 0 ? 0.5 : 0.0) * deco.getHorizontalFacing().rotateYCounterclockwise().getOffsetZ();
+
+				newX += deco.getHorizontalFacing().getOffsetX() * 0.46875D;
+				newZ += deco.getHorizontalFacing().getOffsetZ() * 0.46875D;
+
+				newX -= 0.5;
+				newY -= 0.5;
+				newZ -= 0.5;
+
+				deco.setPosition(newX, newY, newZ);
 			}
 
-		});
+			region.spawnEntity(entity);
+		}
 		return this;
 	}
 

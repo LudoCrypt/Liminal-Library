@@ -55,8 +55,8 @@ public abstract class RectangularMazeGenerator<M extends MazeComponent> {
 		for (int x = 0; x < 16; x++) {
 			for (int y = 0; y < 16; y++) {
 				BlockPos inPos = pos.add(x, 0, y);
-				if (mod(inPos.getX(), thickness) == 0 && mod(inPos.getZ(), thickness) == 0) {
-					BlockPos mazePos = new BlockPos(inPos.getX() - mod(inPos.getX(), (width * thickness)), 0, inPos.getZ() - mod(inPos.getZ(), (height * thickness)));
+				if (Math.floorMod(inPos.getX(), thickness) == 0 && Math.floorMod(inPos.getZ(), thickness) == 0) {
+					BlockPos mazePos = new BlockPos(inPos.getX() - Math.floorMod(inPos.getX(), (width * thickness)), 0, inPos.getZ() - Math.floorMod(inPos.getZ(), (height * thickness)));
 
 					M maze;
 					if (this.mazes.containsKey(mazePos)) {
@@ -80,14 +80,6 @@ public abstract class RectangularMazeGenerator<M extends MazeComponent> {
 
 	public HashMap<BlockPos, M> getMazes() {
 		return mazes;
-	}
-
-	protected int mod(int x, int n) {
-		int r = x % n;
-		if (r < 0) {
-			r += n;
-		}
-		return r;
 	}
 
 	protected long blockSeed(long x, long y, long z) {
