@@ -179,7 +179,7 @@ public class NbtPlacerUtil {
 		NbtCompound entityCompound = (NbtCompound) nbtElement;
 		NbtList nbtPos = entityCompound.getList("pos", 6);
 		Vec3d relativeLocation = mirror(rotate(new Vec3d(nbtPos.getDouble(0), nbtPos.getDouble(1), nbtPos.getDouble(2)), rotation), mirror).subtract(Vec3d.of(lowestPos));
-		Vec3d realPosition = relativeLocation.add(Vec3d.of(from));
+		Vec3d realPosition = relativeLocation.add(Vec3d.of(from.subtract(offset)));
 
 		BlockPos min = offset;
 		BlockPos max = to.subtract(from).add(offset);
