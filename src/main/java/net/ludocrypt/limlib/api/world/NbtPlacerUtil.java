@@ -152,14 +152,14 @@ public class NbtPlacerUtil {
 	}
 
 	public NbtPlacerUtil generateNbt(ChunkRegion region, BlockPos offset, BlockPos from, BlockPos to, TriConsumer<BlockPos, BlockState, NbtCompound> consumer) {
-		for (int xi = from.getX(); xi <= to.getX(); xi++) {
-			for (int yi = from.getY(); yi <= to.getY(); yi++) {
-				for (int zi = from.getZ(); zi <= to.getZ(); zi++) {
-					BlockPos currentPos = new BlockPos(xi, yi, zi);
-					Pair<BlockState, NbtCompound> pair = this.positions.get(currentPos.subtract(from).add(offset));
+		for (int xi = 0; xi < Math.min(to.subtract(from).getX(), this.sizeX); xi++) {
+			for (int yi = 0; yi < Math.min(to.subtract(from).getY(), this.sizeY); yi++) {
+				for (int zi = 0; zi < Math.min(to.subtract(from).getZ(), this.sizeZ); zi++) {
+					BlockPos pos = new BlockPos(xi, yi, zi);
+					Pair<BlockState, NbtCompound> pair = this.positions.get(pos.add(offset));
 					BlockState state = pair.getFirst();
 					NbtCompound nbt = pair.getSecond();
-					consumer.accept(currentPos, state == null ? Blocks.BARRIER.getDefaultState() : state, nbt);
+					consumer.accept(from.add(pos), state == null ? Blocks.BARRIER.getDefaultState() : state, nbt);
 				}
 			}
 		}
