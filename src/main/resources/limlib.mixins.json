@@ -7,13 +7,13 @@
 		"BlockEntityAccessor",
 		"BuiltinDimensionTypesMixin",
 		"ChunkStatusMixin",
-		"DimensionOptionsC_oiwekzxoMixin",
 		"DynamicRegistrySyncMixin",
 		"GeneratorTypeAccessor",
 		"RegistriesAccessor",
 		"RegistryLoaderMixin",
 		"ServerPlayerEntityMixin",
 		"VanillaDynamicRegistriesMixin",
+		"WorldDimensionsMixin",
 		"WorldSaveStorageMixin"
 	],
 	"client": [
