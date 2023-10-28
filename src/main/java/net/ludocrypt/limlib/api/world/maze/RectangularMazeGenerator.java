@@ -2,6 +2,7 @@ package net.ludocrypt.limlib.api.world.maze;
 
 import java.util.HashMap;
 
+import net.ludocrypt.limlib.api.world.LimlibHelper;
 import net.ludocrypt.limlib.api.world.maze.MazeComponent.CellState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.random.RandomGenerator;
@@ -12,7 +13,6 @@ import net.minecraft.util.random.RandomGenerator;
 public abstract class RectangularMazeGenerator<M extends MazeComponent> {
 
 	private final HashMap<BlockPos, M> mazes = new HashMap<BlockPos, M>(30);
-
 	public final int width;
 	public final int height;
 	public final int thickness;
@@ -52,50 +52,52 @@ public abstract class RectangularMazeGenerator<M extends MazeComponent> {
 	 *                      'cell'
 	 */
 	public void generateMaze(BlockPos pos, long seed, MazeCreator<M> mazeCreator, CellDecorator<M> cellDecorator) {
+
 		for (int x = 0; x < 16; x++) {
+
 			for (int y = 0; y < 16; y++) {
 				BlockPos inPos = pos.add(x, 0, y);
+
 				if (Math.floorMod(inPos.getX(), thickness) == 0 && Math.floorMod(inPos.getZ(), thickness) == 0) {
 					BlockPos mazePos = new BlockPos(inPos.getX() - Math.floorMod(inPos.getX(), (width * thickness)), 0, inPos.getZ() - Math.floorMod(inPos.getZ(), (height * thickness)));
-
 					M maze;
+
 					if (this.mazes.containsKey(mazePos)) {
 						maze = this.mazes.get(mazePos);
 					} else {
 						maze = mazeCreator.newMaze(mazePos, redundancy ? width + 4 : width, redundancy ? height + 4 : height,
-								RandomGenerator.createLegacy(blockSeed(mazePos.getX(), mazePos.getZ(), seed + seedModifier)));
+								RandomGenerator.createLegacy(LimlibHelper.blockSeed(mazePos.getX(), mazePos.getZ(), seed + seedModifier)));
 						this.mazes.put(mazePos, maze);
 					}
 
 					int mazeX = (inPos.getX() - mazePos.getX()) / thickness;
 					int mazeY = (inPos.getZ() - mazePos.getZ()) / thickness;
-
 					CellState originCell = maze.cellState(redundancy ? mazeX + 2 : mazeX, redundancy ? mazeY + 2 : mazeY);
-
 					cellDecorator.generate(inPos, mazePos, maze, originCell, this.thickness);
 				}
+
 			}
+
 		}
+
 	}
 
 	public HashMap<BlockPos, M> getMazes() {
 		return mazes;
 	}
 
-	protected long blockSeed(long x, long y, long z) {
-		long l = (x * 3129871) ^ z * 116129781L ^ y;
-		l = l * l * 42317861L + l * 11L;
-		return l >> 16;
-	}
-
 	@FunctionalInterface
 	public static interface CellDecorator<M extends MazeComponent> {
+
 		void generate(BlockPos pos, BlockPos mazePos, M maze, CellState state, int thickness);
+
 	}
 
 	@FunctionalInterface
 	public static interface MazeCreator<M extends MazeComponent> {
+
 		M newMaze(BlockPos mazePos, int width, int height, RandomGenerator random);
+
 	}
 
 }

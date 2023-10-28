@@ -12,7 +12,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import com.mojang.datafixers.util.Either;
 
-import net.ludocrypt.limlib.api.world.chunk.AbstractNbtChunkGenerator;
 import net.ludocrypt.limlib.api.world.chunk.LiminalChunkGenerator;
 import net.minecraft.server.world.ChunkHolder;
 import net.minecraft.server.world.ServerLightingProvider;
@@ -32,30 +31,30 @@ public class ChunkStatusMixin {
 	private static void limlib$liminalChunkGenerator(ChunkStatus chunkStatus, Executor executor, ServerWorld serverWorld, ChunkGenerator chunkGenerator,
 			StructureTemplateManager structureTemplateManager, ServerLightingProvider serverLightingProvider, Function<Chunk, CompletableFuture<Either<Chunk, ChunkHolder.Unloaded>>> function,
 			List<Chunk> chunks, Chunk chunk, CallbackInfoReturnable<CompletableFuture<Either<Chunk, ChunkHolder.Unloaded>>> ci) {
-		if (chunkGenerator instanceof LiminalChunkGenerator limChunkGen) {
-			if (chunkGenerator instanceof AbstractNbtChunkGenerator nbt) {
-				if (nbt.loadedStructures.isEmpty()) {
-					nbt.storeStructures(serverWorld);
-				}
-			}
 
+		if (chunkGenerator instanceof LiminalChunkGenerator limChunkGen) {
 			ChunkRegion chunkRegion = new ChunkRegion(serverWorld, chunks, chunkStatus, limChunkGen.getChunkDistance());
 			ci.setReturnValue(limChunkGen.populateNoise(chunkRegion, chunkStatus, executor, serverWorld, chunkGenerator, structureTemplateManager, serverLightingProvider, function, chunks, chunk)
 					.thenApply(chunkx -> {
+
 						if (chunkx instanceof ProtoChunk protoChunk) {
 							BelowZeroRetrogen belowZeroRetrogen = protoChunk.getBelowZeroRetrogen();
+
 							if (belowZeroRetrogen != null) {
 								BelowZeroRetrogen.replaceOldBedrock(protoChunk);
+
 								if (belowZeroRetrogen.hasBedrockHoles()) {
 									belowZeroRetrogen.applyBedrockMask(protoChunk);
 								}
+
 							}
+
 						}
 
 						return Either.left(chunkx);
 					}));
-
 		}
+
 	}
 
 }
