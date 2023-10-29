@@ -34,6 +34,7 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 		super(biomeSource);
 		this.nbtGroup = nbtGroup;
 		this.structures = structures;
+		this.nbtGroup.fill(structures);
 	}
 
 	public void generateNbt(ChunkRegion region, BlockPos at, Identifier id) {
@@ -54,6 +55,7 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 			structures.eval(id, region.getServer().getResourceManager()).manipulate(rotation, mirror).generateNbt(region, at, (pos, state, nbt) -> this.modifyStructure(region, pos, state, nbt))
 					.spawnEntities(region, at, rotation, mirror);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new NullPointerException("Attempted to load undefined structure \'" + id + "\'");
 		}
 
@@ -65,26 +67,31 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 			structures.eval(id, region.getServer().getResourceManager()).manipulate(rotation, mirror)
 					.generateNbt(region, offset, from, to, (pos, state, nbt) -> this.modifyStructure(region, pos, state, nbt)).spawnEntities(region, offset, from, to, rotation, mirror);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new NullPointerException("Attempted to load undefined structure \'" + id + "\'");
 		}
 
 	}
 
 	protected void modifyStructure(ChunkRegion region, BlockPos pos, BlockState state, Optional<NbtCompound> blockEntityNbt) {
+		this.modifyStructure(region, pos, state, blockEntityNbt, Block.NOTIFY_ALL);
+	}
+
+	protected void modifyStructure(ChunkRegion region, BlockPos pos, BlockState state, Optional<NbtCompound> blockEntityNbt, int update) {
 
 		if (!state.isAir()) {
 
 			if (state.isOf(Blocks.BARREL)) {
-				region.setBlockState(pos, state, Block.NOTIFY_ALL, 1);
+				region.setBlockState(pos, state, update, 1);
 
 				if (region.getBlockEntity(pos) instanceof LootableContainerBlockEntity lootTable) {
-					lootTable.setLootTable(this.getBarrelLootTable(), region.getSeed() + LimlibHelper.blockSeed(pos));
+					lootTable.setLootTable(this.getContainerLootTable(lootTable), region.getSeed() + LimlibHelper.blockSeed(pos));
 				}
 
 			} else if (state.isOf(Blocks.BARRIER)) {
-				region.setBlockState(pos, Blocks.AIR.getDefaultState(), Block.NOTIFY_ALL, 1);
+				region.setBlockState(pos, Blocks.AIR.getDefaultState(), update, 1);
 			} else {
-				region.setBlockState(pos, state, Block.NOTIFY_ALL, 1);
+				region.setBlockState(pos, state, update, 1);
 			}
 
 			if (blockEntityNbt.isPresent()) {
@@ -104,7 +111,7 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 
 	}
 
-	protected Identifier getBarrelLootTable() {
+	protected Identifier getContainerLootTable(LootableContainerBlockEntity container) {
 		return LootTables.SIMPLE_DUNGEON_CHEST;
 	}
 
