@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
@@ -42,6 +44,32 @@ public class NbtGroup {
 		return nbtId(key, group.get(random.nextInt(group.size())));
 	}
 
+	public String chooseGroup(RandomGenerator random, String... keys) {
+		int[] sizes = new int[keys.length];
+
+		for (int i = 0; i < keys.length; i++) {
+			int extra = 0;
+
+			if (i > 0) {
+				extra = sizes[i - 1];
+			}
+
+			sizes[i] = extra + groups.get(keys[i]).size();
+		}
+
+		int g = random.nextInt(sizes[keys.length - 1]);
+
+		for (int i = 0; i < keys.length; i++) {
+
+			if (g < sizes[i]) {
+				return keys[i];
+			}
+
+		}
+
+		throw new UnsupportedOperationException("Failed to retrieve key");
+	}
+
 	public boolean contains(String key, String nbt) {
 
 		if (!groups.containsKey(key)) {
@@ -68,12 +96,57 @@ public class NbtGroup {
 
 	}
 
+	public <A, V> void fill(FunctionMap<Identifier, A, V> map) {
+		forEach(map::put);
+	}
+
 	public Identifier getId() {
 		return id;
 	}
 
 	public Map<String, List<String>> getGroups() {
 		return groups;
+	}
+
+	public static class Builder {
+
+		Identifier id;
+		Map<String, List<String>> groups = Maps.newHashMap();
+
+		public static Builder create(Identifier id) {
+			Builder builder = new Builder();
+			builder.id = id;
+			return builder;
+		}
+
+		public Builder with(String group, String base, int from, int to) {
+			List<String> list = Lists.newArrayList();
+
+			for (int i = from; i <= to; i++) {
+				list.add(base + "_" + i);
+			}
+
+			groups.put(group, list);
+			return this;
+		}
+
+		public Builder with(String group, String base) {
+			groups.put(group, List.of(base));
+			return this;
+		}
+
+		public Builder with(String base, int from, int to) {
+			return with(base, base, from, to);
+		}
+
+		public Builder with(String base) {
+			return with(base, base);
+		}
+
+		public NbtGroup build() {
+			return new NbtGroup(id, groups);
+		}
+
 	}
 
 }

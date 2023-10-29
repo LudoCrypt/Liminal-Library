@@ -49,24 +49,25 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 	}
 
 	public void generateNbt(ChunkRegion region, BlockPos at, Identifier id, BlockRotation rotation, BlockMirror mirror) {
-		NbtPlacerUtil structure = structures.eval(id, region.getServer().getResourceManager());
 
-		if (structure == null) {
+		try {
+			structures.eval(id, region.getServer().getResourceManager()).manipulate(rotation, mirror).generateNbt(region, at, (pos, state, nbt) -> this.modifyStructure(region, pos, state, nbt))
+					.spawnEntities(region, at, rotation, mirror);
+		} catch (Exception e) {
 			throw new NullPointerException("Attempted to load undefined structure \'" + id + "\'");
 		}
 
-		structure.manipulate(rotation, mirror).generateNbt(region, at, (pos, state, nbt) -> this.modifyStructure(region, pos, state, nbt)).spawnEntities(region, at, rotation, mirror);
 	}
 
 	public void generateNbt(ChunkRegion region, BlockPos offset, BlockPos from, BlockPos to, Identifier id, BlockRotation rotation, BlockMirror mirror) {
-		NbtPlacerUtil structure = structures.eval(id, region.getServer().getResourceManager());
 
-		if (structure == null) {
+		try {
+			structures.eval(id, region.getServer().getResourceManager()).manipulate(rotation, mirror)
+					.generateNbt(region, offset, from, to, (pos, state, nbt) -> this.modifyStructure(region, pos, state, nbt)).spawnEntities(region, offset, from, to, rotation, mirror);
+		} catch (Exception e) {
 			throw new NullPointerException("Attempted to load undefined structure \'" + id + "\'");
 		}
 
-		structure.manipulate(rotation, mirror).generateNbt(region, offset, from, to, (pos, state, nbt) -> this.modifyStructure(region, pos, state, nbt)).spawnEntities(region, offset, from, to,
-				rotation, mirror);
 	}
 
 	protected void modifyStructure(ChunkRegion region, BlockPos pos, BlockState state, Optional<NbtCompound> blockEntityNbt) {
