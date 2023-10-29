@@ -81,14 +81,7 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 
 		if (!state.isAir()) {
 
-			if (state.isOf(Blocks.BARREL)) {
-				region.setBlockState(pos, state, update, 1);
-
-				if (region.getBlockEntity(pos) instanceof LootableContainerBlockEntity lootTable) {
-					lootTable.setLootTable(this.getContainerLootTable(lootTable), region.getSeed() + LimlibHelper.blockSeed(pos));
-				}
-
-			} else if (state.isOf(Blocks.BARRIER)) {
+			if (state.isOf(Blocks.BARRIER)) {
 				region.setBlockState(pos, Blocks.AIR.getDefaultState(), update, 1);
 			} else {
 				region.setBlockState(pos, state, update, 1);
@@ -103,6 +96,10 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 						blockEntity.readNbt(blockEntityNbt.get());
 					}
 
+				}
+
+				if (blockEntity instanceof LootableContainerBlockEntity lootTable) {
+					lootTable.setLootTable(this.getContainerLootTable(lootTable), region.getSeed() + LimlibHelper.blockSeed(pos));
 				}
 
 			}
