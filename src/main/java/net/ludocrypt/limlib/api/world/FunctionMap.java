@@ -34,8 +34,14 @@ public class FunctionMap<K, V, A> {
 		return this.functionMap.put(key, (arg) -> this.defaultMapper.get().apply(key, arg));
 	}
 
-	public V eval(K key, A arg) throws NullPointerException {
-		return this.cache.computeIfAbsent(key, (k) -> this.functionMap.get(k).apply(arg));
+	public V eval(K key, A arg) {
+
+		if (this.functionMap.containsKey(key)) {
+			return this.cache.computeIfAbsent(key, (k) -> this.functionMap.get(k).apply(arg));
+		} else {
+			throw new NullPointerException("Map does not contain key: " + key);
+		}
+
 	}
 
 	public Map<K, V> getCache() {

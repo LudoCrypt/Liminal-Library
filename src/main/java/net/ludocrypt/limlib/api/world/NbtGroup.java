@@ -16,10 +16,10 @@ import net.minecraft.util.random.RandomGenerator;
 public class NbtGroup {
 
 	public static final Codec<NbtGroup> CODEC = RecordCodecBuilder.create((instance) -> {
-		return instance.group(Identifier.CODEC.fieldOf("id").stable().forGetter((sky) -> {
-			return sky.id;
-		}), Codec.unboundedMap(Codec.STRING, Codec.list(Codec.STRING)).fieldOf("groups").stable().forGetter((sky) -> {
-			return sky.groups;
+		return instance.group(Identifier.CODEC.fieldOf("id").stable().forGetter((group) -> {
+			return group.id;
+		}), Codec.unboundedMap(Codec.STRING, Codec.list(Codec.STRING)).fieldOf("groups").stable().forGetter((group) -> {
+			return group.groups;
 		})).apply(instance, instance.stable(NbtGroup::new));
 	});
 	Identifier id;
@@ -31,7 +31,7 @@ public class NbtGroup {
 	}
 
 	public Identifier nbtId(String group, String nbt) {
-		return new Identifier(this.id.getNamespace(), "nbt/" + this.id.getPath() + "/" + group + "/" + nbt + ".nbt");
+		return new Identifier(this.id.getNamespace(), "structures/nbt/" + this.id.getPath() + "/" + group + "/" + nbt + ".nbt");
 	}
 
 	public Identifier pick(String key, RandomGenerator random) {
