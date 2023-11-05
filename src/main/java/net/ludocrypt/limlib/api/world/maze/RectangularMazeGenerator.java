@@ -10,7 +10,7 @@ import net.minecraft.util.random.RandomGenerator;
 /**
  * A rectangular maze generator class
  */
-public abstract class RectangularMazeGenerator<M extends MazeComponent> {
+public class RectangularMazeGenerator<M extends MazeComponent> {
 
 	private final HashMap<BlockPos, M> mazes = new HashMap<BlockPos, M>(30);
 	public final int width;

@@ -1,8 +1,10 @@
 package net.ludocrypt.limlib.api.world.maze;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import net.minecraft.util.math.BlockPos;
 
@@ -13,23 +15,25 @@ public abstract class MazeComponent {
 
 	public final int width;
 	public final int height;
-
 	public final CellState[] maze;
 	public final List<Vec2i> solvedMaze = Lists.newArrayList();
-
 	public int visitedCells = 0;
 
 	public MazeComponent(int width, int height) {
 		this.width = width;
 		this.height = height;
 		this.maze = new CellState[width * height];
+
 		for (int x = 0; x < width; x++) {
+
 			for (int y = 0; y < height; y++) {
 				CellState state = new CellState();
 				state.setPosition(new Vec2i(x, y));
 				this.maze[y * this.width + x] = state;
 			}
+
 		}
+
 		this.visitedCells = 1;
 	}
 
@@ -88,6 +92,7 @@ public abstract class MazeComponent {
 		private boolean south = false;
 		private boolean west = false;
 		private boolean visited = false;
+		private Map<String, Object> extra = Maps.newHashMap();
 
 		public CellState copy() {
 			CellState newState = new CellState();
@@ -96,6 +101,7 @@ public abstract class MazeComponent {
 			newState.setEast(this.east);
 			newState.setSouth(this.south);
 			newState.setWest(this.west);
+			newState.appendAll(this.extra);
 			return newState;
 		}
 
@@ -143,6 +149,14 @@ public abstract class MazeComponent {
 			this.visited = visited;
 		}
 
+		public void append(String name, Object data) {
+			this.extra.put(name, data);
+		}
+
+		public void appendAll(Map<String, Object> data) {
+			this.extra.putAll(data);
+		}
+
 		public Vec2i getPosition() {
 			return position;
 		}
@@ -165,6 +179,10 @@ public abstract class MazeComponent {
 
 		public boolean isVisited() {
 			return visited;
+		}
+
+		public Map<String, Object> getExtra() {
+			return extra;
 		}
 
 	}
@@ -193,9 +211,11 @@ public abstract class MazeComponent {
 
 		@Override
 		public boolean equals(Object obj) {
+
 			if (obj instanceof Vec2i pos) {
 				return pos.x == this.x && pos.y == this.y;
 			}
+
 			return super.equals(obj);
 		}
 

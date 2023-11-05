@@ -16,20 +16,21 @@ public class CombineMaze extends MazeComponent {
 			for (Vec2i pos : maze.solvedMaze) {
 				int x = pos.getX();
 				int y = pos.getY();
+				CellState reference = maze.cellState(x, y);
 
-				if (maze.cellState(x, y).isNorth()) {
+				if (reference.isNorth()) {
 					this.cellState(x, y).setNorth(true);
 				}
 
-				if (maze.cellState(x, y).isEast()) {
+				if (reference.isEast()) {
 					this.cellState(x, y).setEast(true);
 				}
 
-				if (maze.cellState(x, y).isSouth()) {
+				if (reference.isSouth()) {
 					this.cellState(x, y).setSouth(true);
 				}
 
-				if (maze.cellState(x, y).isWest()) {
+				if (reference.isWest()) {
 					this.cellState(x, y).setWest(true);
 				}
 
@@ -37,10 +38,7 @@ public class CombineMaze extends MazeComponent {
 					this.solvedMaze.add(new Vec2i(x, y));
 				}
 
-				if (this.cellState(x, y).isNorth() && this.cellState(x, y).isEast() && this.cellState(x, y).isSouth() && this.cellState(x, y).isWest()) {
-					continue;
-				}
-
+				this.cellState(x, y).appendAll(reference.getExtra());
 			}
 
 		}
