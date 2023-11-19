@@ -130,7 +130,7 @@ public class NbtGroup {
 			return this;
 		}
 
-		public Builder with(String group, String base) {
+		public Builder with(String group, String... base) {
 			groups.put(group, List.of(base));
 			return this;
 		}
