@@ -13,7 +13,6 @@ import org.apache.logging.log4j.util.TriConsumer;
 import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
@@ -35,6 +34,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.ChunkRegion;
 
 public class NbtPlacerUtil {
@@ -46,6 +46,7 @@ public class NbtPlacerUtil {
 	public final int sizeX;
 	public final int sizeY;
 	public final int sizeZ;
+	public final Vec3i sizeVector;
 
 	public NbtPlacerUtil(NbtCompound storedNbt, HashMap<BlockPos, Pair<BlockState, Optional<NbtCompound>>> positions, NbtList entities, BlockPos lowestPos, int sizeX, int sizeY, int sizeZ) {
 		this.storedNbt = storedNbt;
@@ -55,6 +56,7 @@ public class NbtPlacerUtil {
 		this.sizeX = sizeX;
 		this.sizeY = sizeY;
 		this.sizeZ = sizeZ;
+		this.sizeVector = new Vec3i(sizeX, sizeY, sizeZ);
 	}
 
 	public NbtPlacerUtil(NbtCompound storedNbt, HashMap<BlockPos, Pair<BlockState, Optional<NbtCompound>>> positions, NbtList entities, BlockPos lowestPos, BlockPos sizePos) {
@@ -152,26 +154,10 @@ public class NbtPlacerUtil {
 	}
 
 	public NbtPlacerUtil generateNbt(ChunkRegion region, BlockPos at, TriConsumer<BlockPos, BlockState, Optional<NbtCompound>> consumer) {
-
-		for (int xi = 0; xi < this.sizeX; xi++) {
-
-			for (int yi = 0; yi < this.sizeY; yi++) {
-
-				for (int zi = 0; zi < this.sizeZ; zi++) {
-					Pair<BlockState, Optional<NbtCompound>> pair = this.positions.get(new BlockPos(xi, yi, zi));
-					BlockState state = pair.getFirst();
-					Optional<NbtCompound> nbt = pair.getSecond();
-					consumer.accept(at.add(xi, yi, zi), state == null ? Blocks.BARRIER.getDefaultState() : state, nbt);
-				}
-
-			}
-
-		}
-
-		return this;
+		return generateNbt(region, BlockPos.ZERO, at, at.add(this.sizeVector), consumer);
 	}
 
-	public NbtPlacerUtil generateNbt(ChunkRegion region, BlockPos offset, BlockPos from, BlockPos to, TriConsumer<BlockPos, BlockState, Optional<NbtCompound>> consumer) {
+	public NbtPlacerUtil generateNbt(ChunkRegion region, Vec3i offset, BlockPos from, BlockPos to, TriConsumer<BlockPos, BlockState, Optional<NbtCompound>> consumer) {
 
 		for (int xi = 0; xi < Math.min(to.subtract(from).getX(), this.sizeX); xi++) {
 
@@ -180,9 +166,17 @@ public class NbtPlacerUtil {
 				for (int zi = 0; zi < Math.min(to.subtract(from).getZ(), this.sizeZ); zi++) {
 					BlockPos pos = new BlockPos(xi, yi, zi);
 					Pair<BlockState, Optional<NbtCompound>> pair = this.positions.get(pos.add(offset));
-					BlockState state = pair.getFirst();
-					Optional<NbtCompound> nbt = pair.getSecond();
-					consumer.accept(from.add(pos), state == null ? Blocks.BARRIER.getDefaultState() : state, nbt);
+
+					if (pair != null) {
+						BlockState state = pair.getFirst();
+						Optional<NbtCompound> nbt = pair.getSecond();
+
+						if (state != null) {
+							consumer.accept(from.add(pos), state, nbt);
+						}
+
+					}
+
 				}
 
 			}
@@ -412,11 +406,10 @@ public class NbtPlacerUtil {
 
 	public static NbtList createNbtIntList(int... ints) {
 		NbtList nbtList = new NbtList();
-		int[] var3 = ints;
-		int var4 = ints.length;
+		int size = ints.length;
 
-		for (int var5 = 0; var5 < var4; ++var5) {
-			int i = var3[var5];
+		for (int j = 0; j < size; ++j) {
+			int i = ints[j];
 			nbtList.add(NbtInt.of(i));
 		}
 

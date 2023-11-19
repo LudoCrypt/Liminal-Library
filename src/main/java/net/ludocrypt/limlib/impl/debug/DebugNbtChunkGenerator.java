@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
@@ -19,11 +20,13 @@ import net.ludocrypt.limlib.api.world.NbtGroup;
 import net.ludocrypt.limlib.api.world.NbtPlacerUtil;
 import net.ludocrypt.limlib.api.world.chunk.AbstractNbtChunkGenerator;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.StructureBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.StructureBlockBlockEntity;
 import net.minecraft.block.enums.StructureBlockMode;
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.Holder;
 import net.minecraft.registry.RegistryOps;
 import net.minecraft.resource.Resource;
@@ -69,6 +72,11 @@ public class DebugNbtChunkGenerator extends AbstractNbtChunkGenerator {
 	public CompletableFuture<Chunk> populateNoise(ChunkRegion chunkRegion, ChunkStatus targetStatus, Executor executor, ServerWorld world, ChunkGenerator generator,
 			StructureTemplateManager structureTemplateManager, ServerLightingProvider lightingProvider, Function<Chunk, CompletableFuture<Either<Chunk, Unloaded>>> fullChunkConverter,
 			List<Chunk> chunks, Chunk chunk) {
+
+		if (chunk.getPos().getStartPos().getX() < 0 || chunk.getPos().getStartPos().getZ() < 0) {
+			return CompletableFuture.completedFuture(chunk);
+		}
+
 		ResourceManager resourceManager = world.getServer().getResourceManager();
 
 		if (positions.isEmpty()) {
@@ -144,7 +152,16 @@ public class DebugNbtChunkGenerator extends AbstractNbtChunkGenerator {
 
 	@Override
 	public int getWorldHeight() {
-		return 384 + 64;
+		return 448;
+	}
+
+	@Override
+	protected void modifyStructure(ChunkRegion region, BlockPos pos, BlockState state, Optional<NbtCompound> blockEntityNbt, int update) {
+		region.setBlockState(pos, state, update, 1);
+		blockEntityNbt.ifPresent((nbt) -> {
+			if (region.getBlockEntity(pos) != null)
+				region.getBlockEntity(pos).readNbt(nbt);
+		});
 	}
 
 	@Override
