@@ -38,7 +38,8 @@ public abstract class LiminalChunkGenerator extends ChunkGenerator {
 	}
 
 	@Override
-	public void carve(ChunkRegion chunkRegion, long seed, RandomState randomState, BiomeAccess biomeAccess, StructureManager structureManager, Chunk chunk, Carver generationStep) {
+	public void carve(ChunkRegion chunkRegion, long seed, RandomState randomState, BiomeAccess biomeAccess,
+			StructureManager structureManager, Chunk chunk, Carver generationStep) {
 	}
 
 	@Override
@@ -50,7 +51,8 @@ public abstract class LiminalChunkGenerator extends ChunkGenerator {
 	}
 
 	@Override
-	public CompletableFuture<Chunk> populateNoise(Executor executor, Blender blender, RandomState randomState, StructureManager structureManager, Chunk chunk) {
+	public CompletableFuture<Chunk> populateNoise(Executor executor, Blender blender, RandomState randomState,
+			StructureManager structureManager, Chunk chunk) {
 		throw new UnsupportedOperationException("populateNoise should never be called in LiminalChunkGenerator");
 	}
 
@@ -65,9 +67,11 @@ public abstract class LiminalChunkGenerator extends ChunkGenerator {
 	 * ChunkRegion as opposed to world when setting blocks, as it allows you to
 	 * extend through multiple chunks in {@link getChunkDistance} away.
 	 */
-	public abstract CompletableFuture<Chunk> populateNoise(ChunkRegion chunkRegion, ChunkStatus targetStatus, Executor executor, ServerWorld world, ChunkGenerator generator,
-			StructureTemplateManager structureTemplateManager, ServerLightingProvider lightingProvider, Function<Chunk, CompletableFuture<Either<Chunk, ChunkHolder.Unloaded>>> fullChunkConverter,
-			List<Chunk> chunks, Chunk chunk);
+	public abstract CompletableFuture<Chunk> populateNoise(ChunkRegion chunkRegion, ChunkStatus targetStatus,
+			Executor executor, ServerWorld world, ChunkGenerator generator,
+			StructureTemplateManager structureTemplateManager, ServerLightingProvider lightingProvider,
+			Function<Chunk, CompletableFuture<Either<Chunk, ChunkHolder.Unloaded>>> fullChunkConverter, List<Chunk> chunks,
+			Chunk chunk);
 
 	@Override
 	public int getSeaLevel() {
@@ -87,9 +91,11 @@ public abstract class LiminalChunkGenerator extends ChunkGenerator {
 	@Override
 	public VerticalBlockSample getColumnSample(int x, int y, HeightLimitView world, RandomState random) {
 		BlockState[] states = new BlockState[world.getHeight()];
+
 		for (int i = 0; i < states.length; i++) {
 			states[i] = Blocks.AIR.getDefaultState();
 		}
+
 		return new VerticalBlockSample(0, states);
 	}
 

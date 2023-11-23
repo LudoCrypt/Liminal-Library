@@ -17,12 +17,16 @@ import net.minecraft.world.dimension.DimensionType;
 public class DimensionVisualEffectsMixin {
 
 	@Inject(method = "byDimensionType", at = @At("HEAD"), cancellable = true)
-	private static void limlib$byDimensionType(DimensionType dimensionType, CallbackInfoReturnable<DimensionVisualEffects> ci) {
-		Optional<DimensionEffects> dimensionEffects = LookupGrabber.snatch(DimensionEffects.MIXIN_WORLD_LOOKUP.get(),
+	private static void limlib$byDimensionType(DimensionType dimensionType,
+			CallbackInfoReturnable<DimensionVisualEffects> ci) {
+		Optional<DimensionEffects> dimensionEffects = LookupGrabber
+			.snatch(DimensionEffects.MIXIN_WORLD_LOOKUP.get(),
 				RegistryKey.of(DimensionEffects.DIMENSION_EFFECTS_KEY, dimensionType.effectsLocation()));
+
 		if (dimensionEffects.isPresent()) {
 			ci.setReturnValue(dimensionEffects.get().getDimensionEffects());
 		}
+
 	}
 
 }

@@ -7,6 +7,7 @@ import net.minecraft.util.BlockRotation;
 import net.minecraft.util.random.RandomGenerator;
 
 public enum RectangularMazePiece {
+
 	T_PIECE,
 	F_PIECE,
 	I_PIECE,
@@ -22,7 +23,8 @@ public enum RectangularMazePiece {
 		if (state.isNorth() && state.isEast() && state.isSouth() && state.isWest()) {
 			piece = RectangularMazePiece.T_PIECE;
 			rotation = random.nextBoolean() ? BlockRotation.NONE
-					: random.nextBoolean() ? random.nextBoolean() ? BlockRotation.CLOCKWISE_90 : BlockRotation.CLOCKWISE_180 : BlockRotation.COUNTERCLOCKWISE_90;
+					: random.nextBoolean() ? random.nextBoolean() ? BlockRotation.CLOCKWISE_90 : BlockRotation.CLOCKWISE_180
+							: BlockRotation.COUNTERCLOCKWISE_90;
 		} else if (state.isNorth() && state.isEast() && state.isSouth() && !state.isWest()) {
 			piece = RectangularMazePiece.F_PIECE;
 			rotation = BlockRotation.CLOCKWISE_180;

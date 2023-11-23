@@ -17,10 +17,13 @@ import net.minecraft.util.Identifier;
  */
 public abstract class DistortionEffect {
 
-	public static final RegistryKey<Registry<Codec<? extends DistortionEffect>>> DISTORTION_EFFECT_CODEC_KEY = RegistryKey.ofRegistry(new Identifier("limlib/codec/distortion_effect"));
-	public static final Registry<Codec<? extends DistortionEffect>> DISTORTION_EFFECT_CODEC = RegistriesAccessor.callRegisterSimple(DISTORTION_EFFECT_CODEC_KEY, Lifecycle.stable(),
-			(registry) -> StaticDistortionEffect.CODEC);
-	public static final Codec<DistortionEffect> CODEC = DISTORTION_EFFECT_CODEC.getCodec().dispatchStable(DistortionEffect::getCodec, Function.identity());
+	public static final RegistryKey<Registry<Codec<? extends DistortionEffect>>> DISTORTION_EFFECT_CODEC_KEY = RegistryKey
+		.ofRegistry(new Identifier("limlib/codec/distortion_effect"));
+	public static final Registry<Codec<? extends DistortionEffect>> DISTORTION_EFFECT_CODEC = RegistriesAccessor
+		.callRegisterSimple(DISTORTION_EFFECT_CODEC_KEY, Lifecycle.stable(), (registry) -> StaticDistortionEffect.CODEC);
+	public static final Codec<DistortionEffect> CODEC = DISTORTION_EFFECT_CODEC
+		.getCodec()
+		.dispatchStable(DistortionEffect::getCodec, Function.identity());
 
 	public abstract Codec<? extends DistortionEffect> getCodec();
 

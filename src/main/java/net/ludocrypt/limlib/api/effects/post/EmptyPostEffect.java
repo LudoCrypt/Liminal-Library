@@ -7,7 +7,8 @@ import net.minecraft.util.Identifier;
 
 public class EmptyPostEffect extends PostEffect {
 
-	public static final Codec<EmptyPostEffect> CODEC = RecordCodecBuilder.create((instance) -> instance.stable(new EmptyPostEffect()));
+	public static final Codec<EmptyPostEffect> CODEC = RecordCodecBuilder
+		.create((instance) -> instance.stable(new EmptyPostEffect()));
 
 	@Override
 	public Codec<? extends PostEffect> getCodec() {

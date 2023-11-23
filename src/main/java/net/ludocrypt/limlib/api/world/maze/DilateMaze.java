@@ -5,32 +5,38 @@ package net.ludocrypt.limlib.api.world.maze;
 public class DilateMaze extends MazeComponent {
 
 	private MazeComponent mazeIn;
-	private int dilation;
+	private int dilationX;
+	private int dilationY;
 
 	public DilateMaze(MazeComponent mazeIn, int dilation) {
-		super(mazeIn.width * dilation, mazeIn.height * dilation);
+		this(mazeIn, dilation, dilation);
+	}
+
+	public DilateMaze(MazeComponent mazeIn, int dilationX, int dilationY) {
+		super(mazeIn.width * dilationX, mazeIn.height * dilationY);
 		this.mazeIn = mazeIn;
-		this.dilation = dilation;
+		this.dilationX = dilationX;
+		this.dilationY = dilationY;
 	}
 
 	@Override
-	public void generateMaze() {
+	public void create() {
 
 		for (int x = 0; x < mazeIn.width; x++) {
 
 			for (int y = 0; y < mazeIn.height; y++) {
 
-				for (int dx = 0; dx < dilation; dx++) {
+				for (int dx = 0; dx < dilationX; dx++) {
 
-					for (int dy = 0; dy < dilation; dy++) {
-						int mazeX = x * dilation + dx;
-						int mazeY = y * dilation + dy;
+					for (int dy = 0; dy < dilationY; dy++) {
+						int mazeX = x * dilationX + dx;
+						int mazeY = y * dilationY + dy;
 						Vec2i position = new Vec2i(mazeX, mazeY);
 						CellState reference = mazeIn.cellState(x, y);
 
-						if (dx % dilation == 0) {
+						if (dx % dilationX == 0) {
 
-							if (dy % dilation == 0) {
+							if (dy % dilationY == 0) {
 								CellState copy = reference.copy();
 								copy.setPosition(position);
 								this.maze[mazeY * this.width + mazeX] = copy;
@@ -51,7 +57,7 @@ public class DilateMaze extends MazeComponent {
 
 						} else {
 
-							if (dy % dilation == 0) {
+							if (dy % dilationY == 0) {
 
 								if (mazeIn.cellState(x, y).isNorth()) {
 									CellState copy = new CellState();
@@ -86,8 +92,12 @@ public class DilateMaze extends MazeComponent {
 		return mazeIn;
 	}
 
-	public int getDilation() {
-		return dilation;
+	public int getDilationX() {
+		return dilationX;
+	}
+
+	public int getDilationY() {
+		return dilationY;
 	}
 
 }

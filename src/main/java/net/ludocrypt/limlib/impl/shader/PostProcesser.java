@@ -23,6 +23,7 @@ public class PostProcesser {
 	}
 
 	public void init(ResourceManager resourceManager) {
+
 		try {
 			this.release();
 			MinecraftClient client = MinecraftClient.getInstance();
@@ -32,14 +33,18 @@ public class PostProcesser {
 			this.loaded = true;
 			Limlib.LOGGER.error("Could not create screen shader {}", this.getLocation(), e);
 		}
+
 	}
 
-	protected ShaderEffect parseShader(ResourceManager resourceManager, MinecraftClient mc, Identifier location) throws IOException {
+	protected ShaderEffect parseShader(ResourceManager resourceManager, MinecraftClient mc, Identifier location)
+			throws IOException {
 		return new ShaderEffect(mc.getTextureManager(), resourceManager, mc.getFramebuffer(), location);
 	}
 
 	public void release() {
+
 		if (this.isInitialized()) {
+
 			try {
 				assert this.shader != null;
 				this.shader.close();
@@ -47,12 +52,15 @@ public class PostProcesser {
 			} catch (Exception e) {
 				throw new RuntimeException("Failed to release shader " + this.location, e);
 			}
+
 		}
+
 		this.loaded = false;
 	}
 
 	public void render(float tickDelta) {
 		ShaderEffect shader = this.getShaderEffect();
+
 		if (shader != null) {
 			RenderSystem.disableBlend();
 			RenderSystem.disableDepthTest();
@@ -63,6 +71,7 @@ public class PostProcesser {
 			RenderSystem.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 			RenderSystem.enableDepthTest();
 		}
+
 	}
 
 	public Identifier getLocation() {
@@ -78,9 +87,11 @@ public class PostProcesser {
 	}
 
 	public ShaderEffect getShaderEffect() {
+
 		if (!this.isInitialized() && !this.isLoaded()) {
 			this.init(MinecraftClient.getInstance().getResourceManager());
 		}
+
 		return this.shader;
 	}
 

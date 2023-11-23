@@ -17,9 +17,13 @@ import net.minecraft.util.Identifier;
  */
 public abstract class ReverbEffect {
 
-	public static final RegistryKey<Registry<Codec<? extends ReverbEffect>>> REVERB_EFFECT_CODEC_KEY = RegistryKey.ofRegistry(new Identifier("limlib/codec/reverb_effect"));
-	public static final Registry<Codec<? extends ReverbEffect>> REVERB_EFFECT_CODEC = RegistriesAccessor.callRegisterSimple(REVERB_EFFECT_CODEC_KEY, Lifecycle.stable(), (registry) -> StaticReverbEffect.CODEC);
-	public static final Codec<ReverbEffect> CODEC = REVERB_EFFECT_CODEC.getCodec().dispatchStable(ReverbEffect::getCodec, Function.identity());
+	public static final RegistryKey<Registry<Codec<? extends ReverbEffect>>> REVERB_EFFECT_CODEC_KEY = RegistryKey
+		.ofRegistry(new Identifier("limlib/codec/reverb_effect"));
+	public static final Registry<Codec<? extends ReverbEffect>> REVERB_EFFECT_CODEC = RegistriesAccessor
+		.callRegisterSimple(REVERB_EFFECT_CODEC_KEY, Lifecycle.stable(), (registry) -> StaticReverbEffect.CODEC);
+	public static final Codec<ReverbEffect> CODEC = REVERB_EFFECT_CODEC
+		.getCodec()
+		.dispatchStable(ReverbEffect::getCodec, Function.identity());
 
 	public abstract Codec<? extends ReverbEffect> getCodec();
 

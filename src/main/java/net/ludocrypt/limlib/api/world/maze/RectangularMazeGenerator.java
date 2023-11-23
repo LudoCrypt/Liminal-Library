@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import net.ludocrypt.limlib.api.world.LimlibHelper;
 import net.ludocrypt.limlib.api.world.maze.MazeComponent.CellState;
-import net.minecraft.util.math.BlockPos;
+import net.ludocrypt.limlib.api.world.maze.MazeComponent.Vec2i;
 import net.minecraft.util.random.RandomGenerator;
 
 /**
@@ -12,11 +12,11 @@ import net.minecraft.util.random.RandomGenerator;
  */
 public class RectangularMazeGenerator<M extends MazeComponent> {
 
-	private final HashMap<BlockPos, M> mazes = new HashMap<BlockPos, M>(30);
+	private final HashMap<Vec2i, M> mazes = new HashMap<Vec2i, M>(30);
 	public final int width;
 	public final int height;
-	public final int thickness;
-	public final boolean redundancy;
+	public final int thicknessX;
+	public final int thicknessY;
 	public final long seedModifier;
 
 	/**
@@ -25,19 +25,16 @@ public class RectangularMazeGenerator<M extends MazeComponent> {
 	 * 
 	 * @param width        of the maze
 	 * @param height       of the maze
-	 * @param thickness    of the walls. This helps to know where to place adjacent
-	 *                     cells.
-	 * @param redundancy   makes a maze 2 blocks outwards in each direction, and
-	 *                     only generates the centre part of the maze. This helps
-	 *                     create the illusion of a larger structure at work.
+	 * @param thicknessX   of the cells in real world coordinates.
+	 * @param thicknessY   of the cells in real world coordinates.
 	 * @param seedModifier is the change to the seed when generating a new random
 	 *                     maze. In code, it uses the world seed + seedModifier
 	 */
-	public RectangularMazeGenerator(int width, int height, int thickness, boolean redundancy, long seedModifier) {
+	public RectangularMazeGenerator(int width, int height, int thicknessX, int thicknessY, long seedModifier) {
 		this.width = width;
 		this.height = height;
-		this.thickness = thickness;
-		this.redundancy = redundancy;
+		this.thicknessX = thicknessX;
+		this.thicknessY = thicknessY;
 		this.seedModifier = seedModifier;
 	}
 
@@ -51,29 +48,31 @@ public class RectangularMazeGenerator<M extends MazeComponent> {
 	 * @param cellDecorator funcional interface to generate a single maze block, or
 	 *                      'cell'
 	 */
-	public void generateMaze(BlockPos pos, long seed, MazeCreator<M> mazeCreator, CellDecorator<M> cellDecorator) {
+	public void generateMaze(Vec2i pos, long seed, MazeCreator<M> mazeCreator, CellDecorator<M> cellDecorator) {
 
 		for (int x = 0; x < 16; x++) {
 
 			for (int y = 0; y < 16; y++) {
-				BlockPos inPos = pos.add(x, 0, y);
+				Vec2i inPos = pos.add(x, y);
 
-				if (Math.floorMod(inPos.getX(), thickness) == 0 && Math.floorMod(inPos.getZ(), thickness) == 0) {
-					BlockPos mazePos = new BlockPos(inPos.getX() - Math.floorMod(inPos.getX(), (width * thickness)), 0, inPos.getZ() - Math.floorMod(inPos.getZ(), (height * thickness)));
+				if (Math.floorMod(inPos.getX(), thicknessX) == 0 && Math.floorMod(inPos.getY(), thicknessY) == 0) {
+					Vec2i mazePos = new Vec2i(inPos.getX() - Math.floorMod(inPos.getX(), (width * thicknessX)),
+						inPos.getY() - Math.floorMod(inPos.getY(), (height * thicknessY)));
 					M maze;
 
 					if (this.mazes.containsKey(mazePos)) {
 						maze = this.mazes.get(mazePos);
 					} else {
-						maze = mazeCreator.newMaze(mazePos, redundancy ? width + 4 : width, redundancy ? height + 4 : height,
-								RandomGenerator.createLegacy(LimlibHelper.blockSeed(mazePos.getX(), mazePos.getZ(), seed + seedModifier)));
+						maze = mazeCreator
+							.newMaze(mazePos, width, height, RandomGenerator
+								.createLegacy(LimlibHelper.blockSeed(mazePos.getX(), mazePos.getY(), seed + seedModifier)));
 						this.mazes.put(mazePos, maze);
 					}
 
-					int mazeX = (inPos.getX() - mazePos.getX()) / thickness;
-					int mazeY = (inPos.getZ() - mazePos.getZ()) / thickness;
-					CellState originCell = maze.cellState(redundancy ? mazeX + 2 : mazeX, redundancy ? mazeY + 2 : mazeY);
-					cellDecorator.generate(inPos, mazePos, maze, originCell, this.thickness);
+					int mazeX = (inPos.getX() - mazePos.getX()) / thicknessX;
+					int mazeY = (inPos.getY() - mazePos.getY()) / thicknessY;
+					CellState originCell = maze.cellState(mazeX, mazeY);
+					cellDecorator.generate(inPos, mazePos, maze, originCell, new Vec2i(this.thicknessX, this.thicknessY));
 				}
 
 			}
@@ -82,21 +81,21 @@ public class RectangularMazeGenerator<M extends MazeComponent> {
 
 	}
 
-	public HashMap<BlockPos, M> getMazes() {
+	public HashMap<Vec2i, M> getMazes() {
 		return mazes;
 	}
 
 	@FunctionalInterface
 	public static interface CellDecorator<M extends MazeComponent> {
 
-		void generate(BlockPos pos, BlockPos mazePos, M maze, CellState state, int thickness);
+		void generate(Vec2i pos, Vec2i mazePos, M maze, CellState state, Vec2i thickness);
 
 	}
 
 	@FunctionalInterface
 	public static interface MazeCreator<M extends MazeComponent> {
 
-		M newMaze(BlockPos mazePos, int width, int height, RandomGenerator random);
+		M newMaze(Vec2i mazePos, int width, int height, RandomGenerator random);
 
 	}
 

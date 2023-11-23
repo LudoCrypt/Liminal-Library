@@ -28,10 +28,13 @@ public class LimlibTravelling {
 	@Internal
 	public static float travelingPitch = 1.0F;
 
-	public static <E extends Entity> E travelTo(E teleported, ServerWorld destination, TeleportTarget target, SoundEvent sound, float volume, float pitch) {
+	public static <E extends Entity> E travelTo(E teleported, ServerWorld destination, TeleportTarget target,
+			SoundEvent sound, float volume, float pitch) {
+
 		if (destination.equals(teleported.getWorld())) {
 
 			BlockPos blockPos = BlockPos.create(target.position.x, target.position.y, target.position.z);
+
 			if (!World.isValid(blockPos)) {
 				throw new UnsupportedOperationException("Position " + blockPos.toString() + " is out of this world!");
 			}
@@ -43,10 +46,13 @@ public class LimlibTravelling {
 				ChunkPos chunkPos = new ChunkPos(blockPos);
 				destination.getChunkManager().addTicket(ChunkTicketType.POST_TELEPORT, chunkPos, 1, teleported.getId());
 				teleported.stopRiding();
+
 				if (((ServerPlayerEntity) teleported).isSleeping()) {
 					((ServerPlayerEntity) teleported).wakeUp(true, true);
 				}
-				((ServerPlayerEntity) teleported).networkHandler.requestTeleport(target.position.x, target.position.y, target.position.z, f, g, Set.of());
+
+				((ServerPlayerEntity) teleported).networkHandler
+					.requestTeleport(target.position.x, target.position.y, target.position.z, f, g, Set.of());
 
 				teleported.setHeadYaw(f);
 			} else {
@@ -56,10 +62,14 @@ public class LimlibTravelling {
 			}
 
 			teleported.setVelocity(target.velocity);
-			teleported.getWorld().playSound(null, teleported.getX(), teleported.getY(), teleported.getZ(), sound, SoundCategory.AMBIENT, volume, pitch);
+			teleported
+				.getWorld()
+				.playSound(null, teleported.getX(), teleported.getY(), teleported.getZ(), sound, SoundCategory.AMBIENT,
+					volume, pitch);
 
 			return teleported;
 		} else {
+
 			try {
 				travelingSound = sound;
 				travelingVolume = volume;
@@ -70,7 +80,9 @@ public class LimlibTravelling {
 				travelingVolume = 0.0F;
 				travelingPitch = 0.0F;
 			}
+
 		}
+
 	}
 
 }

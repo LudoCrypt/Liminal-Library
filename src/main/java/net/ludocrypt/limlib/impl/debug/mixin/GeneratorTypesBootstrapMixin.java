@@ -27,7 +27,9 @@ public abstract class GeneratorTypesBootstrapMixin {
 
 	@Inject(method = "Lnet/minecraft/client/world/GeneratorTypes$Bootstrap;method_41600()V", at = @At("TAIL"))
 	public void limlib$addDimensionOpions(CallbackInfo ci) {
-		this.addDimensionGenerator(DebugWorld.DEBUG_KEY, new DimensionOptions(this.overworld, new DebugNbtChunkGenerator(this.biome.getHolderOrThrow(Biomes.THE_VOID))));
+		this
+			.addDimensionGenerator(DebugWorld.DEBUG_KEY, new DimensionOptions(this.overworld,
+				new DebugNbtChunkGenerator(this.biome.getHolderOrThrow(Biomes.THE_VOID))));
 	}
 
 	abstract void addDimensionGenerator(RegistryKey<GeneratorType> generator, DimensionOptions dimension);

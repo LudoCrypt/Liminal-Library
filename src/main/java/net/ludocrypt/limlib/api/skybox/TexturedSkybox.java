@@ -36,7 +36,8 @@ public class TexturedSkybox extends Skybox {
 
 	@Override
 	@ClientOnly
-	public void renderSky(WorldRenderer worldRenderer, MinecraftClient client, MatrixStack matrices, Matrix4f projectionMatrix, float tickDelta) {
+	public void renderSky(WorldRenderer worldRenderer, MinecraftClient client, MatrixStack matrices,
+			Matrix4f projectionMatrix, float tickDelta) {
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.depthMask(MinecraftClient.isFabulousGraphicsOrBetter());
@@ -52,6 +53,7 @@ public class TexturedSkybox extends Skybox {
 
 		for (int i = 0; i < 6; ++i) {
 			matrices.push();
+
 			if (i == 0) {
 				matrices.multiply(Axis.Z_POSITIVE.rotationDegrees(180.0F));
 				matrices.multiply(Axis.Y_POSITIVE.rotationDegrees(180.0F));

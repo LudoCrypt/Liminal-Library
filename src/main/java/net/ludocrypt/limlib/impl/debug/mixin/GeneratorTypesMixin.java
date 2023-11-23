@@ -20,16 +20,19 @@ import net.minecraft.world.gen.chunk.ChunkGenerator;
 public class GeneratorTypesMixin {
 
 	@Inject(method = "getKey", at = @At("HEAD"), cancellable = true)
-	private static void limlib$getKey(Registry<DimensionOptions> registry, CallbackInfoReturnable<Optional<RegistryKey<GeneratorType>>> ci) {
-		Optional<RegistryKey<GeneratorType>> optional = registry.getOrEmpty(DimensionOptions.OVERWORLD).flatMap(dimensionOptions -> {
-			ChunkGenerator chunkGenerator = dimensionOptions.getChunkGenerator();
+	private static void limlib$getKey(Registry<DimensionOptions> registry,
+			CallbackInfoReturnable<Optional<RegistryKey<GeneratorType>>> ci) {
+		Optional<RegistryKey<GeneratorType>> optional = registry
+			.getOrEmpty(DimensionOptions.OVERWORLD)
+			.flatMap(dimensionOptions -> {
+				ChunkGenerator chunkGenerator = dimensionOptions.getChunkGenerator();
 
-			if (chunkGenerator instanceof DebugNbtChunkGenerator) {
-				return Optional.of(DebugWorld.DEBUG_KEY);
-			}
+				if (chunkGenerator instanceof DebugNbtChunkGenerator) {
+					return Optional.of(DebugWorld.DEBUG_KEY);
+				}
 
-			return Optional.empty();
-		});
+				return Optional.empty();
+			});
 
 		if (optional.isPresent()) {
 			ci.setReturnValue(optional);

@@ -6,8 +6,6 @@ import java.util.Map;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-import net.minecraft.util.math.BlockPos;
-
 /**
  * Abstract maze component
  **/
@@ -18,6 +16,7 @@ public abstract class MazeComponent {
 	public final CellState[] maze;
 	public final List<Vec2i> solvedMaze = Lists.newArrayList();
 	public int visitedCells = 0;
+	public boolean generated = false;
 
 	public MazeComponent(int width, int height) {
 		this.width = width;
@@ -38,9 +37,34 @@ public abstract class MazeComponent {
 	}
 
 	/**
-	 * Generates the full maze
+	 * Attempt to generate the maze
 	 **/
-	public abstract void generateMaze();
+	public void generateMaze() {
+		this.generateMaze(false);
+	}
+
+	/**
+	 * Attempt to generate the maze
+	 **/
+	public void generateMaze(boolean doesThrow) {
+
+		if (generated) {
+
+			if (doesThrow) {
+				throw new UnsupportedOperationException("This maze has already been created");
+			}
+
+		} else {
+			create();
+			generated = true;
+		}
+
+	}
+
+	/**
+	 * Create the maze
+	 **/
+	public abstract void create();
 
 	public CellState cellState(int x, int y) {
 		return this.maze[y * this.width + x];
@@ -67,11 +91,31 @@ public abstract class MazeComponent {
 	}
 
 	public boolean hasNeighbors(Vec2i vec) {
-		return this.hasNorthNeighbor(vec) || this.hasEastNeighbor(vec) || this.hasSouthNeighbor(vec) || this.hasWestNeighbor(vec);
+		return this.hasNorthNeighbor(vec) || this.hasEastNeighbor(vec) || this.hasSouthNeighbor(vec) || this
+			.hasWestNeighbor(vec);
 	}
 
 	public boolean fits(Vec2i vec) {
 		return vec.getX() >= 0 && vec.getX() < this.width && vec.getY() >= 0 && vec.getY() < this.height;
+	}
+
+	@Override
+	public String toString() {
+
+		StringBuilder row = new StringBuilder();
+		row.append("\n");
+
+		for (int x = width - 1; x >= 0; x--) {
+
+			for (int y = 0; y < height; y++) {
+				row.append(cellState(x, y).toString());
+
+			}
+
+			row.append("\n");
+		}
+
+		return row.toString();
 	}
 
 	/**
@@ -185,6 +229,45 @@ public abstract class MazeComponent {
 			return extra;
 		}
 
+		@Override
+		public String toString() {
+
+			if (this.isWest() && this.isNorth() && this.isEast() && this.isSouth()) {
+				return ("┼");
+			} else if (this.isWest() && this.isNorth() && this.isEast() && !this.isSouth()) {
+				return ("┴");
+			} else if (this.isWest() && this.isNorth() && !this.isEast() && this.isSouth()) {
+				return ("┤");
+			} else if (this.isWest() && this.isNorth() && !this.isEast() && !this.isSouth()) {
+				return ("┘");
+			} else if (this.isWest() && !this.isNorth() && this.isEast() && this.isSouth()) {
+				return ("┬");
+			} else if (this.isWest() && !this.isNorth() && this.isEast() && !this.isSouth()) {
+				return ("─");
+			} else if (this.isWest() && !this.isNorth() && !this.isEast() && this.isSouth()) {
+				return ("┐");
+			} else if (this.isWest() && !this.isNorth() && !this.isEast() && !this.isSouth()) {
+				return ("╴");
+			} else if (!this.isWest() && this.isNorth() && this.isEast() && this.isSouth()) {
+				return ("├");
+			} else if (!this.isWest() && this.isNorth() && this.isEast() && !this.isSouth()) {
+				return ("└");
+			} else if (!this.isWest() && this.isNorth() && !this.isEast() && this.isSouth()) {
+				return ("│");
+			} else if (!this.isWest() && this.isNorth() && !this.isEast() && !this.isSouth()) {
+				return ("╵");
+			} else if (!this.isWest() && !this.isNorth() && this.isEast() && this.isSouth()) {
+				return ("┌");
+			} else if (!this.isWest() && !this.isNorth() && this.isEast() && !this.isSouth()) {
+				return ("╶");
+			} else if (!this.isWest() && !this.isNorth() && !this.isEast() && this.isSouth()) {
+				return ("╷");
+			} else {
+				return ("░");
+			}
+
+		}
+
 	}
 
 	public static class Vec2i {
@@ -205,8 +288,8 @@ public abstract class MazeComponent {
 			return y;
 		}
 
-		public BlockPos toPos() {
-			return new BlockPos(x, y, 0);
+		public Vec2i add(int x, int y) {
+			return new Vec2i(this.x + x, this.y + y);
 		}
 
 		@Override

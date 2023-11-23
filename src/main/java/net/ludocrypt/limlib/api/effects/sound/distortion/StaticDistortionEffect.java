@@ -20,22 +20,42 @@ public class StaticDistortionEffect extends DistortionEffect {
 	public static final Codec<StaticDistortionEffect> CODEC = RecordCodecBuilder.create((instance) -> {
 		return instance.group(Codec.BOOL.optionalFieldOf("enabled", true).stable().forGetter((distortion) -> {
 			return distortion.enabled;
-		}), Codec.floatRange(EXTEfx.AL_DISTORTION_MIN_EDGE, EXTEfx.AL_DISTORTION_MAX_EDGE).optionalFieldOf("edge", EXTEfx.AL_DISTORTION_DEFAULT_EDGE).stable().forGetter((distortion) -> {
-			return distortion.edge;
-		}), Codec.floatRange(EXTEfx.AL_DISTORTION_MIN_GAIN, EXTEfx.AL_DISTORTION_MAX_GAIN).optionalFieldOf("gain", EXTEfx.AL_DISTORTION_DEFAULT_GAIN).stable().forGetter((distortion) -> {
-			return distortion.gain;
-		}), Codec.floatRange(EXTEfx.AL_DISTORTION_MIN_LOWPASS_CUTOFF, EXTEfx.AL_DISTORTION_MAX_LOWPASS_CUTOFF).optionalFieldOf("lowpass_cutoff", EXTEfx.AL_DISTORTION_DEFAULT_LOWPASS_CUTOFF).stable()
+		}), Codec
+			.floatRange(EXTEfx.AL_DISTORTION_MIN_EDGE, EXTEfx.AL_DISTORTION_MAX_EDGE)
+			.optionalFieldOf("edge", EXTEfx.AL_DISTORTION_DEFAULT_EDGE)
+			.stable()
+			.forGetter((distortion) -> {
+				return distortion.edge;
+			}),
+			Codec
+				.floatRange(EXTEfx.AL_DISTORTION_MIN_GAIN, EXTEfx.AL_DISTORTION_MAX_GAIN)
+				.optionalFieldOf("gain", EXTEfx.AL_DISTORTION_DEFAULT_GAIN)
+				.stable()
+				.forGetter((distortion) -> {
+					return distortion.gain;
+				}),
+			Codec
+				.floatRange(EXTEfx.AL_DISTORTION_MIN_LOWPASS_CUTOFF, EXTEfx.AL_DISTORTION_MAX_LOWPASS_CUTOFF)
+				.optionalFieldOf("lowpass_cutoff", EXTEfx.AL_DISTORTION_DEFAULT_LOWPASS_CUTOFF)
+				.stable()
 				.forGetter((distortion) -> {
 					return distortion.lowpassCutoff;
-				}), Codec.floatRange(EXTEfx.AL_DISTORTION_MIN_EQCENTER, EXTEfx.AL_DISTORTION_MAX_EQCENTER).optionalFieldOf("eq_center", EXTEfx.AL_DISTORTION_DEFAULT_EQCENTER).stable()
-						.forGetter((distortion) -> {
-							return distortion.eqCenter;
-						}),
-				Codec.floatRange(EXTEfx.AL_DISTORTION_MIN_EQBANDWIDTH, EXTEfx.AL_DISTORTION_MAX_EQBANDWIDTH).optionalFieldOf("eq_band_width", EXTEfx.AL_DISTORTION_DEFAULT_EQBANDWIDTH).stable()
-						.forGetter((distortion) -> {
-							return distortion.eqBandWidth;
-						}))
-				.apply(instance, instance.stable(StaticDistortionEffect::new));
+				}),
+			Codec
+				.floatRange(EXTEfx.AL_DISTORTION_MIN_EQCENTER, EXTEfx.AL_DISTORTION_MAX_EQCENTER)
+				.optionalFieldOf("eq_center", EXTEfx.AL_DISTORTION_DEFAULT_EQCENTER)
+				.stable()
+				.forGetter((distortion) -> {
+					return distortion.eqCenter;
+				}),
+			Codec
+				.floatRange(EXTEfx.AL_DISTORTION_MIN_EQBANDWIDTH, EXTEfx.AL_DISTORTION_MAX_EQBANDWIDTH)
+				.optionalFieldOf("eq_band_width", EXTEfx.AL_DISTORTION_DEFAULT_EQBANDWIDTH)
+				.stable()
+				.forGetter((distortion) -> {
+					return distortion.eqBandWidth;
+				}))
+			.apply(instance, instance.stable(StaticDistortionEffect::new));
 	});
 
 	private final boolean enabled;
@@ -45,7 +65,8 @@ public class StaticDistortionEffect extends DistortionEffect {
 	private final float eqCenter;
 	private final float eqBandWidth;
 
-	public StaticDistortionEffect(boolean enabled, float edge, float gain, float lowpassCutoff, float eqCenter, float eqBandWidth) {
+	public StaticDistortionEffect(boolean enabled, float edge, float gain, float lowpassCutoff, float eqCenter,
+			float eqBandWidth) {
 		this.enabled = enabled;
 		this.edge = edge;
 		this.gain = gain;
@@ -61,8 +82,11 @@ public class StaticDistortionEffect extends DistortionEffect {
 
 	@Override
 	public boolean shouldIgnore(Identifier identifier) {
-		return identifier.getPath().contains("ui.") || identifier.getPath().contains("music.") || identifier.getPath().contains("block.lava.pop") || identifier.getPath().contains("weather.")
-				|| identifier.getPath().startsWith("atmosfera") || identifier.getPath().startsWith("dynmus");
+		return identifier.getPath().contains("ui.") || identifier.getPath().contains("music.") || identifier
+			.getPath()
+			.contains("block.lava.pop") || identifier.getPath().contains("weather.") || identifier
+				.getPath()
+				.startsWith("atmosfera") || identifier.getPath().startsWith("dynmus");
 	}
 
 	@Override
@@ -135,7 +159,8 @@ public class StaticDistortionEffect extends DistortionEffect {
 		}
 
 		public StaticDistortionEffect build() {
-			return new StaticDistortionEffect(this.enabled, this.edge, this.gain, this.lowpassCutoff, this.eqCenter, this.eqBandWidth);
+			return new StaticDistortionEffect(this.enabled, this.edge, this.gain, this.lowpassCutoff, this.eqCenter,
+				this.eqBandWidth);
 		}
 
 	}

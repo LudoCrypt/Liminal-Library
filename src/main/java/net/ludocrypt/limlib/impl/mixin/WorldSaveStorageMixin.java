@@ -28,11 +28,14 @@ import net.minecraft.world.storage.WorldSaveStorage;
 public class WorldSaveStorageMixin {
 
 	@ModifyVariable(method = "readGeneratorProperties(Lcom/mojang/serialization/Dynamic;Lcom/mojang/datafixers/DataFixer;I)Lcom/mojang/serialization/DataResult;", at = @At(value = "STORE"), ordinal = 1)
-	private static <T> Dynamic<T> limlib$readGeneratorProperties$datafix(Dynamic<T> in, Dynamic<T> levelData, DataFixer dataFixer, int version) {
+	private static <T> Dynamic<T> limlib$readGeneratorProperties$datafix(Dynamic<T> in, Dynamic<T> levelData,
+			DataFixer dataFixer, int version) {
 		Dynamic<T> dynamic = in;
+
 		for (Entry<RegistryKey<LimlibWorld>, LimlibWorld> entry : LimlibWorld.LIMLIB_WORLD.getEntries()) {
 			dynamic = limlib$addDimension(entry.getKey(), entry.getValue(), dynamic);
 		}
+
 		return dynamic;
 	}
 
@@ -40,22 +43,30 @@ public class WorldSaveStorageMixin {
 	@SuppressWarnings("unchecked")
 	private static <T> Dynamic<T> limlib$addDimension(RegistryKey<LimlibWorld> key, LimlibWorld world, Dynamic<T> in) {
 		Dynamic<T> dimensions = in.get("dimensions").orElseEmptyMap();
+
 		if (!dimensions.get(key.getValue().toString()).result().isPresent()) {
 			Map<Dynamic<T>, Dynamic<T>> dimensionsMap = Maps.newHashMap(dimensions.getMapValues().result().get());
 
 			DynamicRegistryManager registryManager = SaveStorageSupplier.LOADED_REGISTRY.get();
 
-			dimensionsMap.put(dimensions.createString(key.getValue().toString()), new Dynamic<T>(dimensions.getOps(),
-					(T) DimensionOptions.CODEC.encodeStart(RegistryOps.create(NbtOps.INSTANCE, registryManager), world.getDimensionOptionsSupplier().apply(new RegistryProvider() {
+			dimensionsMap
+				.put(dimensions.createString(key.getValue().toString()),
+					new Dynamic<T>(dimensions.getOps(),
+						(T) DimensionOptions.CODEC
+							.encodeStart(RegistryOps.create(NbtOps.INSTANCE, registryManager),
+								world.getDimensionOptionsSupplier().apply(new RegistryProvider() {
 
-						@Override
-						public <Q> HolderProvider<Q> get(RegistryKey<Registry<Q>> key) {
-							return registryManager.getLookup(key).get();
-						}
+									@Override
+									public <Q> HolderProvider<Q> get(RegistryKey<Registry<Q>> key) {
+										return registryManager.getLookup(key).get();
+									}
 
-					})).result().get()));
+								}))
+							.result()
+							.get()));
 			in = in.set("dimensions", in.createMap(dimensionsMap));
 		}
+
 		return in;
 	}
 

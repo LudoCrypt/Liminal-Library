@@ -21,7 +21,8 @@ import net.minecraft.registry.tag.WorldPresetTags;
 @Mixin(WorldPresetTagProvider.class)
 public abstract class WorldPresetTagProviderMixin extends AbstractTagProvider<GeneratorType> {
 
-	protected WorldPresetTagProviderMixin(DataPackOutput output, RegistryKey<? extends Registry<GeneratorType>> key, CompletableFuture<Provider> lookupProvider) {
+	protected WorldPresetTagProviderMixin(DataPackOutput output, RegistryKey<? extends Registry<GeneratorType>> key,
+			CompletableFuture<Provider> lookupProvider) {
 		super(output, key, lookupProvider);
 	}
 

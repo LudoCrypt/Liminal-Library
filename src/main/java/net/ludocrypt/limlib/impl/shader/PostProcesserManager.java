@@ -10,6 +10,7 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
 public final class PostProcesserManager implements SimpleSynchronousResourceReloader {
+
 	public static final PostProcesserManager INSTANCE = new PostProcesserManager();
 	public static final Identifier RESOURCE_KEY = new Identifier("limlib:shaders");
 
@@ -22,14 +23,22 @@ public final class PostProcesserManager implements SimpleSynchronousResourceRelo
 	}
 
 	public void onResolutionChanged(int newWidth, int newHeight) {
+
 		if (!shaders.isEmpty()) {
+
 			for (PostProcesser shader : shaders) {
+
 				if (shader.isInitialized()) {
 					MinecraftClient client = MinecraftClient.getInstance();
-					shader.shader.setupDimensions(client.getWindow().getFramebufferWidth(), client.getWindow().getFramebufferHeight());
+					shader.shader
+						.setupDimensions(client.getWindow().getFramebufferWidth(),
+							client.getWindow().getFramebufferHeight());
 				}
+
 			}
+
 		}
+
 	}
 
 	@Override
@@ -39,9 +48,11 @@ public final class PostProcesserManager implements SimpleSynchronousResourceRelo
 
 	@Override
 	public void reload(ResourceManager mgr) {
+
 		for (PostProcesser shader : shaders) {
 			shader.init(mgr);
 		}
+
 	}
 
 	public void dispose(PostProcesser shader) {

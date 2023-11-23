@@ -36,21 +36,29 @@ public class MinecraftClientMixin {
 
 	@Inject(method = "getMusic", at = @At("HEAD"), cancellable = true)
 	private void limlib$getMusic(CallbackInfoReturnable<MusicSound> ci) {
+
 		if (this.player != null) {
-			Optional<SoundEffects> soundEffects = LookupGrabber.snatch(world.getRegistryManager().getLookup(SoundEffects.SOUND_EFFECTS_KEY).get(),
+			Optional<SoundEffects> soundEffects = LookupGrabber
+				.snatch(world.getRegistryManager().getLookup(SoundEffects.SOUND_EFFECTS_KEY).get(),
 					RegistryKey.of(SoundEffects.SOUND_EFFECTS_KEY, world.getRegistryKey().getValue()));
+
 			if (soundEffects.isPresent()) {
 				Optional<MusicSound> musicSound = soundEffects.get().getMusic();
+
 				if (musicSound.isPresent()) {
 					ci.setReturnValue(musicSound.get());
 				}
+
 			}
+
 		}
+
 	}
 
 	@Inject(method = "onResolutionChanged", at = @At("RETURN"))
 	private void limlib$onResolutionChanged(CallbackInfo info) {
-		PostProcesserManager.INSTANCE.onResolutionChanged(this.window.getFramebufferWidth(), this.window.getFramebufferHeight());
+		PostProcesserManager.INSTANCE
+			.onResolutionChanged(this.window.getFramebufferWidth(), this.window.getFramebufferHeight());
 	}
 
 }

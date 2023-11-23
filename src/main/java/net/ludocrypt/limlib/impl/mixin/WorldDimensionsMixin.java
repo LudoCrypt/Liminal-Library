@@ -31,7 +31,9 @@ public class WorldDimensionsMixin {
 	private static void limlib$clinit(CallbackInfo ci) {
 		Set<RegistryKey<DimensionOptions>> dimensions = Sets.newHashSet();
 		dimensions.addAll(VANILLA_DIMENSION_KEYS);
-		LimlibWorld.LIMLIB_WORLD.getEntries().forEach((entry) -> dimensions.add(RegistryKey.of(RegistryKeys.DIMENSION, entry.getKey().getValue())));
+		LimlibWorld.LIMLIB_WORLD
+			.getEntries()
+			.forEach((entry) -> dimensions.add(RegistryKey.of(RegistryKeys.DIMENSION, entry.getKey().getValue())));
 		VANILLA_DIMENSION_KEYS = dimensions;
 	}
 

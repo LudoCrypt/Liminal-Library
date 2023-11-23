@@ -28,13 +28,18 @@ import net.minecraft.world.gen.chunk.ChunkGenerator;
 public class ChunkStatusMixin {
 
 	@Inject(method = "method_38284(Lnet/minecraft/world/chunk/ChunkStatus;Ljava/util/concurrent/Executor;Lnet/minecraft/server/world/ServerWorld;Lnet/minecraft/world/gen/chunk/ChunkGenerator;Lnet/minecraft/structure/StructureTemplateManager;Lnet/minecraft/server/world/ServerLightingProvider;Ljava/util/function/Function;Ljava/util/List;Lnet/minecraft/world/chunk/Chunk;)Ljava/util/concurrent/CompletableFuture;", at = @At("HEAD"), cancellable = true)
-	private static void limlib$liminalChunkGenerator(ChunkStatus chunkStatus, Executor executor, ServerWorld serverWorld, ChunkGenerator chunkGenerator,
-			StructureTemplateManager structureTemplateManager, ServerLightingProvider serverLightingProvider, Function<Chunk, CompletableFuture<Either<Chunk, ChunkHolder.Unloaded>>> function,
-			List<Chunk> chunks, Chunk chunk, CallbackInfoReturnable<CompletableFuture<Either<Chunk, ChunkHolder.Unloaded>>> ci) {
+	private static void limlib$liminalChunkGenerator(ChunkStatus chunkStatus, Executor executor, ServerWorld serverWorld,
+			ChunkGenerator chunkGenerator, StructureTemplateManager structureTemplateManager,
+			ServerLightingProvider serverLightingProvider,
+			Function<Chunk, CompletableFuture<Either<Chunk, ChunkHolder.Unloaded>>> function, List<Chunk> chunks,
+			Chunk chunk, CallbackInfoReturnable<CompletableFuture<Either<Chunk, ChunkHolder.Unloaded>>> ci) {
 
 		if (chunkGenerator instanceof LiminalChunkGenerator limChunkGen) {
 			ChunkRegion chunkRegion = new ChunkRegion(serverWorld, chunks, chunkStatus, limChunkGen.getChunkDistance());
-			ci.setReturnValue(limChunkGen.populateNoise(chunkRegion, chunkStatus, executor, serverWorld, chunkGenerator, structureTemplateManager, serverLightingProvider, function, chunks, chunk)
+			ci
+				.setReturnValue(limChunkGen
+					.populateNoise(chunkRegion, chunkStatus, executor, serverWorld, chunkGenerator, structureTemplateManager,
+						serverLightingProvider, function, chunks, chunk)
 					.thenApply(chunkx -> {
 
 						if (chunkx instanceof ProtoChunk protoChunk) {

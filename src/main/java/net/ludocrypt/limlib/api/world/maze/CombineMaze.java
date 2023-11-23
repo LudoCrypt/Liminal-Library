@@ -9,7 +9,7 @@ public class CombineMaze extends MazeComponent {
 	}
 
 	@Override
-	public void generateMaze() {
+	public void create() {
 
 		for (MazeComponent maze : components) {
 
@@ -34,7 +34,9 @@ public class CombineMaze extends MazeComponent {
 					this.cellState(x, y).setWest(true);
 				}
 
-				if (this.cellState(x, y).isNorth() || this.cellState(x, y).isEast() || this.cellState(x, y).isSouth() || this.cellState(x, y).isWest()) {
+				if (this.cellState(x, y).isNorth() || this.cellState(x, y).isEast() || this.cellState(x, y).isSouth() || this
+					.cellState(x, y)
+					.isWest()) {
 					this.solvedMaze.add(new Vec2i(x, y));
 				}
 

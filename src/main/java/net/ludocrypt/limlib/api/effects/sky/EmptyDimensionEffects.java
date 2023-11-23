@@ -13,7 +13,8 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
  */
 public class EmptyDimensionEffects extends StaticDimensionEffects {
 
-	public static final Codec<EmptyDimensionEffects> CODEC = RecordCodecBuilder.create((instance) -> instance.stable(new EmptyDimensionEffects()));
+	public static final Codec<EmptyDimensionEffects> CODEC = RecordCodecBuilder
+		.create((instance) -> instance.stable(new EmptyDimensionEffects()));
 
 	public EmptyDimensionEffects() {
 		super(Optional.empty(), false, "NONE", false, false, false, 1.0F);

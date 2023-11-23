@@ -17,8 +17,11 @@ public class BuiltinDimensionTypesMixin {
 
 	@Inject(method = "bootstrap(Lnet/minecraft/world/gen/BootstrapContext;)V", at = @At("RETURN"))
 	private static void limlib$initAndGetDefault(BootstrapContext<DimensionType> bootstrapContext, CallbackInfo ci) {
-		LimlibWorld.LIMLIB_WORLD.getEntries()
-				.forEach((entry) -> bootstrapContext.register(RegistryKey.of(RegistryKeys.DIMENSION_TYPE, entry.getKey().getValue()), entry.getValue().getDimensionTypeSupplier().get()));
+		LimlibWorld.LIMLIB_WORLD
+			.getEntries()
+			.forEach((entry) -> bootstrapContext
+				.register(RegistryKey.of(RegistryKeys.DIMENSION_TYPE, entry.getKey().getValue()),
+					entry.getValue().getDimensionTypeSupplier().get()));
 	}
 
 }

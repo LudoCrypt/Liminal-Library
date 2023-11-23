@@ -18,9 +18,11 @@ import net.minecraft.registry.RegistryOps.RegistryInfoLookup;
 public class LimlibRegistryHooks {
 
 	@Internal
-	public static final Map<RegistryKey<? extends Registry<?>>, Set<LimlibRegistryHook<?>>> REGISTRY_HOOKS = Maps.newHashMap();
+	public static final Map<RegistryKey<? extends Registry<?>>, Set<LimlibRegistryHook<?>>> REGISTRY_HOOKS = Maps
+		.newHashMap();
 	@Internal
-	public static final Map<RegistryKey<? extends Registry<?>>, Set<LimlibJsonRegistryHook<?>>> REGISTRY_JSON_HOOKS = Maps.newHashMap();
+	public static final Map<RegistryKey<? extends Registry<?>>, Set<LimlibJsonRegistryHook<?>>> REGISTRY_JSON_HOOKS = Maps
+		.newHashMap();
 
 	public static <O, T extends Registry<O>> void hook(RegistryKey<T> key, LimlibRegistryHook<O> hook) {
 		Set<LimlibRegistryHook<?>> hooks = REGISTRY_HOOKS.computeIfAbsent(key, k -> Sets.newHashSet());
@@ -40,7 +42,8 @@ public class LimlibRegistryHooks {
 		 * @param registryKey The RegistryKey of the registry.
 		 * @param registry    The MutableRegistry where to register.
 		 */
-		void register(RegistryInfoLookup infoLookup, RegistryKey<? extends Registry<O>> registryKey, MutableRegistry<O> registry);
+		void register(RegistryInfoLookup infoLookup, RegistryKey<? extends Registry<O>> registryKey,
+				MutableRegistry<O> registry);
 
 	}
 
@@ -53,7 +56,8 @@ public class LimlibRegistryHooks {
 		 * @param registry    The MutableRegistry where to register.
 		 * @param jsonElement The jsonElement to modify before being read by a CODEC.
 		 */
-		void register(RegistryInfoLookup infoLookup, RegistryKey<? extends Registry<O>> registryKey, RegistryOps<JsonElement> registryOps, JsonElement jsonElement);
+		void register(RegistryInfoLookup infoLookup, RegistryKey<? extends Registry<O>> registryKey,
+				RegistryOps<JsonElement> registryOps, JsonElement jsonElement);
 
 	}
 

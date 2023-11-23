@@ -30,7 +30,8 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 		this(biomeSource, nbtGroup, new FunctionMap<Identifier, NbtPlacerUtil, ResourceManager>(NbtPlacerUtil::load));
 	}
 
-	public AbstractNbtChunkGenerator(BiomeSource biomeSource, NbtGroup nbtGroup, FunctionMap<Identifier, NbtPlacerUtil, ResourceManager> structures) {
+	public AbstractNbtChunkGenerator(BiomeSource biomeSource, NbtGroup nbtGroup,
+			FunctionMap<Identifier, NbtPlacerUtil, ResourceManager> structures) {
 		super(biomeSource);
 		this.nbtGroup = nbtGroup;
 		this.structures = structures;
@@ -52,8 +53,11 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 	public void generateNbt(ChunkRegion region, BlockPos at, Identifier id, BlockRotation rotation, BlockMirror mirror) {
 
 		try {
-			structures.eval(id, region.getServer().getResourceManager()).manipulate(rotation, mirror).generateNbt(region, at, (pos, state, nbt) -> this.modifyStructure(region, pos, state, nbt))
-					.spawnEntities(region, at, rotation, mirror);
+			structures
+				.eval(id, region.getServer().getResourceManager())
+				.manipulate(rotation, mirror)
+				.generateNbt(region, at, (pos, state, nbt) -> this.modifyStructure(region, pos, state, nbt))
+				.spawnEntities(region, at, rotation, mirror);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new NullPointerException("Attempted to load undefined structure \'" + id + "\'");
@@ -61,11 +65,15 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 
 	}
 
-	public void generateNbt(ChunkRegion region, BlockPos offset, BlockPos from, BlockPos to, Identifier id, BlockRotation rotation, BlockMirror mirror) {
+	public void generateNbt(ChunkRegion region, BlockPos offset, BlockPos from, BlockPos to, Identifier id,
+			BlockRotation rotation, BlockMirror mirror) {
 
 		try {
-			structures.eval(id, region.getServer().getResourceManager()).manipulate(rotation, mirror)
-					.generateNbt(region, offset, from, to, (pos, state, nbt) -> this.modifyStructure(region, pos, state, nbt)).spawnEntities(region, offset, from, to, rotation, mirror);
+			structures
+				.eval(id, region.getServer().getResourceManager())
+				.manipulate(rotation, mirror)
+				.generateNbt(region, offset, from, to, (pos, state, nbt) -> this.modifyStructure(region, pos, state, nbt))
+				.spawnEntities(region, offset, from, to, rotation, mirror);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new NullPointerException("Attempted to load undefined structure \'" + id + "\'");
@@ -73,11 +81,13 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 
 	}
 
-	protected void modifyStructure(ChunkRegion region, BlockPos pos, BlockState state, Optional<NbtCompound> blockEntityNbt) {
+	protected void modifyStructure(ChunkRegion region, BlockPos pos, BlockState state,
+			Optional<NbtCompound> blockEntityNbt) {
 		this.modifyStructure(region, pos, state, blockEntityNbt, Block.NOTIFY_ALL);
 	}
 
-	protected void modifyStructure(ChunkRegion region, BlockPos pos, BlockState state, Optional<NbtCompound> blockEntityNbt, int update) {
+	protected void modifyStructure(ChunkRegion region, BlockPos pos, BlockState state, Optional<NbtCompound> blockEntityNbt,
+			int update) {
 
 		if (!state.isAir()) {
 
@@ -99,7 +109,8 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 				}
 
 				if (blockEntity instanceof LootableContainerBlockEntity lootTable) {
-					lootTable.setLootTable(this.getContainerLootTable(lootTable), region.getSeed() + LimlibHelper.blockSeed(pos));
+					lootTable
+						.setLootTable(this.getContainerLootTable(lootTable), region.getSeed() + LimlibHelper.blockSeed(pos));
 				}
 
 			}

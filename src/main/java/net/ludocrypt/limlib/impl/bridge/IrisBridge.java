@@ -10,7 +10,9 @@ public class IrisBridge {
 	public static final boolean IRIS_LOADED = QuiltLoader.isModLoaded("iris");
 
 	public static boolean areShadersInUse() {
+
 		if (IRIS_LOADED) {
+
 			try {
 				Class<?> irisApi = Class.forName("net.coderbot.iris.apiimpl.IrisApiV0Impl");
 				Field irisInstance = irisApi.getField("INSTANCE");
@@ -20,11 +22,14 @@ public class IrisBridge {
 				if (areThey instanceof Boolean depends) {
 					return depends;
 				}
+
 			} catch (Exception e) {
 				e.printStackTrace();
 				return false;
 			}
+
 		}
+
 		return false;
 	}
 

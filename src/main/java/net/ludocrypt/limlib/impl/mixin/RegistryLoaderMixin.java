@@ -67,43 +67,61 @@ public class RegistryLoaderMixin {
 	}
 
 	@Inject(method = "loadRegistryContents(Lnet/minecraft/registry/RegistryOps$RegistryInfoLookup;Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/registry/RegistryKey;Lnet/minecraft/registry/MutableRegistry;Lcom/mojang/serialization/Decoder;Ljava/util/Map;)V", at = @At(value = "INVOKE", target = "Lcom/mojang/serialization/Decoder;parse(Lcom/mojang/serialization/DynamicOps;Ljava/lang/Object;)Lcom/mojang/serialization/DataResult;", shift = Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILHARD)
-	private static <E> void limlib$loadRegistryContents(RegistryOps.RegistryInfoLookup infoLookup, ResourceManager resourceManager, RegistryKey<? extends Registry<E>> registryKey,
-			MutableRegistry<E> registry, Decoder<E> decoder, Map<RegistryKey<?>, Exception> readFailures, CallbackInfo ci, String string, ResourceFileNamespace resourceFileNamespace,
-			RegistryOps<JsonElement> registryOps, Iterator<Map.Entry<Identifier, Resource>> var9, Map.Entry<Identifier, Resource> entry, Identifier identifier, RegistryKey<E> registryKey2,
-			Resource resource, Reader reader, JsonElement jsonElement) {
+	private static <E> void limlib$loadRegistryContents(RegistryOps.RegistryInfoLookup infoLookup,
+			ResourceManager resourceManager, RegistryKey<? extends Registry<E>> registryKey, MutableRegistry<E> registry,
+			Decoder<E> decoder, Map<RegistryKey<?>, Exception> readFailures, CallbackInfo ci, String string,
+			ResourceFileNamespace resourceFileNamespace, RegistryOps<JsonElement> registryOps,
+			Iterator<Map.Entry<Identifier, Resource>> var9, Map.Entry<Identifier, Resource> entry, Identifier identifier,
+			RegistryKey<E> registryKey2, Resource resource, Reader reader, JsonElement jsonElement) {
 
 		if (registryKey2.isOf(RegistryKeys.GENERATOR_TYPE)) {
 			JsonObject presetType = jsonElement.getAsJsonObject();
 			JsonObject dimensions = presetType.get("dimensions").getAsJsonObject();
-			LimlibWorld.LIMLIB_WORLD.getEntries().forEach((world) -> dimensions.add(world.getKey().getValue().toString(),
-					DimensionOptions.CODEC.encodeStart(registryOps, world.getValue().getDimensionOptionsSupplier().apply(new RegistryProvider() {
+			LimlibWorld.LIMLIB_WORLD
+				.getEntries()
+				.forEach((world) -> dimensions
+					.add(world.getKey().getValue().toString(),
+						DimensionOptions.CODEC
+							.encodeStart(registryOps,
+								world.getValue().getDimensionOptionsSupplier().apply(new RegistryProvider() {
 
-						@Override
-						public <T> HolderProvider<T> get(RegistryKey<Registry<T>> key) {
-							return registryOps.getHolderProvider(key).get();
-						}
+									@Override
+									public <T> HolderProvider<T> get(RegistryKey<Registry<T>> key) {
+										return registryOps.getHolderProvider(key).get();
+									}
 
-					})).result().get()));
+								}))
+							.result()
+							.get()));
 		}
 
-		LimlibRegistryHooks.REGISTRY_JSON_HOOKS.getOrDefault(registryKey, Sets.newHashSet())
-				.forEach((registrarhook -> ((LimlibJsonRegistryHook<E>) registrarhook).register(infoLookup, registryKey, registryOps, jsonElement)));
+		LimlibRegistryHooks.REGISTRY_JSON_HOOKS
+			.getOrDefault(registryKey, Sets.newHashSet())
+			.forEach((registrarhook -> ((LimlibJsonRegistryHook<E>) registrarhook)
+				.register(infoLookup, registryKey, registryOps, jsonElement)));
 	}
 
 	@Inject(method = "loadRegistryContents(Lnet/minecraft/registry/RegistryOps$RegistryInfoLookup;Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/registry/RegistryKey;Lnet/minecraft/registry/MutableRegistry;Lcom/mojang/serialization/Decoder;Ljava/util/Map;)V", at = @At("TAIL"))
-	private static <E> void limlib$loadRegistryContents(RegistryOps.RegistryInfoLookup infoLookup, ResourceManager resourceManager, RegistryKey<? extends Registry<E>> registryKey,
-			MutableRegistry<E> registry, Decoder<E> decoder, Map<RegistryKey<?>, Exception> readFailures, CallbackInfo ci) {
+	private static <E> void limlib$loadRegistryContents(RegistryOps.RegistryInfoLookup infoLookup,
+			ResourceManager resourceManager, RegistryKey<? extends Registry<E>> registryKey, MutableRegistry<E> registry,
+			Decoder<E> decoder, Map<RegistryKey<?>, Exception> readFailures, CallbackInfo ci) {
 
 		if (registryKey.equals(RegistryKeys.DIMENSION_TYPE)) {
-			LimlibWorld.LIMLIB_WORLD.getEntries().forEach((world) -> ((MutableRegistry<DimensionType>) registry).register(RegistryKey.of(RegistryKeys.DIMENSION_TYPE, world.getKey().getValue()),
-					world.getValue().getDimensionTypeSupplier().get(), Lifecycle.stable()));
+			LimlibWorld.LIMLIB_WORLD
+				.getEntries()
+				.forEach((world) -> ((MutableRegistry<DimensionType>) registry)
+					.register(RegistryKey.of(RegistryKeys.DIMENSION_TYPE, world.getKey().getValue()),
+						world.getValue().getDimensionTypeSupplier().get(), Lifecycle.stable()));
 		}
 
-		LimlibRegistryHooks.REGISTRY_HOOKS.getOrDefault(registryKey, Sets.newHashSet()).forEach((registrarhook -> ((LimlibRegistryHook<E>) registrarhook).register(infoLookup, registryKey, registry)));
+		LimlibRegistryHooks.REGISTRY_HOOKS
+			.getOrDefault(registryKey, Sets.newHashSet())
+			.forEach((registrarhook -> ((LimlibRegistryHook<E>) registrarhook).register(infoLookup, registryKey, registry)));
 	}
 
 	@Inject(method = "loadRegistriesIntoManager(Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/registry/DynamicRegistryManager;Ljava/util/List;)Lnet/minecraft/registry/DynamicRegistryManager$Frozen;", at = @At("TAIL"))
-	private static void limlib$loadRegistriesIntoManager(ResourceManager resourceManager, DynamicRegistryManager registryManager, List<RegistryLoader.DecodingData<?>> decodingData,
+	private static void limlib$loadRegistriesIntoManager(ResourceManager resourceManager,
+			DynamicRegistryManager registryManager, List<RegistryLoader.DecodingData<?>> decodingData,
 			CallbackInfoReturnable<DynamicRegistryManager.Frozen> ci) {
 		SaveStorageSupplier.LOADED_REGISTRY.set(registryManager.freeze());
 	}

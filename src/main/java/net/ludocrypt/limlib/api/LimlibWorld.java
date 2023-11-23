@@ -16,13 +16,18 @@ import net.minecraft.world.dimension.DimensionType;
 
 public class LimlibWorld {
 
-	public static final RegistryKey<Registry<LimlibWorld>> LIMLIB_WORLD_KEY = RegistryKey.ofRegistry(new Identifier("limlib", "limlib_world"));
-	public static final SimpleRegistry<LimlibWorld> LIMLIB_WORLD = FabricRegistryBuilder.createSimple(LIMLIB_WORLD_KEY).attribute(RegistryAttribute.SYNCED).buildAndRegister();
+	public static final RegistryKey<Registry<LimlibWorld>> LIMLIB_WORLD_KEY = RegistryKey
+		.ofRegistry(new Identifier("limlib", "limlib_world"));
+	public static final SimpleRegistry<LimlibWorld> LIMLIB_WORLD = FabricRegistryBuilder
+		.createSimple(LIMLIB_WORLD_KEY)
+		.attribute(RegistryAttribute.SYNCED)
+		.buildAndRegister();
 
 	private Supplier<DimensionType> dimensionTypeSupplier;
 	private Function<RegistryProvider, DimensionOptions> dimensionOptionsSupplier;
 
-	public LimlibWorld(Supplier<DimensionType> dimensionTypeSupplier, Function<RegistryProvider, DimensionOptions> dimensionOptionsSupplier) {
+	public LimlibWorld(Supplier<DimensionType> dimensionTypeSupplier,
+			Function<RegistryProvider, DimensionOptions> dimensionOptionsSupplier) {
 		this.dimensionTypeSupplier = Suppliers.memoize(dimensionTypeSupplier);
 		this.dimensionOptionsSupplier = dimensionOptionsSupplier;
 	}
@@ -36,7 +41,9 @@ public class LimlibWorld {
 	}
 
 	public static interface RegistryProvider {
+
 		public <T> HolderProvider<T> get(RegistryKey<Registry<T>> key);
+
 	}
 
 	// Load the class early so our variables are set

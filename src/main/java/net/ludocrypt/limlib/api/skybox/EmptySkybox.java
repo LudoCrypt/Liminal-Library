@@ -12,11 +12,13 @@ import net.minecraft.client.util.math.MatrixStack;
 
 public class EmptySkybox extends Skybox {
 
-	public static final Codec<EmptySkybox> CODEC = RecordCodecBuilder.create((instance) -> instance.stable(new EmptySkybox()));
+	public static final Codec<EmptySkybox> CODEC = RecordCodecBuilder
+		.create((instance) -> instance.stable(new EmptySkybox()));
 
 	@Override
 	@ClientOnly
-	public void renderSky(WorldRenderer worldRenderer, MinecraftClient client, MatrixStack matrices, Matrix4f projectionMatrix, float tickDelta) {
+	public void renderSky(WorldRenderer worldRenderer, MinecraftClient client, MatrixStack matrices,
+			Matrix4f projectionMatrix, float tickDelta) {
 	}
 
 	@Override

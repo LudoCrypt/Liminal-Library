@@ -35,14 +35,14 @@ public class DepthFirstMazeSolver extends MazeComponent {
 	}
 
 	@Override
-	public void generateMaze() {
+	public void create() {
 		List<Stack<Vec2i>> paths = Lists.newArrayList();
 		this.ends.forEach((end) -> {
 			Stack<Vec2i> stack = new Stack<Vec2i>();
-			stack.push(new Vec2i(start.getX(), start.getY()));
+			stack.push(new Vec2i(end.getX(), end.getY()));
 			Vec2i peek = stack.peek();
 
-			while (!peek.equals(end)) {
+			while (!peek.equals(start)) {
 				List<Integer> neighbours = Lists.newArrayList();
 
 				// North Neighbour

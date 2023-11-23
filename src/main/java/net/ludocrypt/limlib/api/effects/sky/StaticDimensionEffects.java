@@ -43,7 +43,8 @@ public class StaticDimensionEffects extends DimensionEffects {
 	private final boolean thickFog;
 	private final float skyShading;
 
-	public StaticDimensionEffects(Optional<Float> cloudHeight, boolean alternateSkyColor, String skyType, boolean brightenLighting, boolean darkened, boolean thickFog, float skyShading) {
+	public StaticDimensionEffects(Optional<Float> cloudHeight, boolean alternateSkyColor, String skyType,
+			boolean brightenLighting, boolean darkened, boolean thickFog, float skyShading) {
 		this.cloudHeight = cloudHeight;
 		this.alternateSkyColor = alternateSkyColor;
 		this.skyType = skyType;
@@ -84,7 +85,9 @@ public class StaticDimensionEffects extends DimensionEffects {
 	@Override
 	@ClientOnly
 	public DimensionVisualEffects getDimensionEffects() {
-		return SkyPropertiesCreator.create(getCloudHeight(), hasAlternateSkyColor(), getSkyType(), shouldBrightenLighting(), isDarkened(), hasThickFog());
+		return SkyPropertiesCreator
+			.create(getCloudHeight(), hasAlternateSkyColor(), getSkyType(), shouldBrightenLighting(), isDarkened(),
+				hasThickFog());
 	}
 
 	@Override

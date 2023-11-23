@@ -13,7 +13,8 @@ import net.minecraft.registry.RegistryKey;
 public interface RegistriesAccessor {
 
 	@Invoker
-	static <T> Registry<T> callRegisterSimple(RegistryKey<? extends Registry<T>> registryKey, Lifecycle lifecycle, Registries.RegistryBootstrap<T> bootstrap) {
+	static <T> Registry<T> callRegisterSimple(RegistryKey<? extends Registry<T>> registryKey, Lifecycle lifecycle,
+			Registries.RegistryBootstrap<T> bootstrap) {
 		throw new UnsupportedOperationException();
 	}
 

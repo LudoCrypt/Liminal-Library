@@ -31,13 +31,23 @@ public class Limlib implements ModInitializer {
 	public void onInitialize(ModContainer mod) {
 		LimlibWorld.load();
 		Registry.register(ReverbEffect.REVERB_EFFECT_CODEC, new Identifier("limlib", "static"), StaticReverbEffect.CODEC);
-		Registry.register(DistortionEffect.DISTORTION_EFFECT_CODEC, new Identifier("limlib", "static"), StaticDistortionEffect.CODEC);
-		Registry.register(DimensionEffects.DIMENSION_EFFECTS_CODEC, new Identifier("limlib", "static"), StaticDimensionEffects.CODEC);
-		Registry.register(DimensionEffects.DIMENSION_EFFECTS_CODEC, new Identifier("limlib", "empty"), EmptyDimensionEffects.CODEC);
+		Registry
+			.register(DistortionEffect.DISTORTION_EFFECT_CODEC, new Identifier("limlib", "static"),
+				StaticDistortionEffect.CODEC);
+		Registry
+			.register(DimensionEffects.DIMENSION_EFFECTS_CODEC, new Identifier("limlib", "static"),
+				StaticDimensionEffects.CODEC);
+		Registry
+			.register(DimensionEffects.DIMENSION_EFFECTS_CODEC, new Identifier("limlib", "empty"),
+				EmptyDimensionEffects.CODEC);
 		Registry.register(PostEffect.POST_EFFECT_CODEC, new Identifier("limlib", "static"), StaticPostEffect.CODEC);
 		Registry.register(PostEffect.POST_EFFECT_CODEC, new Identifier("limlib", "empty"), EmptyPostEffect.CODEC);
-		Registry.register(Registries.CHUNK_GENERATOR, new Identifier("limlib", "debug_nbt_chunk_generator"), DebugNbtChunkGenerator.CODEC);
-		QuiltLoader.getEntrypoints(LimlibRegistrar.ENTRYPOINT_KEY, LimlibRegistrar.class).forEach(LimlibRegistrar::registerHooks);
+		Registry
+			.register(Registries.CHUNK_GENERATOR, new Identifier("limlib", "debug_nbt_chunk_generator"),
+				DebugNbtChunkGenerator.CODEC);
+		QuiltLoader
+			.getEntrypoints(LimlibRegistrar.ENTRYPOINT_KEY, LimlibRegistrar.class)
+			.forEach(LimlibRegistrar::registerHooks);
 	}
 
 }
