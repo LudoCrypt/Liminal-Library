@@ -2,6 +2,7 @@ package net.ludocrypt.limlib.api.world.maze;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -290,6 +291,11 @@ public abstract class MazeComponent {
 
 		public Vec2i add(int x, int y) {
 			return new Vec2i(this.x + x, this.y + y);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(x, y);
 		}
 
 		@Override
