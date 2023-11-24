@@ -28,9 +28,6 @@ import net.minecraft.world.gen.chunk.Blender;
 import net.minecraft.world.gen.chunk.ChunkGenerator;
 import net.minecraft.world.gen.chunk.VerticalBlockSample;
 
-/**
- * A simplification of {@link ChunkGenerator}
- */
 public abstract class LiminalChunkGenerator extends ChunkGenerator {
 
 	public LiminalChunkGenerator(BiomeSource biomeSource) {
@@ -53,19 +50,21 @@ public abstract class LiminalChunkGenerator extends ChunkGenerator {
 	@Override
 	public CompletableFuture<Chunk> populateNoise(Executor executor, Blender blender, RandomState randomState,
 			StructureManager structureManager, Chunk chunk) {
-		throw new UnsupportedOperationException("populateNoise should never be called in LiminalChunkGenerator");
+		throw new UnsupportedOperationException("Vanilla populateNoise should never be called in LiminalChunkGenerator");
 	}
 
 	/**
-	 * How many chunks (distance) around the currently generating chunk from the
-	 * populateNoise method should be allowed to generate into.
+	 * The number of neighboring chunks which can be accessed for block placement. A
+	 * value of 0 means that only this chunk is accessible. A positive value means
+	 * that the given amount of neighbors are accessible in each direction. A
+	 * negative value means that this region shouldn't be used for block placement.
 	 */
-	public abstract int getChunkDistance();
+	public abstract int getPlacementRadius();
 
 	/**
 	 * An extention of the base populateNoise method but with more variables. Use
 	 * ChunkRegion as opposed to world when setting blocks, as it allows you to
-	 * extend through multiple chunks in {@link getChunkDistance} away.
+	 * extend through multiple chunks in {@link getPlacementRadius} away.
 	 */
 	public abstract CompletableFuture<Chunk> populateNoise(ChunkRegion chunkRegion, ChunkStatus targetStatus,
 			Executor executor, ServerWorld world, ChunkGenerator generator,

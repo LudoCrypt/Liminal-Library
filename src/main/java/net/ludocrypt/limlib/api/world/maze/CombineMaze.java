@@ -1,4 +1,5 @@
 package net.ludocrypt.limlib.api.world.maze;
+
 public class CombineMaze extends MazeComponent {
 
 	MazeComponent[] components;
@@ -13,34 +14,22 @@ public class CombineMaze extends MazeComponent {
 
 		for (MazeComponent maze : components) {
 
-			for (Vec2i pos : maze.solvedMaze) {
-				int x = pos.getX();
-				int y = pos.getY();
-				CellState reference = maze.cellState(x, y);
+			for (int x = 0; x < width; x++) {
 
-				if (reference.isNorth()) {
-					this.cellState(x, y).setNorth(true);
+				for (int y = 0; y < height; y++) {
+					CellState reference = maze.cellState(x, y);
+
+					for (Face face : Face.values()) {
+
+						if (reference.goes(face)) {
+							this.cellState(x, y).go(face);
+						}
+
+					}
+
+					this.cellState(x, y).appendAll(reference.getExtra());
 				}
 
-				if (reference.isEast()) {
-					this.cellState(x, y).setEast(true);
-				}
-
-				if (reference.isSouth()) {
-					this.cellState(x, y).setSouth(true);
-				}
-
-				if (reference.isWest()) {
-					this.cellState(x, y).setWest(true);
-				}
-
-				if (this.cellState(x, y).isNorth() || this.cellState(x, y).isEast() || this.cellState(x, y).isSouth() || this
-					.cellState(x, y)
-					.isWest()) {
-					this.solvedMaze.add(new Vec2i(x, y));
-				}
-
-				this.cellState(x, y).appendAll(reference.getExtra());
 			}
 
 		}

@@ -65,7 +65,7 @@ public class NbtPlacerUtil {
 		this(storedNbt, positions, entities, lowestPos, sizePos.getX(), sizePos.getY(), sizePos.getZ());
 	}
 
-	public NbtPlacerUtil manipulate(BlockRotation rotation, BlockMirror mirror) {
+	public NbtPlacerUtil manipulate(Manipulation manipulation) {
 		NbtList paletteList = storedNbt.getList("palette", 10);
 		HashMap<Integer, BlockState> palette = new HashMap<Integer, BlockState>(paletteList.size());
 		List<NbtCompound> paletteCompoundList = paletteList
@@ -79,13 +79,15 @@ public class NbtPlacerUtil {
 				.put(i,
 					NbtHelper
 						.toBlockState(Registries.BLOCK.asLookup(), paletteCompoundList.get(i))
-						.rotate(rotation)
-						.mirror(mirror));
+						.rotate(manipulation.getRotation())
+						.mirror(manipulation.getMirror()));
 		}
 
 		NbtList sizeList = storedNbt.getList("size", 3);
 		BlockPos sizeVectorRotated = NbtPlacerUtil
-			.mirror(new BlockPos(sizeList.getInt(0), sizeList.getInt(1), sizeList.getInt(2)).rotate(rotation), mirror);
+			.mirror(
+				new BlockPos(sizeList.getInt(0), sizeList.getInt(1), sizeList.getInt(2)).rotate(manipulation.getRotation()),
+				manipulation.getMirror());
 		BlockPos sizeVector = new BlockPos(Math.abs(sizeVectorRotated.getX()), Math.abs(sizeVectorRotated.getY()),
 			Math.abs(sizeVectorRotated.getZ()));
 		NbtList positionsList = storedNbt.getList("blocks", 10);
@@ -97,8 +99,10 @@ public class NbtPlacerUtil {
 			.map(element -> (NbtCompound) element)
 			.map((nbtCompound) -> Pair
 				.of(NbtPlacerUtil
-					.mirror(new BlockPos(nbtCompound.getList("pos", 3).getInt(0), nbtCompound.getList("pos", 3).getInt(1),
-						nbtCompound.getList("pos", 3).getInt(2)).rotate(rotation), mirror),
+					.mirror(
+						new BlockPos(nbtCompound.getList("pos", 3).getInt(0), nbtCompound.getList("pos", 3).getInt(1),
+							nbtCompound.getList("pos", 3).getInt(2)).rotate(manipulation.getRotation()),
+						manipulation.getMirror()),
 					Pair
 						.of(palette.get(nbtCompound.getInt("state")),
 							nbtCompound.contains("nbt", NbtElement.COMPOUND_TYPE)
@@ -112,7 +116,7 @@ public class NbtPlacerUtil {
 			.forEach(
 				(pair) -> positions.put(pair.getFirst().subtract(positionsPairList.get(0).getFirst()), pair.getSecond()));
 		return new NbtPlacerUtil(storedNbt, positions, storedNbt.getList("entities", 10),
-			transformSize(sizeVector, rotation, mirror), sizeVector);
+			transformSize(sizeVector, manipulation.getRotation(), manipulation.getMirror()), sizeVector);
 	}
 
 	public static NbtPlacerUtil load(Identifier id, ResourceManager manager) {
@@ -234,23 +238,23 @@ public class NbtPlacerUtil {
 		return this;
 	}
 
-	public NbtPlacerUtil spawnEntities(ChunkRegion region, BlockPos pos, BlockRotation rotation, BlockMirror mirror) {
-		return spawnEntities(region, BlockPos.ORIGIN, pos, pos.add(this.sizeX, this.sizeY, this.sizeZ), rotation, mirror);
+	public NbtPlacerUtil spawnEntities(ChunkRegion region, BlockPos pos, Manipulation manipulation) {
+		return spawnEntities(region, BlockPos.ORIGIN, pos, pos.add(this.sizeX, this.sizeY, this.sizeZ), manipulation);
 	}
 
 	public NbtPlacerUtil spawnEntities(ChunkRegion region, BlockPos offset, BlockPos from, BlockPos to,
-			BlockRotation rotation, BlockMirror mirror) {
-		this.entities.forEach((nbtElement) -> spawnEntity(nbtElement, region, offset, from, to, rotation, mirror));
+			Manipulation manipulation) {
+		this.entities.forEach((nbtElement) -> spawnEntity(nbtElement, region, offset, from, to, manipulation));
 		return this;
 	}
 
 	public NbtPlacerUtil spawnEntity(NbtElement nbtElement, ChunkRegion region, BlockPos offset, BlockPos from, BlockPos to,
-			BlockRotation rotation, BlockMirror mirror) {
+			Manipulation manipulation) {
 		NbtCompound entityCompound = (NbtCompound) nbtElement;
 		NbtList nbtPos = entityCompound.getList("pos", 6);
 		Vec3d relativeLocation = mirror(
-			rotate(new Vec3d(nbtPos.getDouble(0), nbtPos.getDouble(1), nbtPos.getDouble(2)), rotation), mirror)
-				.subtract(Vec3d.of(lowestPos));
+			rotate(new Vec3d(nbtPos.getDouble(0), nbtPos.getDouble(1), nbtPos.getDouble(2)), manipulation.getRotation()),
+			manipulation.getMirror()).subtract(Vec3d.of(lowestPos));
 		Vec3d realPosition = relativeLocation.add(Vec3d.of(from.subtract(offset)));
 		BlockPos min = offset;
 		BlockPos max = to.subtract(from).add(offset);
@@ -271,14 +275,16 @@ public class NbtPlacerUtil {
 		nbt.put("Pos", posList);
 		NbtList rotationList = new NbtList();
 		NbtList entityRotationList = nbt.getList("Rotation", 5);
-		float yawRotation = applyMirror(applyRotation(entityRotationList.getFloat(0), rotation), mirror);
+		float yawRotation = applyMirror(applyRotation(entityRotationList.getFloat(0), manipulation.getRotation()),
+			manipulation.getMirror());
 		rotationList.add(NbtFloat.of(yawRotation));
 		rotationList.add(NbtFloat.of(entityRotationList.getFloat(1)));
 		nbt.remove("Rotation");
 		nbt.put("Rotation", rotationList);
 
 		if (nbt.contains("facing")) {
-			Direction dir = mirror(rotation.rotate(Direction.fromHorizontal(nbt.getByte("facing"))), mirror);
+			Direction dir = mirror(manipulation.getRotation().rotate(Direction.fromHorizontal(nbt.getByte("facing"))),
+				manipulation.getMirror());
 			nbt.remove("facing");
 			nbt.putByte("facing", (byte) dir.getHorizontal());
 		}

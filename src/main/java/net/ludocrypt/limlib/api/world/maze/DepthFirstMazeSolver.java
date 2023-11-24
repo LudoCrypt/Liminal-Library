@@ -10,11 +10,11 @@ import net.minecraft.util.random.RandomGenerator;
 /**
  * Solves a maze using the Depth First Search algorithm.
  **/
-public class DepthFirstMazeSolver extends MazeComponent {
+public class DepthFirstMazeSolver extends DepthLikeMaze {
 
 	private final MazeComponent mazeToSolve;
-	private final Vec2i start;
-	private final List<Vec2i> ends;
+	private final Vec2i end;
+	private final List<Vec2i> beginnings;
 	public final RandomGenerator random;
 
 	/**
@@ -22,70 +22,43 @@ public class DepthFirstMazeSolver extends MazeComponent {
 	 * <p>
 	 * 
 	 * @param mazeToSolve is the maze to solve
-	 * @param start       is the position for the depth first algorithm to start at
-	 * @param ends        are the positions to look for before being 'solved'
 	 * @param random      is the random
+	 * @param end         is the position for the depth first algorithm to find
+	 * @param beginnings  are the positions to start from
 	 **/
-	public DepthFirstMazeSolver(MazeComponent mazeToSolve, Vec2i start, List<Vec2i> ends, RandomGenerator random) {
+	public DepthFirstMazeSolver(MazeComponent mazeToSolve, RandomGenerator random, Vec2i end, Vec2i... beginnings) {
 		super(mazeToSolve.width, mazeToSolve.height);
 		this.mazeToSolve = mazeToSolve;
-		this.start = start;
-		this.ends = ends;
+		this.end = end;
+		this.beginnings = Lists.newArrayList(beginnings);
 		this.random = random;
 	}
 
 	@Override
 	public void create() {
 		List<Stack<Vec2i>> paths = Lists.newArrayList();
-		this.ends.forEach((end) -> {
+		this.beginnings.forEach((beginning) -> {
 			Stack<Vec2i> stack = new Stack<Vec2i>();
-			stack.push(new Vec2i(end.getX(), end.getY()));
+			stack.push(new Vec2i(beginning.getX(), beginning.getY()));
 			Vec2i peek = stack.peek();
+			visit(peek);
 
-			while (!peek.equals(start)) {
-				List<Integer> neighbours = Lists.newArrayList();
+			while (!peek.equals(end)) {
+				List<Face> neighbours = Lists.newArrayList();
 
-				// North Neighbour
-				if (this.hasNorthNeighbor(stack.peek())) {
-					neighbours.add(0);
-				}
+				for (Face face : Face.values()) {
 
-				// East Neighbour
-				if (this.hasEastNeighbor(stack.peek())) {
-					neighbours.add(1);
-				}
+					if (this.hasNeighbour(peek, face)) {
+						neighbours.add(face);
+					}
 
-				// South Neighbour
-				if (this.hasSouthNeighbor(stack.peek())) {
-					neighbours.add(2);
-				}
-
-				// West Neighbour
-				if (this.hasWestNeighbor(stack.peek())) {
-					neighbours.add(3);
 				}
 
 				if (!neighbours.isEmpty()) {
-					int nextCellDir = neighbours.get(random.nextInt(neighbours.size()));
+					Face nextFace = neighbours.get(random.nextInt(neighbours.size()));
 
-					switch (nextCellDir) {
-						case 0: // North
-							this.cellState(stack.peek().getX() + 1, stack.peek().getY()).visited();
-							stack.push(new Vec2i(stack.peek().getX() + 1, stack.peek().getY()));
-							break;
-						case 1: // East
-							this.cellState(stack.peek().getX(), stack.peek().getY() + 1).visited();
-							stack.push(new Vec2i(stack.peek().getX(), stack.peek().getY() + 1));
-							break;
-						case 2: // South
-							this.cellState(stack.peek().getX() - 1, stack.peek().getY()).visited();
-							stack.push(new Vec2i(stack.peek().getX() - 1, stack.peek().getY()));
-							break;
-						case 3: // West
-							this.cellState(stack.peek().getX(), stack.peek().getY() - 1).visited();
-							stack.push(new Vec2i(stack.peek().getX(), stack.peek().getY() - 1));
-							break;
-					}
+					visit(peek.go(nextFace));
+					stack.push(peek.go(nextFace));
 
 				} else {
 					stack.pop();
@@ -97,7 +70,7 @@ public class DepthFirstMazeSolver extends MazeComponent {
 			for (int x = 0; x < width; x++) {
 
 				for (int y = 0; y < height; y++) {
-					this.maze[y * this.width + x].setVisited(false);
+					visit(new Vec2i(x, y), false);
 				}
 
 			}
@@ -112,44 +85,30 @@ public class DepthFirstMazeSolver extends MazeComponent {
 				if (i + 1 != path.size()) {
 					Vec2i nextPos = path.get(i + 1);
 
-					if (nextPos.equals(new Vec2i(pos.getX() + 1, pos.getY()))) { // North
-						this.cellState(pos).north();
-						this.cellState(nextPos).south();
-					} else if (nextPos.equals(new Vec2i(pos.getX(), pos.getY() + 1))) { // East
-						this.cellState(pos).east();
-						this.cellState(nextPos).west();
-					} else if (nextPos.equals(new Vec2i(pos.getX() - 1, pos.getY()))) { // South
-						this.cellState(pos).south();
-						this.cellState(nextPos).north();
-					} else if (nextPos.equals(new Vec2i(pos.getX(), pos.getY() - 1))) { // West
-						this.cellState(pos).west();
-						this.cellState(nextPos).east();
-					}
+					Face face = pos.normal(nextPos);
+					this.cellState(pos).go(face);
+					this.cellState(pos.go(face)).go(face.mirror());
 
 					this.cellState(pos).appendAll(mazeToSolve.cellState(pos).getExtra());
 
-					if (!this.solvedMaze.contains(new Vec2i(pos.getX(), pos.getY()))) {
-						this.solvedMaze.add(new Vec2i(pos.getX(), pos.getY()));
-					}
-
 				}
 
-				if (this.ends.contains(pos) || pos.equals(this.start)) {
+				if (this.beginnings.contains(pos) || pos.equals(this.end)) {
 
 					if (pos.getX() == 0) {
-						this.cellState(pos).south();
+						this.cellState(pos).down();
 					}
 
 					if (pos.getY() == 0) {
-						this.cellState(pos).west();
+						this.cellState(pos).left();
 					}
 
 					if (pos.getX() == width - 1) {
-						this.cellState(pos).north();
+						this.cellState(pos).up();
 					}
 
 					if (pos.getY() == height - 1) {
-						this.cellState(pos).east();
+						this.cellState(pos).right();
 					}
 
 				}
@@ -164,23 +123,23 @@ public class DepthFirstMazeSolver extends MazeComponent {
 	}
 
 	@Override
-	public boolean hasNorthNeighbor(Vec2i vec) {
-		return super.hasNorthNeighbor(vec) && this.mazeToSolve.cellState(vec.getX(), vec.getY()).isNorth();
+	public boolean hasNeighbourUp(Vec2i vec) {
+		return super.hasNeighbourUp(vec) && this.mazeToSolve.cellState(vec).goesUp();
 	}
 
 	@Override
-	public boolean hasEastNeighbor(Vec2i vec) {
-		return super.hasEastNeighbor(vec) && this.mazeToSolve.cellState(vec.getX(), vec.getY()).isEast();
+	public boolean hasNeighbourRight(Vec2i vec) {
+		return super.hasNeighbourRight(vec) && this.mazeToSolve.cellState(vec).goesRight();
 	}
 
 	@Override
-	public boolean hasSouthNeighbor(Vec2i vec) {
-		return super.hasSouthNeighbor(vec) && this.mazeToSolve.cellState(vec.getX(), vec.getY()).isSouth();
+	public boolean hasNeighbourDown(Vec2i vec) {
+		return super.hasNeighbourDown(vec) && this.mazeToSolve.cellState(vec).goesDown();
 	}
 
 	@Override
-	public boolean hasWestNeighbor(Vec2i vec) {
-		return super.hasWestNeighbor(vec) && this.mazeToSolve.cellState(vec.getX(), vec.getY()).isWest();
+	public boolean hasNeighbourLeft(Vec2i vec) {
+		return super.hasNeighbourLeft(vec) && this.mazeToSolve.cellState(vec).goesLeft();
 	}
 
 }

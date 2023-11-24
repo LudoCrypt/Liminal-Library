@@ -66,7 +66,7 @@ public class DebugNbtChunkGenerator extends AbstractNbtChunkGenerator {
 	}
 
 	@Override
-	public int getChunkDistance() {
+	public int getPlacementRadius() {
 		return 4;
 	}
 

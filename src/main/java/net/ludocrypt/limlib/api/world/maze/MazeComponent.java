@@ -1,22 +1,19 @@
 package net.ludocrypt.limlib.api.world.maze;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-/**
- * Abstract maze component
- **/
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3i;
+
 public abstract class MazeComponent {
 
 	public final int width;
 	public final int height;
 	public final CellState[] maze;
-	public final List<Vec2i> solvedMaze = Lists.newArrayList();
-	public int visitedCells = 0;
 	public boolean generated = false;
 
 	public MazeComponent(int width, int height) {
@@ -34,7 +31,6 @@ public abstract class MazeComponent {
 
 		}
 
-		this.visitedCells = 1;
 	}
 
 	/**
@@ -45,7 +41,7 @@ public abstract class MazeComponent {
 	}
 
 	/**
-	 * Attempt to generate the maze
+	 * Attempt to generate the maze, throw if this has already been generated.
 	 **/
 	public void generateMaze(boolean doesThrow) {
 
@@ -62,9 +58,6 @@ public abstract class MazeComponent {
 
 	}
 
-	/**
-	 * Create the maze
-	 **/
 	public abstract void create();
 
 	public CellState cellState(int x, int y) {
@@ -73,27 +66,6 @@ public abstract class MazeComponent {
 
 	public CellState cellState(Vec2i pos) {
 		return this.cellState(pos.getX(), pos.getY());
-	}
-
-	public boolean hasNorthNeighbor(Vec2i vec) {
-		return (vec.getX() + 1 < this.height) && !(this.maze[((vec.getY()) * this.width + (vec.getX() + 1))].isVisited());
-	}
-
-	public boolean hasEastNeighbor(Vec2i vec) {
-		return (vec.getY() + 1 < this.width) && !(this.maze[((vec.getY() + 1) * this.width + (vec.getX()))].isVisited());
-	}
-
-	public boolean hasSouthNeighbor(Vec2i vec) {
-		return (vec.getX() > 0) && !(this.maze[((vec.getY()) * this.width + (vec.getX() - 1))].isVisited());
-	}
-
-	public boolean hasWestNeighbor(Vec2i vec) {
-		return (vec.getY() > 0) && !(this.maze[((vec.getY() - 1) * this.width + (vec.getX()))].isVisited());
-	}
-
-	public boolean hasNeighbors(Vec2i vec) {
-		return this.hasNorthNeighbor(vec) || this.hasEastNeighbor(vec) || this.hasSouthNeighbor(vec) || this
-			.hasWestNeighbor(vec);
 	}
 
 	public boolean fits(Vec2i vec) {
@@ -106,10 +78,10 @@ public abstract class MazeComponent {
 		StringBuilder row = new StringBuilder();
 		row.append("\n");
 
-		for (int x = width - 1; x >= 0; x--) {
+		for (int x = 1; x <= width; x++) {
 
 			for (int y = 0; y < height; y++) {
-				row.append(cellState(x, y).toString());
+				row.append(cellState(width - x, y).toString());
 
 			}
 
@@ -123,82 +95,93 @@ public abstract class MazeComponent {
 	 * Describes the state of a particular room or 'cell' in a maze
 	 * <p>
 	 * 
-	 * @param north   has north wall open
-	 * @param east    has east wall open
-	 * @param south   has south wall open
-	 * @param west    has west wall open
-	 * @param visited was already visited by the maze algorithm
+	 * @param up       has wall up open
+	 * @param right    has right wall open
+	 * @param down     has wall down open
+	 * @param left     has left wall open
+	 * @param extra    information appended to this state
+	 * @param position inside the maze
 	 **/
 	public static class CellState {
 
 		private Vec2i position = new Vec2i(0, 0);
-		private boolean north = false;
-		private boolean east = false;
-		private boolean south = false;
-		private boolean west = false;
-		private boolean visited = false;
-		private Map<String, Object> extra = Maps.newHashMap();
+		private boolean up = false;
+		private boolean right = false;
+		private boolean down = false;
+		private boolean left = false;
+		private Map<String, NbtCompound> extra = Maps.newHashMap();
 
 		public CellState copy() {
 			CellState newState = new CellState();
 			newState.setPosition(this.position);
-			newState.setNorth(this.north);
-			newState.setEast(this.east);
-			newState.setSouth(this.south);
-			newState.setWest(this.west);
+			newState.up(this.up);
+			newState.right(this.right);
+			newState.down(this.down);
+			newState.left(this.left);
 			newState.appendAll(this.extra);
 			return newState;
 		}
 
-		public void north() {
-			this.north = true;
+		public void up() {
+			this.up = true;
 		}
 
-		public void east() {
-			this.east = true;
+		public void right() {
+			this.right = true;
 		}
 
-		public void south() {
-			this.south = true;
+		public void down() {
+			this.down = true;
 		}
 
-		public void west() {
-			this.west = true;
+		public void left() {
+			this.left = true;
 		}
 
-		public void visited() {
-			this.visited = true;
+		public void go(Face face) {
+
+			switch (face) {
+				case DOWN:
+					down();
+					break;
+				case LEFT:
+					left();
+					break;
+				case RIGHT:
+					right();
+					break;
+				case UP:
+					up();
+					break;
+			}
+
 		}
 
 		public void setPosition(Vec2i position) {
 			this.position = position;
 		}
 
-		public void setNorth(boolean north) {
-			this.north = north;
+		public void up(boolean up) {
+			this.up = up;
 		}
 
-		public void setEast(boolean east) {
-			this.east = east;
+		public void right(boolean right) {
+			this.right = right;
 		}
 
-		public void setSouth(boolean south) {
-			this.south = south;
+		public void down(boolean down) {
+			this.down = down;
 		}
 
-		public void setWest(boolean west) {
-			this.west = west;
+		public void left(boolean left) {
+			this.left = left;
 		}
 
-		public void setVisited(boolean visited) {
-			this.visited = visited;
-		}
-
-		public void append(String name, Object data) {
+		public void append(String name, NbtCompound data) {
 			this.extra.put(name, data);
 		}
 
-		public void appendAll(Map<String, Object> data) {
+		public void appendAll(Map<String, NbtCompound> data) {
 			this.extra.putAll(data);
 		}
 
@@ -206,62 +189,71 @@ public abstract class MazeComponent {
 			return position;
 		}
 
-		public boolean isNorth() {
-			return north;
+		public boolean goesUp() {
+			return up;
 		}
 
-		public boolean isEast() {
-			return east;
+		public boolean goesRight() {
+			return right;
 		}
 
-		public boolean isSouth() {
-			return south;
+		public boolean goesDown() {
+			return down;
 		}
 
-		public boolean isWest() {
-			return west;
+		public boolean goesLeft() {
+			return left;
 		}
 
-		public boolean isVisited() {
-			return visited;
+		public boolean goes() {
+			return up || down || left || right;
 		}
 
-		public Map<String, Object> getExtra() {
+		public boolean goes(Face face) {
+			return switch (face) {
+				case UP -> up;
+				case DOWN -> down;
+				case LEFT -> left;
+				case RIGHT -> right;
+			};
+		}
+
+		public Map<String, NbtCompound> getExtra() {
 			return extra;
 		}
 
 		@Override
 		public String toString() {
 
-			if (this.isWest() && this.isNorth() && this.isEast() && this.isSouth()) {
+			if (this.goesLeft() && this.goesUp() && this.goesRight() && this.goesDown()) {
 				return ("┼");
-			} else if (this.isWest() && this.isNorth() && this.isEast() && !this.isSouth()) {
+			} else if (this.goesLeft() && this.goesUp() && this.goesRight() && !this.goesDown()) {
 				return ("┴");
-			} else if (this.isWest() && this.isNorth() && !this.isEast() && this.isSouth()) {
+			} else if (this.goesLeft() && this.goesUp() && !this.goesRight() && this.goesDown()) {
 				return ("┤");
-			} else if (this.isWest() && this.isNorth() && !this.isEast() && !this.isSouth()) {
+			} else if (this.goesLeft() && this.goesUp() && !this.goesRight() && !this.goesDown()) {
 				return ("┘");
-			} else if (this.isWest() && !this.isNorth() && this.isEast() && this.isSouth()) {
+			} else if (this.goesLeft() && !this.goesUp() && this.goesRight() && this.goesDown()) {
 				return ("┬");
-			} else if (this.isWest() && !this.isNorth() && this.isEast() && !this.isSouth()) {
+			} else if (this.goesLeft() && !this.goesUp() && this.goesRight() && !this.goesDown()) {
 				return ("─");
-			} else if (this.isWest() && !this.isNorth() && !this.isEast() && this.isSouth()) {
+			} else if (this.goesLeft() && !this.goesUp() && !this.goesRight() && this.goesDown()) {
 				return ("┐");
-			} else if (this.isWest() && !this.isNorth() && !this.isEast() && !this.isSouth()) {
+			} else if (this.goesLeft() && !this.goesUp() && !this.goesRight() && !this.goesDown()) {
 				return ("╴");
-			} else if (!this.isWest() && this.isNorth() && this.isEast() && this.isSouth()) {
+			} else if (!this.goesLeft() && this.goesUp() && this.goesRight() && this.goesDown()) {
 				return ("├");
-			} else if (!this.isWest() && this.isNorth() && this.isEast() && !this.isSouth()) {
+			} else if (!this.goesLeft() && this.goesUp() && this.goesRight() && !this.goesDown()) {
 				return ("└");
-			} else if (!this.isWest() && this.isNorth() && !this.isEast() && this.isSouth()) {
+			} else if (!this.goesLeft() && this.goesUp() && !this.goesRight() && this.goesDown()) {
 				return ("│");
-			} else if (!this.isWest() && this.isNorth() && !this.isEast() && !this.isSouth()) {
+			} else if (!this.goesLeft() && this.goesUp() && !this.goesRight() && !this.goesDown()) {
 				return ("╵");
-			} else if (!this.isWest() && !this.isNorth() && this.isEast() && this.isSouth()) {
+			} else if (!this.goesLeft() && !this.goesUp() && this.goesRight() && this.goesDown()) {
 				return ("┌");
-			} else if (!this.isWest() && !this.isNorth() && this.isEast() && !this.isSouth()) {
+			} else if (!this.goesLeft() && !this.goesUp() && this.goesRight() && !this.goesDown()) {
 				return ("╶");
-			} else if (!this.isWest() && !this.isNorth() && !this.isEast() && this.isSouth()) {
+			} else if (!this.goesLeft() && !this.goesUp() && !this.goesRight() && this.goesDown()) {
 				return ("╷");
 			} else {
 				return ("░");
@@ -281,6 +273,15 @@ public abstract class MazeComponent {
 			this.y = y;
 		}
 
+		public Vec2i(Vec3i pos) {
+			this.x = pos.getX();
+			this.y = pos.getZ();
+		}
+
+		public BlockPos toBlock() {
+			return new BlockPos(x, 0, y);
+		}
+
 		public int getX() {
 			return x;
 		}
@@ -291,6 +292,66 @@ public abstract class MazeComponent {
 
 		public Vec2i add(int x, int y) {
 			return new Vec2i(this.x + x, this.y + y);
+		}
+
+		public Vec2i up() {
+			return up(1);
+		}
+
+		public Vec2i down() {
+			return down(1);
+		}
+
+		public Vec2i left() {
+			return left(1);
+		}
+
+		public Vec2i right() {
+			return right(1);
+		}
+
+		public Vec2i up(int d) {
+			return add(d, 0);
+		}
+
+		public Vec2i down(int d) {
+			return add(-d, 0);
+		}
+
+		public Vec2i left(int d) {
+			return add(0, -d);
+		}
+
+		public Vec2i right(int d) {
+			return add(0, d);
+		}
+
+		public Vec2i go(Face face) {
+			return go(face, 1);
+		}
+
+		public Vec2i go(Face face, int d) {
+			return switch (face) {
+				case DOWN -> this.down(d);
+				case LEFT -> this.left(d);
+				case RIGHT -> this.right(d);
+				case UP -> this.up();
+			};
+		}
+
+		public Face normal(Vec2i b) {
+
+			if (b.equals(this.up())) {
+				return Face.UP;
+			} else if (b.equals(this.left())) {
+				return Face.LEFT;
+			} else if (b.equals(this.right())) {
+				return Face.RIGHT;
+			} else if (b.equals(this.down())) {
+				return Face.DOWN;
+			}
+
+			throw new IllegalArgumentException("Cannot find the normal between two non-adjacent vectors");
 		}
 
 		@Override
@@ -311,6 +372,37 @@ public abstract class MazeComponent {
 		@Override
 		public String toString() {
 			return "(" + this.x + ", " + this.y + ")";
+		}
+
+	}
+
+	public static enum Face {
+
+		UP,
+		DOWN,
+		LEFT,
+		RIGHT;
+
+		public Face mirror() {
+			return switch (this) {
+				case UP -> DOWN;
+				case DOWN -> UP;
+				case LEFT -> RIGHT;
+				case RIGHT -> LEFT;
+			};
+		}
+
+		public Face clockwise() {
+			return switch (this) {
+				case UP -> RIGHT;
+				case DOWN -> LEFT;
+				case LEFT -> UP;
+				case RIGHT -> DOWN;
+			};
+		}
+
+		public Face anticlockwise() {
+			return clockwise().clockwise().clockwise();
 		}
 
 	}

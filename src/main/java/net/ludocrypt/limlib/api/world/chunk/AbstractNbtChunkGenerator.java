@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import net.ludocrypt.limlib.api.world.FunctionMap;
 import net.ludocrypt.limlib.api.world.LimlibHelper;
+import net.ludocrypt.limlib.api.world.Manipulation;
 import net.ludocrypt.limlib.api.world.NbtGroup;
 import net.ludocrypt.limlib.api.world.NbtPlacerUtil;
 import net.minecraft.block.Block;
@@ -14,8 +15,6 @@ import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.loot.LootTables;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.BlockMirror;
-import net.minecraft.util.BlockRotation;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkRegion;
@@ -39,25 +38,17 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 	}
 
 	public void generateNbt(ChunkRegion region, BlockPos at, Identifier id) {
-		generateNbt(region, at, id, BlockRotation.NONE, BlockMirror.NONE);
+		generateNbt(region, at, id, Manipulation.NONE);
 	}
 
-	public void generateNbt(ChunkRegion region, BlockPos at, Identifier id, BlockRotation rotation) {
-		generateNbt(region, at, id, rotation, BlockMirror.NONE);
-	}
-
-	public void generateNbt(ChunkRegion region, BlockPos at, Identifier id, BlockMirror mirror) {
-		generateNbt(region, at, id, BlockRotation.NONE, mirror);
-	}
-
-	public void generateNbt(ChunkRegion region, BlockPos at, Identifier id, BlockRotation rotation, BlockMirror mirror) {
+	public void generateNbt(ChunkRegion region, BlockPos at, Identifier id, Manipulation manipulation) {
 
 		try {
 			structures
 				.eval(id, region.getServer().getResourceManager())
-				.manipulate(rotation, mirror)
+				.manipulate(manipulation)
 				.generateNbt(region, at, (pos, state, nbt) -> this.modifyStructure(region, pos, state, nbt))
-				.spawnEntities(region, at, rotation, mirror);
+				.spawnEntities(region, at, manipulation);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new NullPointerException("Attempted to load undefined structure \'" + id + "\'");
@@ -65,15 +56,19 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 
 	}
 
+	public void generateNbt(ChunkRegion region, BlockPos offset, BlockPos from, BlockPos to, Identifier id) {
+		generateNbt(region, offset, from, to, id, Manipulation.NONE);
+	}
+
 	public void generateNbt(ChunkRegion region, BlockPos offset, BlockPos from, BlockPos to, Identifier id,
-			BlockRotation rotation, BlockMirror mirror) {
+			Manipulation manipulation) {
 
 		try {
 			structures
 				.eval(id, region.getServer().getResourceManager())
-				.manipulate(rotation, mirror)
+				.manipulate(manipulation)
 				.generateNbt(region, offset, from, to, (pos, state, nbt) -> this.modifyStructure(region, pos, state, nbt))
-				.spawnEntities(region, offset, from, to, rotation, mirror);
+				.spawnEntities(region, offset, from, to, manipulation);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new NullPointerException("Attempted to load undefined structure \'" + id + "\'");

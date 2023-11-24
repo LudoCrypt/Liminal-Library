@@ -35,7 +35,7 @@ public class ChunkStatusMixin {
 			Chunk chunk, CallbackInfoReturnable<CompletableFuture<Either<Chunk, ChunkHolder.Unloaded>>> ci) {
 
 		if (chunkGenerator instanceof LiminalChunkGenerator limChunkGen) {
-			ChunkRegion chunkRegion = new ChunkRegion(serverWorld, chunks, chunkStatus, limChunkGen.getChunkDistance());
+			ChunkRegion chunkRegion = new ChunkRegion(serverWorld, chunks, chunkStatus, limChunkGen.getPlacementRadius());
 			ci
 				.setReturnValue(limChunkGen
 					.populateNoise(chunkRegion, chunkStatus, executor, serverWorld, chunkGenerator, structureTemplateManager,

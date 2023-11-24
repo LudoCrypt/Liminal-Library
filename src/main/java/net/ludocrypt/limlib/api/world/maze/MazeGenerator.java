@@ -6,11 +6,9 @@ import net.ludocrypt.limlib.api.world.LimlibHelper;
 import net.ludocrypt.limlib.api.world.maze.MazeComponent.CellState;
 import net.ludocrypt.limlib.api.world.maze.MazeComponent.Vec2i;
 import net.minecraft.util.random.RandomGenerator;
+import net.minecraft.world.ChunkRegion;
 
-/**
- * A rectangular maze generator class
- */
-public class RectangularMazeGenerator<M extends MazeComponent> {
+public class MazeGenerator<M extends MazeComponent> {
 
 	private final HashMap<Vec2i, M> mazes = new HashMap<Vec2i, M>(30);
 	public final int width;
@@ -30,7 +28,7 @@ public class RectangularMazeGenerator<M extends MazeComponent> {
 	 * @param seedModifier is the change to the seed when generating a new random
 	 *                     maze. In code, it uses the world seed + seedModifier
 	 */
-	public RectangularMazeGenerator(int width, int height, int thicknessX, int thicknessY, long seedModifier) {
+	public MazeGenerator(int width, int height, int thicknessX, int thicknessY, long seedModifier) {
 		this.width = width;
 		this.height = height;
 		this.thicknessX = thicknessX;
@@ -48,7 +46,7 @@ public class RectangularMazeGenerator<M extends MazeComponent> {
 	 * @param cellDecorator funcional interface to generate a single maze block, or
 	 *                      'cell'
 	 */
-	public void generateMaze(Vec2i pos, long seed, MazeCreator<M> mazeCreator, CellDecorator<M> cellDecorator) {
+	public void generateMaze(Vec2i pos, ChunkRegion region, MazeCreator<M> mazeCreator, CellDecorator<M> cellDecorator) {
 
 		for (int x = 0; x < 16; x++) {
 
@@ -64,15 +62,21 @@ public class RectangularMazeGenerator<M extends MazeComponent> {
 						maze = this.mazes.get(mazePos);
 					} else {
 						maze = mazeCreator
-							.newMaze(mazePos, width, height, RandomGenerator
-								.createLegacy(LimlibHelper.blockSeed(mazePos.getX(), mazePos.getY(), seed + seedModifier)));
+							.newMaze(region, mazePos, width, height,
+								RandomGenerator
+									.createLegacy(LimlibHelper
+										.blockSeed(mazePos.getX(), mazePos.getY(), region.getSeed() + seedModifier)));
 						this.mazes.put(mazePos, maze);
 					}
 
 					int mazeX = (inPos.getX() - mazePos.getX()) / thicknessX;
 					int mazeY = (inPos.getY() - mazePos.getY()) / thicknessY;
 					CellState originCell = maze.cellState(mazeX, mazeY);
-					cellDecorator.generate(inPos, mazePos, maze, originCell, new Vec2i(this.thicknessX, this.thicknessY));
+					cellDecorator
+						.generate(region, inPos, mazePos, maze, originCell, new Vec2i(this.thicknessX, this.thicknessY),
+							RandomGenerator
+								.createLegacy(LimlibHelper
+									.blockSeed(mazePos.getX(), mazePos.getY(), region.getSeed() + seedModifier)));
 				}
 
 			}
@@ -88,14 +92,15 @@ public class RectangularMazeGenerator<M extends MazeComponent> {
 	@FunctionalInterface
 	public static interface CellDecorator<M extends MazeComponent> {
 
-		void generate(Vec2i pos, Vec2i mazePos, M maze, CellState state, Vec2i thickness);
+		void generate(ChunkRegion region, Vec2i pos, Vec2i mazePos, M maze, CellState state, Vec2i thickness,
+				RandomGenerator random);
 
 	}
 
 	@FunctionalInterface
 	public static interface MazeCreator<M extends MazeComponent> {
 
-		M newMaze(Vec2i mazePos, int width, int height, RandomGenerator random);
+		M newMaze(ChunkRegion region, Vec2i mazePos, int width, int height, RandomGenerator random);
 
 	}
 
