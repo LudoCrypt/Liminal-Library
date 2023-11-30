@@ -1,8 +1,7 @@
 package net.ludocrypt.limlib.impl;
 
-import org.quiltmc.loader.api.ModContainer;
-import org.quiltmc.loader.api.QuiltLoader;
-import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +30,7 @@ public class Limlib implements ModInitializer {
 	public static final Logger LOGGER = LoggerFactory.getLogger("Limlib");
 
 	@Override
-	public void onInitialize(ModContainer mod) {
+	public void onInitialize() {
 		LimlibWorld.load();
 		Registry.register(ReverbEffect.REVERB_EFFECT_CODEC, new Identifier("limlib", "static"), StaticReverbEffect.CODEC);
 		Registry
@@ -50,7 +49,7 @@ public class Limlib implements ModInitializer {
 		Registry
 			.register(Registries.CHUNK_GENERATOR, new Identifier("limlib", "debug_nbt_chunk_generator"),
 				DebugNbtChunkGenerator.CODEC);
-		QuiltLoader
+		FabricLoader.getInstance()
 			.getEntrypoints(LimlibRegistrar.ENTRYPOINT_KEY, LimlibRegistrar.class)
 			.forEach(LimlibRegistrar::registerHooks);
 	}

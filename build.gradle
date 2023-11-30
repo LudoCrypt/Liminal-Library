@@ -1,10 +1,10 @@
 plugins {
+	id 'fabric-loom' version '1.4-SNAPSHOT'
 	id 'maven-publish'
-	alias libs.plugins.quilt.loom
 }
 
 base.archivesName = project.archives_base_name
-version = "$project.version+${libs.versions.minecraft.get()}"
+version = project.version
 group = project.maven_group
 
 loom {
@@ -15,19 +15,23 @@ repositories {
 	maven {
 		url 'https://ladysnake.jfrog.io/artifactory/mods'
     }
+	maven {
+		name = 'Quilt'
+		url = 'https://maven.quiltmc.org/repository/release'
+	}
 }
 
 dependencies {
-	minecraft libs.minecraft
-	mappings variantOf(libs.quilt.mappings) { classifier 'intermediary-v2' }
-	modImplementation libs.quilt.loader
-	modImplementation libs.quilted.fabric.api
+	minecraft "com.mojang:minecraft:${project.minecraft_version}"
+	mappings "org.quiltmc:quilt-mappings:${project.quilt_mappings}:intermediary-v2"
+	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 }
 
 processResources {
 	inputs.property 'version', version
 
-	filesMatching('quilt.mod.json') {
+	filesMatching('fabric.mod.json') {
 		expand "version": version
 	}
 }

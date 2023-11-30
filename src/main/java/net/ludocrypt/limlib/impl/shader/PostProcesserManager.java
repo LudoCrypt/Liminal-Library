@@ -2,14 +2,14 @@ package net.ludocrypt.limlib.impl.shader;
 
 import java.util.Set;
 
-import org.quiltmc.qsl.resource.loader.api.reloader.SimpleSynchronousResourceReloader;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
-public final class PostProcesserManager implements SimpleSynchronousResourceReloader {
+public final class PostProcesserManager implements SimpleSynchronousResourceReloadListener {
 
 	public static final PostProcesserManager INSTANCE = new PostProcesserManager();
 	public static final Identifier RESOURCE_KEY = new Identifier("limlib:shaders");
@@ -42,7 +42,7 @@ public final class PostProcesserManager implements SimpleSynchronousResourceRelo
 	}
 
 	@Override
-	public Identifier getQuiltId() {
+	public Identifier getFabricId() {
 		return RESOURCE_KEY;
 	}
 

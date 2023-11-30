@@ -2,8 +2,9 @@ package net.ludocrypt.limlib.api.skybox;
 
 import java.util.function.Function;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import org.joml.Matrix4f;
-import org.quiltmc.loader.api.minecraft.ClientOnly;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.Lifecycle;
@@ -27,7 +28,7 @@ public abstract class Skybox {
 
 	public abstract Codec<? extends Skybox> getCodec();
 
-	@ClientOnly
+	@Environment(EnvType.CLIENT)
 	public abstract void renderSky(WorldRenderer worldRenderer, MinecraftClient client, MatrixStack matrices,
 			Matrix4f projectionMatrix, float tickDelta);
 

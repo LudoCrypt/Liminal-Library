@@ -1,12 +1,13 @@
 package net.ludocrypt.limlib.api.effects.sky;
 
-import org.quiltmc.loader.api.minecraft.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import net.minecraft.client.render.DimensionVisualEffects;
 import net.minecraft.client.render.DimensionVisualEffects.SkyType;
 import net.minecraft.util.math.Vec3d;
 
-@ClientOnly
+@Environment(EnvType.CLIENT)
 public class SkyPropertiesCreator {
 
 	public static DimensionVisualEffects create(float cloudHeight, boolean alternateSkyColor, String skyType,

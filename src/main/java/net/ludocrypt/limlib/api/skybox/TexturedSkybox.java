@@ -1,7 +1,7 @@
 package net.ludocrypt.limlib.api.skybox;
 
-import org.joml.Matrix4f;
-import org.quiltmc.loader.api.minecraft.ClientOnly;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
@@ -19,6 +19,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Axis;
 import net.minecraft.util.math.Vec3d;
+import org.joml.Matrix4f;
 
 public class TexturedSkybox extends Skybox {
 
@@ -35,9 +36,9 @@ public class TexturedSkybox extends Skybox {
 	}
 
 	@Override
-	@ClientOnly
+	@Environment(EnvType.CLIENT)
 	public void renderSky(WorldRenderer worldRenderer, MinecraftClient client, MatrixStack matrices,
-			Matrix4f projectionMatrix, float tickDelta) {
+						  Matrix4f projectionMatrix, float tickDelta) {
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.depthMask(MinecraftClient.isFabulousGraphicsOrBetter());

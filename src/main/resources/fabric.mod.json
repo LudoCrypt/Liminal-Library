@@ -1,0 +1,47 @@
+{
+	"schemaVersion": 1,
+	"id": "limlib",
+	"version": "${version}",
+	"name": "Liminal Library",
+	"description": "A library for liminal mods",
+	"authors": [
+		"LudoCrypt"
+	],
+	"contact": {
+		"homepage": "https://github.com/LudoCrypt/Liminal-Library/wiki",
+		"issues": "https://github.com/LudoCrypt/Liminal-Library/issues",
+		"sources": "https://github.com/LudoCrypt/Liminal-Library"
+	},
+	"license": "LGPL",
+	"icon": "assets/limlib/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"net.ludocrypt.limlib.impl.Limlib"
+		],
+		"client": [
+			"net.ludocrypt.limlib.impl.LimlibClient"
+		],
+		"limlib:registrar": [
+			"net.ludocrypt.limlib.impl.debug.DebugWorld"
+		]
+	},
+	"mixins": [
+		"limlib.mixins.json",
+		"limlib.debug.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.15.0",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*"
+	},
+	"access_widener": "limlib.accesswidener",
+	"custom": {
+		"modmenu": {
+			"badges": [
+				"library"
+			]
+		}
+  }
+}

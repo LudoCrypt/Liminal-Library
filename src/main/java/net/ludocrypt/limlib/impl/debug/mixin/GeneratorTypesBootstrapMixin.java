@@ -25,7 +25,7 @@ public abstract class GeneratorTypesBootstrapMixin {
 	@Shadow
 	private Holder<DimensionType> overworld;
 
-	@Inject(method = "Lnet/minecraft/client/world/GeneratorTypes$Bootstrap;method_41600()V", at = @At("TAIL"))
+	@Inject(method = "Lnet/minecraft/client/world/GeneratorTypes$Bootstrap;bootstrap()V", at = @At("TAIL"))
 	public void limlib$addDimensionOpions(CallbackInfo ci) {
 		this
 			.addDimensionGenerator(DebugWorld.DEBUG_KEY, new DimensionOptions(this.overworld,
