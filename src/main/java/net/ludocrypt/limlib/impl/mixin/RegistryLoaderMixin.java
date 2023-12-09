@@ -13,7 +13,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.At.Shift;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 import com.google.common.collect.Lists;
@@ -32,8 +31,6 @@ import net.ludocrypt.limlib.api.effects.post.PostEffect;
 import net.ludocrypt.limlib.api.effects.sky.DimensionEffects;
 import net.ludocrypt.limlib.api.effects.sound.SoundEffects;
 import net.ludocrypt.limlib.api.skybox.Skybox;
-import net.ludocrypt.limlib.impl.SaveStorageSupplier;
-import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.registry.HolderProvider;
 import net.minecraft.registry.MutableRegistry;
 import net.minecraft.registry.Registry;
@@ -117,13 +114,6 @@ public class RegistryLoaderMixin {
 		LimlibRegistryHooks.REGISTRY_HOOKS
 			.getOrDefault(registryKey, Sets.newHashSet())
 			.forEach((registrarhook -> ((LimlibRegistryHook<E>) registrarhook).register(infoLookup, registryKey, registry)));
-	}
-
-	@Inject(method = "loadRegistriesIntoManager(Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/registry/DynamicRegistryManager;Ljava/util/List;)Lnet/minecraft/registry/DynamicRegistryManager$Frozen;", at = @At("TAIL"))
-	private static void limlib$loadRegistriesIntoManager(ResourceManager resourceManager,
-			DynamicRegistryManager registryManager, List<RegistryLoader.DecodingData<?>> decodingData,
-			CallbackInfoReturnable<DynamicRegistryManager.Frozen> ci) {
-		SaveStorageSupplier.LOADED_REGISTRY.set(registryManager.freeze());
 	}
 
 }

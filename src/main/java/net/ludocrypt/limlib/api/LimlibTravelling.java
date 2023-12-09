@@ -3,7 +3,6 @@ package net.ludocrypt.limlib.api;
 import java.util.Set;
 
 import org.jetbrains.annotations.ApiStatus.Internal;
-import org.quiltmc.qsl.worldgen.dimension.api.QuiltDimensions;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -28,6 +27,7 @@ public class LimlibTravelling {
 	@Internal
 	public static float travelingPitch = 1.0F;
 
+	@SuppressWarnings("unchecked")
 	public static <E extends Entity> E travelTo(E teleported, ServerWorld destination, TeleportTarget target,
 			SoundEvent sound, float volume, float pitch) {
 
@@ -70,18 +70,31 @@ public class LimlibTravelling {
 			return teleported;
 		} else {
 
+			((Travelling) teleported).limlib$setTeleportTarget(target);
+
 			try {
 				travelingSound = sound;
 				travelingVolume = volume;
 				travelingPitch = pitch;
-				return QuiltDimensions.teleport(teleported, destination, target);
+
+				return (E) teleported.moveToWorld(destination);
+
 			} finally {
+				((Travelling) teleported).limlib$setTeleportTarget(null);
 				travelingSound = null;
 				travelingVolume = 0.0F;
 				travelingPitch = 0.0F;
 			}
 
 		}
+
+	}
+
+	public static interface Travelling {
+
+		public TeleportTarget limlib$getTeleportTarget();
+
+		public void limlib$setTeleportTarget(TeleportTarget teleportTarget);
 
 	}
 

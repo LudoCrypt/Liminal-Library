@@ -1,15 +1,18 @@
 package net.ludocrypt.limlib.impl.shader;
 
 import java.util.Set;
-
-import org.quiltmc.qsl.resource.loader.api.reloader.SimpleSynchronousResourceReloader;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourceReloader;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Unit;
+import net.minecraft.util.profiler.Profiler;
 
-public final class PostProcesserManager implements SimpleSynchronousResourceReloader {
+public final class PostProcesserManager implements ResourceReloader {
 
 	public static final PostProcesserManager INSTANCE = new PostProcesserManager();
 	public static final Identifier RESOURCE_KEY = new Identifier("limlib:shaders");
@@ -41,23 +44,25 @@ public final class PostProcesserManager implements SimpleSynchronousResourceRelo
 
 	}
 
-	@Override
-	public Identifier getQuiltId() {
-		return RESOURCE_KEY;
-	}
-
-	@Override
-	public void reload(ResourceManager mgr) {
-
-		for (PostProcesser shader : shaders) {
-			shader.init(mgr);
-		}
-
-	}
-
 	public void dispose(PostProcesser shader) {
 		shader.release();
 		shaders.remove(shader);
+	}
+
+	@Override
+	public CompletableFuture<Void> reload(Synchronizer synchronizer, ResourceManager manager, Profiler prepareProfiler,
+			Profiler applyProfiler, Executor prepareExecutor, Executor applyExecutor) {
+		return synchronizer.whenPrepared(Unit.INSTANCE).thenRunAsync(() -> {
+			applyProfiler.startTick();
+			applyProfiler.push("listener");
+
+			for (PostProcesser shader : shaders) {
+				shader.init(manager);
+			}
+
+			applyProfiler.pop();
+			applyProfiler.endTick();
+		}, applyExecutor);
 	}
 
 }

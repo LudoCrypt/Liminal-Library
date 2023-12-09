@@ -30,7 +30,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 		super(world, pos, f, gameProfile);
 	}
 
-	@Inject(method = "moveToWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;sendPacket(Lnet/minecraft/network/packet/Packet;)V", ordinal = 5, shift = Shift.AFTER))
+	@Inject(method = "moveToWorld", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayNetworkHandler;send(Lnet/minecraft/network/packet/Packet;)V", ordinal = 5, shift = Shift.AFTER))
 	public void limlib$moveToWorld(ServerWorld to, CallbackInfoReturnable<Entity> ci) {
 
 		if (LimlibTravelling.travelingSound != null) {

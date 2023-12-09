@@ -24,6 +24,7 @@ import net.minecraft.nbt.NbtHelper;
 import net.minecraft.nbt.NbtInt;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtTagSizeTracker;
 import net.minecraft.registry.Registries;
 import net.minecraft.resource.Resource;
 import net.minecraft.resource.ResourceManager;
@@ -198,7 +199,7 @@ public class NbtPlacerUtil {
 
 	public static NbtCompound readStructure(Resource resource) throws IOException {
 		InputStream stream = resource.open();
-		NbtCompound nbt = NbtIo.readCompressed(stream);
+		NbtCompound nbt = NbtIo.method_10629(stream, NbtTagSizeTracker.method_53898());
 		stream.close();
 		return nbt;
 	}

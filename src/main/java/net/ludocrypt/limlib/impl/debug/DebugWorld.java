@@ -2,6 +2,8 @@ package net.ludocrypt.limlib.impl.debug;
 
 import java.util.Map;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.mojang.serialization.Lifecycle;
 
 import net.ludocrypt.limlib.api.LimlibRegistrar;
@@ -9,6 +11,7 @@ import net.ludocrypt.limlib.api.LimlibRegistryHooks;
 import net.minecraft.client.world.GeneratorType;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.WorldPresetTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.biome.Biomes;
 import net.minecraft.world.dimension.DimensionOptions;
@@ -21,8 +24,8 @@ public class DebugWorld implements LimlibRegistrar {
 
 	@Override
 	public void registerHooks() {
-		LimlibRegistryHooks
-			.hook(RegistryKeys.GENERATOR_TYPE, (infoLookup, registryKey, registry) -> registry
+		LimlibRegistryHooks.hook(RegistryKeys.GENERATOR_TYPE, (infoLookup, registryKey, registry) -> {
+			registry
 				.register(DEBUG_KEY, new GeneratorType(Map
 					.of(DimensionOptions.OVERWORLD,
 						new DimensionOptions(
@@ -33,7 +36,17 @@ public class DebugWorld implements LimlibRegistrar {
 								.getHolderOrThrow(DimensionTypes.OVERWORLD),
 							new DebugNbtChunkGenerator(
 								infoLookup.lookup(RegistryKeys.BIOME).get().getter().getHolderOrThrow(Biomes.THE_VOID))))),
-					Lifecycle.stable()));
+					Lifecycle.stable());
+		});
+		LimlibRegistryHooks.hook(WorldPresetTags.EXTENDED, (manager, tag, json) -> {
+			JsonObject obj = json.getAsJsonObject();
+
+			if (obj.has("values")) {
+				JsonArray values = obj.get("values").getAsJsonArray();
+				values.add(DEBUG_KEY.getValue().toString());
+			}
+
+		});
 	}
 
 }

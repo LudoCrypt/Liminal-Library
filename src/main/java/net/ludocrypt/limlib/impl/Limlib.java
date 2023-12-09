@@ -1,8 +1,6 @@
 package net.ludocrypt.limlib.impl;
 
-import org.quiltmc.loader.api.ModContainer;
 import org.quiltmc.loader.api.QuiltLoader;
-import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,12 +24,11 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 
-public class Limlib implements ModInitializer {
+public class Limlib {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger("Limlib");
 
-	@Override
-	public void onInitialize(ModContainer mod) {
+	public static void onInitialize() {
 		LimlibWorld.load();
 		Registry.register(ReverbEffect.REVERB_EFFECT_CODEC, new Identifier("limlib", "static"), StaticReverbEffect.CODEC);
 		Registry

@@ -4,13 +4,17 @@
 	"package": "net.ludocrypt.limlib.impl.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
+		"BootstrapMixin",
 		"BuiltinDimensionTypesMixin",
 		"ChunkStatusMixin",
 		"DynamicRegistrySyncMixin",
+		"EntityMixin",
 		"GeneratorTypeAccessor",
 		"RegistriesAccessor",
 		"RegistryLoaderMixin",
 		"ServerPlayerEntityMixin",
+		"TagGroupLoaderMixin",
+		"TagManagerLoaderMixin",
 		"WorldDimensionsMixin",
 		"WorldSaveStorageMixin"
 	],

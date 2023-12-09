@@ -105,7 +105,7 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 
 				if (blockEntity instanceof LootableContainerBlockEntity lootTable) {
 					lootTable
-						.setLootTable(this.getContainerLootTable(lootTable), region.getSeed() + LimlibHelper.blockSeed(pos));
+						.method_54867(this.getContainerLootTable(lootTable), region.getSeed() + LimlibHelper.blockSeed(pos));
 				}
 
 			}

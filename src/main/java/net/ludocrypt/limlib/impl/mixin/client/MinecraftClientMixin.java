@@ -16,9 +16,11 @@ import net.ludocrypt.limlib.api.effects.LookupGrabber;
 import net.ludocrypt.limlib.api.effects.sound.SoundEffects;
 import net.ludocrypt.limlib.impl.shader.PostProcesserManager;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.RunArgs;
 import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.registry.RegistryKey;
+import net.minecraft.resource.ReloadableResourceManager;
 import net.minecraft.sound.MusicSound;
 
 @Mixin(MinecraftClient.class)
@@ -33,6 +35,10 @@ public class MinecraftClientMixin {
 	@Final
 	@Shadow
 	private Window window;
+
+	@Shadow
+	@Final
+	private ReloadableResourceManager resourceManager;
 
 	@Inject(method = "getMusic", at = @At("HEAD"), cancellable = true)
 	private void limlib$getMusic(CallbackInfoReturnable<MusicSound> ci) {
@@ -59,6 +65,11 @@ public class MinecraftClientMixin {
 	private void limlib$onResolutionChanged(CallbackInfo info) {
 		PostProcesserManager.INSTANCE
 			.onResolutionChanged(this.window.getFramebufferWidth(), this.window.getFramebufferHeight());
+	}
+
+	@Inject(method = "<init>", at = @At(value = "INVOKE", target = "Lnet/minecraft/resource/ReloadableResourceManager;registerReloader(Lnet/minecraft/resource/ResourceReloader;)V", ordinal = 0))
+	private void limlib$init(RunArgs runArgs, CallbackInfo ci) {
+		this.resourceManager.registerReloader(PostProcesserManager.INSTANCE);
 	}
 
 }
