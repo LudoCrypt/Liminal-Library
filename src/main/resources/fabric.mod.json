@@ -1,0 +1,26 @@
+{
+	"schemaVersion": 1,
+	"id": "limlib",
+	"version": "${version}",
+	"name": "Liminal Library",
+	"description": "A library for liminal mods",
+	"authors": [
+		"LudoCrypt"
+	],
+	"contact": {
+		"homepage": "https://github.com/LudoCrypt/Liminal-Library/wiki",
+		"issues": "https://github.com/LudoCrypt/Liminal-Library/issues",
+		"sources": "https://github.com/LudoCrypt/Liminal-Library"
+	},
+	"license": "LGPLv3.0",
+	"icon": "assets/limlib/icon.png",
+	"environment": "*",
+	"entrypoints": {
+	},
+	"mixins": [
+		"limlib.mixins.json",
+		"limlib.debug.mixins.json"
+	],
+	"depends": {
+	}
+}

@@ -19,8 +19,6 @@
 		},
 		"intermediate_mappings": "net.fabricmc:intermediary",
 		"entrypoints": {
-			"init": "net.ludocrypt.limlib.impl.Limlib",
-			"client_init": "net.ludocrypt.limlib.impl.LimlibClient",
 			"limlib:registrar": "net.ludocrypt.limlib.impl.debug.DebugWorld"
 		},
 		"depends": [
