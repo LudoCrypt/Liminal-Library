@@ -7,10 +7,10 @@ import org.jetbrains.annotations.Nullable;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
 
-public interface TagGroupLoaderAccess {
+public interface TagGroupLoaderAccess<O> {
 
-	public Optional<RegistryKey<? extends Registry<?>>> getRegistryKey();
+	public Optional<RegistryKey<? extends Registry<O>>> getRegistryKey();
 
-	public void setRegistryKey(@Nullable RegistryKey<? extends Registry<?>> key);
+	public void setRegistryKey(@Nullable RegistryKey<? extends Registry<O>> key);
 
 }

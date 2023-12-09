@@ -34,18 +34,18 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
 @Mixin(TagGroupLoader.class)
-public class TagGroupLoaderMixin<T> implements TagGroupLoaderAccess {
+public class TagGroupLoaderMixin<T, O> implements TagGroupLoaderAccess<O> {
 
 	@Shadow
 	@Final
 	Function<Identifier, Optional<? extends T>> registryGetter;
 
 	@Unique
-	Optional<RegistryKey<? extends Registry<?>>> associatedRegistryKey = Optional.empty();
+	Optional<RegistryKey<? extends Registry<O>>> associatedRegistryKey = Optional.empty();
 
 	@SuppressWarnings("unchecked")
 	@Inject(method = "Lnet/minecraft/registry/tag/TagGroupLoader;loadTags(Lnet/minecraft/resource/ResourceManager;)Ljava/util/Map;", at = @At(value = "INVOKE", target = "Ljava/util/Map;computeIfAbsent(Ljava/lang/Object;Ljava/util/function/Function;)Ljava/lang/Object;", shift = Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILHARD)
-	private <O> void limlib$loadTags(ResourceManager manager,
+	private void limlib$loadTags(ResourceManager manager,
 			CallbackInfoReturnable<Map<Identifier, List<TagGroupLoader.EntryWithSource>>> ci,
 			Map<Identifier, List<TagGroupLoader.EntryWithSource>> map, ResourceFileNamespace resourceFileNamespace,
 			Iterator<Map.Entry<Identifier, List<Resource>>> itr, Map.Entry<Identifier, List<Resource>> entry,
@@ -53,7 +53,7 @@ public class TagGroupLoaderMixin<T> implements TagGroupLoaderAccess {
 			JsonElement jsonElement) {
 
 		if (this.getRegistryKey().isPresent()) {
-			TagKey<O> key = (TagKey<O>) TagKey.of(this.getRegistryKey().get(), identifier2);
+			TagKey<O> key = TagKey.of(this.getRegistryKey().get(), identifier2);
 			LimlibRegistryHooks.TAG_JSON_HOOKS
 				.getOrDefault(key, Sets.newHashSet())
 				.forEach((hook) -> ((LimlibJsonTagHook<O>) hook).register(manager, key, jsonElement));
@@ -62,12 +62,12 @@ public class TagGroupLoaderMixin<T> implements TagGroupLoaderAccess {
 	}
 
 	@Override
-	public Optional<RegistryKey<? extends Registry<?>>> getRegistryKey() {
+	public Optional<RegistryKey<? extends Registry<O>>> getRegistryKey() {
 		return this.associatedRegistryKey;
 	}
 
 	@Override
-	public void setRegistryKey(@Nullable RegistryKey<? extends Registry<?>> key) {
+	public void setRegistryKey(@Nullable RegistryKey<? extends Registry<O>> key) {
 		this.associatedRegistryKey = Optional.ofNullable(key);
 	}
 

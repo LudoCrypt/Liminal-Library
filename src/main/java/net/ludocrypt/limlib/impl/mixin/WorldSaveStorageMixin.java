@@ -26,15 +26,15 @@ import net.minecraft.world.storage.WorldSaveStorage;
 @Mixin(WorldSaveStorage.class)
 public class WorldSaveStorageMixin {
 
-	@ModifyVariable(method = "Lnet/minecraft/world/storage/WorldSaveStorage;method_54523(Lcom/mojang/serialization/Dynamic;Lnet/minecraft/server/world/FeatureAndDataSettings;Lnet/minecraft/registry/Registry;Lnet/minecraft/registry/DynamicRegistryManager$Frozen;)Lnet/minecraft/unmapped/C_qhzfxdhh;", at = @At(value = "STORE"), ordinal = 1)
+	@ModifyVariable(method = "Lnet/minecraft/world/storage/WorldSaveStorage;method_54523(Lcom/mojang/serialization/Dynamic;Lnet/minecraft/server/world/FeatureAndDataSettings;Lnet/minecraft/registry/Registry;Lnet/minecraft/registry/DynamicRegistryManager$Frozen;)Lnet/minecraft/unmapped/C_qhzfxdhh;", at = @At(value = "STORE"), ordinal = 2)
 	private static <T> Dynamic<T> limlib$readGeneratorProperties$datafix(Dynamic<T> in, Dynamic<?> levelData,
 			FeatureAndDataSettings featureAndDataSettings, Registry<DimensionOptions> registry,
 			DynamicRegistryManager.Frozen frozen) {
 		Dynamic<T> dynamic = in;
 
-//		for (Entry<RegistryKey<LimlibWorld>, LimlibWorld> entry : LimlibWorld.LIMLIB_WORLD.getEntries()) {
-//			dynamic = limlib$addDimension(entry.getKey(), entry.getValue(), dynamic, frozen);
-//		}
+		for (Entry<RegistryKey<LimlibWorld>, LimlibWorld> entry : LimlibWorld.LIMLIB_WORLD.getEntries()) {
+			dynamic = limlib$addDimension(entry.getKey(), entry.getValue(), dynamic, frozen);
+		}
 
 		return dynamic;
 	}
@@ -63,7 +63,7 @@ public class WorldSaveStorageMixin {
 								}))
 							.result()
 							.get()));
-			in = in.set("dimensions", in.createMap(dimensionsMap));
+			return in.set("dimensions", in.createMap(dimensionsMap));
 		}
 
 		return in;

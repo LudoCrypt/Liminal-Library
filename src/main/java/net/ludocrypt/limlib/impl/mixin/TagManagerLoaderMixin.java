@@ -21,12 +21,13 @@ import net.minecraft.resource.ResourceManager;
 @Mixin(TagManagerLoader.class)
 public class TagManagerLoaderMixin {
 
+	@SuppressWarnings("unchecked")
 	@Inject(method = "Lnet/minecraft/registry/tag/TagManagerLoader;buildGroup(Lnet/minecraft/resource/ResourceManager;Ljava/util/concurrent/Executor;Lnet/minecraft/registry/DynamicRegistryManager$RegistryEntry;)Ljava/util/concurrent/CompletableFuture;", at = @At("TAIL"), locals = LocalCapture.CAPTURE_FAILHARD)
 	private <T> void limlib$buildGroup(ResourceManager resourceManager, Executor prepareExecutor,
 			DynamicRegistryManager.RegistryEntry<T> registryEntry,
 			CallbackInfoReturnable<CompletableFuture<TagManagerLoader.LoadResult<T>>> ci,
 			RegistryKey<? extends Registry<T>> registryKey, Registry<T> registry, TagGroupLoader<Holder<T>> tagGroupLoader) {
-		((TagGroupLoaderAccess) tagGroupLoader).setRegistryKey(registryKey);
+		((TagGroupLoaderAccess<T>) tagGroupLoader).setRegistryKey(registryKey);
 	}
 
 }
