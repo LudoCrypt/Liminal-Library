@@ -332,6 +332,18 @@ public final class MazeComponent implements NbtSerializer<MazeComponent> {
 			return new Vec2i(this.x + x, this.y + y);
 		}
 
+		public Vec2i add(Vec2i vec) {
+			return add(vec.x, vec.y);
+		}
+
+		public Vec2i mul(int x, int y) {
+			return new Vec2i(this.x * x, this.y * y);
+		}
+
+		public Vec2i mul(int x) {
+			return mul(x, x);
+		}
+
 		public Vec2i up() {
 			return up(1);
 		}

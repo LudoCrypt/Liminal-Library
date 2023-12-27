@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Queue;
 
 import org.apache.commons.io.FilenameUtils;
@@ -17,6 +18,7 @@ import net.ludocrypt.limlib.api.world.maze.MazeComponent.Vec2i;
 import net.ludocrypt.limlib.api.world.maze.MazeGenerator;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtIo;
+import net.minecraft.util.math.MathHelper;
 
 public class MazeStorage {
 
@@ -34,6 +36,7 @@ public class MazeStorage {
 		dir.mkdirs();
 
 		for (Entry<String, MazeGenerator> entry : generators.entrySet()) {
+			new File(dir, entry.getKey()).mkdirs();
 			entry.getValue().connect((pos, maze) -> dirt.add(() -> serialize(entry.getKey(), pos, maze)));
 		}
 
@@ -47,12 +50,24 @@ public class MazeStorage {
 			for (File data : mazeDir.listFiles((file) -> FilenameUtils.getExtension(file.getAbsolutePath()).equals("nbt"))) {
 
 				try {
-					NbtCompound readMaze = NbtIo.read(data);
+					NbtCompound region = NbtIo.readCompressed(data);
 
-					String[] sizeRaw = FilenameUtils.getBaseName(data.getAbsolutePath()).substring(2).split("\\.");
-					Vec2i size = new Vec2i(Integer.valueOf(sizeRaw[0]), Integer.valueOf(sizeRaw[1]));
+					String[] regionPosRaw = FilenameUtils.getBaseName(data.getAbsolutePath()).substring(2).split("\\.");
+					Vec2i regionPos = new Vec2i(Integer.valueOf(regionPosRaw[0]), Integer.valueOf(regionPosRaw[1])).mul(16);
 
-					this.generators.get(id).getMazes().put(size, new MazeComponent(size.getX(), size.getY()).read(readMaze));
+					for (String mid : region.getKeys()) {
+						String[] posRaw = mid.split("\\.");
+						Vec2i pos = new Vec2i(Integer.valueOf(posRaw[0]), Integer.valueOf(posRaw[1]));
+
+						NbtCompound mazeRaw = region.getCompound(mid);
+
+						this.generators
+							.get(id)
+							.getMazes()
+							.put(regionPos.add(pos), new MazeComponent(mazeRaw.getInt("width"), mazeRaw.getInt("height"))
+								.read(mazeRaw.getCompound("maze")));
+					}
+
 				} catch (IOException | NullPointerException e) {
 					LOGGER.error("Could not read data {}", this, e);
 				}
@@ -75,9 +90,22 @@ public class MazeStorage {
 	public void serialize(String mazeId, Vec2i pos, MazeComponent maze) {
 
 		try {
-			NbtIo
-				.writeCompressed(maze.write(new NbtCompound()),
-					new File(new File(dir, mazeId), "m." + pos.getX() + "." + pos.getY() + ".nbt"));
+			File regionFile = new File(new File(dir, mazeId), "m." + ((pos.getX() - MathHelper
+				.floorMod(pos.getX(), 16)) / 16) + "." + ((pos.getY() - MathHelper.floorMod(pos.getY(), 16)) / 16) + ".nbt");
+
+			NbtCompound region = Optional.ofNullable(NbtIo.readCompressed(regionFile)).orElse(new NbtCompound());
+
+			NbtCompound compound = new NbtCompound();
+			NbtCompound mazeCompound = maze.write(new NbtCompound());
+
+			compound.put("maze", mazeCompound);
+			compound.putInt("width", maze.width);
+			compound.putInt("height", maze.height);
+
+			region.put(MathHelper.floorMod(pos.getX(), 16) + "." + MathHelper.floorMod(pos.getY(), 16), compound);
+
+			NbtIo.writeCompressed(region, regionFile);
+
 		} catch (IOException e) {
 			LOGGER.error("Could not save data {}", this, e);
 		}
