@@ -11,7 +11,7 @@ import net.ludocrypt.limlib.api.world.maze.MazeComponent.Face;
 import net.ludocrypt.limlib.api.world.maze.MazeComponent.Vec2i;
 import net.minecraft.util.random.RandomGenerator;
 
-public class MazeCreator {
+public class MazeTypes {
 
 	public static MazeComponent combine(MazeComponent... components) {
 		MazeComponent combined = new MazeComponent(components[0].width, components[0].height);

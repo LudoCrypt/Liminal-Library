@@ -2,6 +2,7 @@ package net.ludocrypt.limlib.api.world.maze.storage;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
@@ -23,7 +24,7 @@ public class MazeStorage {
 
 	private final Map<String, MazeGenerator> generators;
 
-	private Queue<Runnable> dirt;
+	private Queue<Runnable> dirt = new LinkedList<Runnable>();
 
 	private File dir;
 
