@@ -1,7 +1,6 @@
 package net.ludocrypt.limlib.impl.debug;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +9,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.function.Function;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.mojang.datafixers.util.Either;
@@ -54,7 +55,7 @@ public class DebugNbtChunkGenerator extends AbstractNbtChunkGenerator {
 			.group(RegistryOps.retrieveElement(Biomes.THE_VOID))
 			.apply(instance, instance.stable(DebugNbtChunkGenerator::new));
 	});
-	BidirectionalMap<Identifier, BlockPos> positions = new BidirectionalMap<Identifier, BlockPos>();
+	BiMap<Identifier, BlockPos> positions = HashBiMap.create();
 
 	public DebugNbtChunkGenerator(Holder.Reference<Biome> reference) {
 		super(new FixedBiomeSource(reference), new DebugNbtGroup());
@@ -135,8 +136,8 @@ public class DebugNbtChunkGenerator extends AbstractNbtChunkGenerator {
 			for (int z = 0; z < 16; z++) {
 				BlockPos pos = chunk.getPos().getStartPos().add(x, 10, z);
 
-				if (positions.reverseMap.containsKey(pos.add(0, -10, 0))) {
-					Identifier id = positions.reverseMap.get(pos.add(0, -10, 0));
+				if (positions.inverse().containsKey(pos.add(0, -10, 0))) {
+					Identifier id = positions.inverse().get(pos.add(0, -10, 0));
 					this.generateNbt(chunkRegion, pos, id);
 					chunkRegion
 						.setBlockState(pos.add(-1, -1, -1),
@@ -194,30 +195,6 @@ public class DebugNbtChunkGenerator extends AbstractNbtChunkGenerator {
 		@Override
 		public Identifier nbtId(String group, String nbt) {
 			return new Identifier(nbt);
-		}
-
-	}
-
-	public static class BidirectionalMap<K, V> {
-
-		private Map<K, V> forwardMap = new HashMap<>();
-		private Map<V, K> reverseMap = new HashMap<>();
-
-		public void put(K key, V value) {
-			forwardMap.put(key, value);
-			reverseMap.put(value, key);
-		}
-
-		public V get(K key) {
-			return forwardMap.get(key);
-		}
-
-		public K invertGet(V value) {
-			return reverseMap.get(value);
-		}
-
-		public boolean isEmpty() {
-			return forwardMap.isEmpty() || reverseMap.isEmpty();
 		}
 
 	}

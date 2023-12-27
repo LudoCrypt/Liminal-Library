@@ -1,20 +1,21 @@
 package net.ludocrypt.limlib.api.world.maze;
 
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 
 import com.google.common.collect.Maps;
 
+import net.ludocrypt.limlib.api.world.maze.storage.NbtSerializer;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
-public abstract class MazeComponent {
+public final class MazeComponent implements NbtSerializer<MazeComponent> {
 
 	public final int width;
 	public final int height;
 	public final CellState[] maze;
-	public boolean generated = false;
 
 	public MazeComponent(int width, int height) {
 		this.width = width;
@@ -32,33 +33,6 @@ public abstract class MazeComponent {
 		}
 
 	}
-
-	/**
-	 * Attempt to generate the maze
-	 **/
-	public void generateMaze() {
-		this.generateMaze(false);
-	}
-
-	/**
-	 * Attempt to generate the maze, throw if this has already been generated.
-	 **/
-	public void generateMaze(boolean doesThrow) {
-
-		if (generated) {
-
-			if (doesThrow) {
-				throw new UnsupportedOperationException("This maze has already been created");
-			}
-
-		} else {
-			create();
-			generated = true;
-		}
-
-	}
-
-	public abstract void create();
 
 	public CellState cellState(int x, int y) {
 		return this.maze[y * this.width + x];
@@ -91,6 +65,34 @@ public abstract class MazeComponent {
 		return row.toString();
 	}
 
+	@Override
+	public NbtCompound write(NbtCompound nbt) {
+
+		for (int x = 0; x < width; x++) {
+
+			for (int y = 0; y < height; y++) {
+				nbt.put(x + "." + y, this.cellState(x, y).write(new NbtCompound()));
+			}
+
+		}
+
+		return nbt;
+	}
+
+	@Override
+	public MazeComponent read(NbtCompound nbt) {
+
+		for (int x = 0; x < width; x++) {
+
+			for (int y = 0; y < height; y++) {
+				this.cellState(x, y).read(nbt.getCompound(x + "." + y));
+			}
+
+		}
+
+		return this;
+	}
+
 	/**
 	 * Describes the state of a particular room or 'cell' in a maze
 	 * <p>
@@ -102,7 +104,7 @@ public abstract class MazeComponent {
 	 * @param extra    information appended to this state
 	 * @param position inside the maze
 	 **/
-	public static class CellState {
+	public static final class CellState implements NbtSerializer<CellState> {
 
 		private Vec2i position = new Vec2i(0, 0);
 		private boolean up = false;
@@ -261,9 +263,45 @@ public abstract class MazeComponent {
 
 		}
 
+		@Override
+		public NbtCompound write(NbtCompound nbt) {
+			nbt.putBoolean("up", up);
+			nbt.putBoolean("down", down);
+			nbt.putBoolean("left", left);
+			nbt.putBoolean("right", right);
+			nbt.put("pos", this.position.write(new NbtCompound()));
+
+			NbtCompound extraData = new NbtCompound();
+
+			for (Entry<String, NbtCompound> entry : extra.entrySet()) {
+				extraData.put(entry.getKey(), entry.getValue());
+			}
+
+			nbt.put("extra", extraData);
+
+			return nbt;
+		}
+
+		@Override
+		public CellState read(NbtCompound nbt) {
+			this.up = nbt.getBoolean("up");
+			this.down = nbt.getBoolean("down");
+			this.left = nbt.getBoolean("left");
+			this.right = nbt.getBoolean("right");
+			this.position.read(nbt.getCompound("pos"));
+
+			NbtCompound extraData = nbt.getCompound("extra");
+
+			for (String key : extraData.getKeys()) {
+				this.extra.put(key, extraData.getCompound(key));
+			}
+
+			return this;
+		}
+
 	}
 
-	public static class Vec2i {
+	public static final class Vec2i implements NbtSerializer<Vec2i> {
 
 		private int x;
 		private int y;
@@ -372,6 +410,22 @@ public abstract class MazeComponent {
 		@Override
 		public String toString() {
 			return "(" + this.x + ", " + this.y + ")";
+		}
+
+		@Override
+		public NbtCompound write(NbtCompound nbt) {
+			nbt.putInt("x", x);
+			nbt.putInt("y", y);
+
+			return nbt;
+		}
+
+		@Override
+		public Vec2i read(NbtCompound nbt) {
+			this.x = nbt.getInt("x");
+			this.y = nbt.getInt("y");
+
+			return this;
 		}
 
 	}

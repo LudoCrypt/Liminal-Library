@@ -11,6 +11,7 @@
 		"RegistriesAccessor",
 		"RegistryLoaderMixin",
 		"ServerPlayerEntityMixin",
+		"ServerWorldMixin",
 		"WorldDimensionsMixin",
 		"WorldSaveStorageMixin"
 	],
