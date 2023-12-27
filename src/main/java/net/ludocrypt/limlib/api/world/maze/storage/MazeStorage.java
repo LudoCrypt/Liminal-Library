@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Optional;
 import java.util.Queue;
 
 import org.apache.commons.io.FilenameUtils;
@@ -93,7 +92,11 @@ public class MazeStorage {
 			File regionFile = new File(new File(dir, mazeId), "m." + ((pos.getX() - MathHelper
 				.floorMod(pos.getX(), 16)) / 16) + "." + ((pos.getY() - MathHelper.floorMod(pos.getY(), 16)) / 16) + ".nbt");
 
-			NbtCompound region = Optional.ofNullable(NbtIo.readCompressed(regionFile)).orElse(new NbtCompound());
+			NbtCompound region = new NbtCompound();
+
+			if (regionFile.exists()) {
+				region = NbtIo.readCompressed(regionFile);
+			}
 
 			NbtCompound compound = new NbtCompound();
 			NbtCompound mazeCompound = maze.write(new NbtCompound());
