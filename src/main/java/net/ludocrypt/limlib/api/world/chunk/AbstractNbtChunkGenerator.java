@@ -59,7 +59,7 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 				.eval(id, region.getServer().getResourceManager())
 				.manipulate(manipulation)
 				.generateNbt(region, at, (pos, state, nbt) -> this.modifyStructure(region, pos, state, nbt))
-				.spawnEntities(region, at, manipulation);
+				.spawnEntities(region, at, manipulation, (nbt) -> this.modifyEntity(region, nbt));
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new NullPointerException("Attempted to load undefined structure \'" + id + "\'");
@@ -79,7 +79,7 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 				.eval(id, region.getServer().getResourceManager())
 				.manipulate(manipulation)
 				.generateNbt(region, offset, from, to, (pos, state, nbt) -> this.modifyStructure(region, pos, state, nbt))
-				.spawnEntities(region, offset, from, to, manipulation);
+				.spawnEntities(region, offset, from, to, manipulation, (nbt) -> this.modifyEntity(region, nbt));
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new NullPointerException("Attempted to load undefined structure \'" + id + "\'");
@@ -123,6 +123,10 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 
 	protected Identifier getContainerLootTable(LootableContainerBlockEntity container) {
 		return LootTables.SIMPLE_DUNGEON_CHEST;
+	}
+
+	protected NbtCompound modifyEntity(ChunkRegion region, NbtCompound nbt) {
+		return nbt;
 	}
 
 }

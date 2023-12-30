@@ -1,10 +1,13 @@
 package net.ludocrypt.limlib.api.world.nbt;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.function.Predicate;
 
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.resource.ResourceManager;
@@ -13,66 +16,56 @@ import net.minecraft.util.Identifier;
 public class NbtTags {
 
 	final ArrayListMultimap<Identifier, ImmutableNbtCompound> tagsForStruct;
-	final ArrayListMultimap<ImmutableNbtCompound, Identifier> structsForTag;
+	final Map<String, Set<Identifier>> matchingCache;
 
 	public NbtTags(ArrayListMultimap<Identifier, ImmutableNbtCompound> tagsForStruct,
-			ArrayListMultimap<ImmutableNbtCompound, Identifier> structsForTag) {
+			Map<String, Set<Identifier>> matchingCache) {
 		this.tagsForStruct = tagsForStruct;
-		this.structsForTag = structsForTag;
+		this.matchingCache = matchingCache;
 	}
 
 	public NbtTags() {
 		this.tagsForStruct = ArrayListMultimap.create();
-		this.structsForTag = ArrayListMultimap.create();
+		this.matchingCache = Maps.newHashMap();
 	}
 
 	public static NbtTags parse(NbtGroup group, ResourceManager manager) {
 		NbtTags tags = new NbtTags();
 
-		Iterator<Identifier> iterator = group.iterator();
-
-		while (iterator.hasNext()) {
-			Identifier id = iterator.next();
+		group.forEach((id) -> {
 			NbtCompound readTags = NbtPlacerUtil.loadTags(id, manager);
 
 			for (String tagKey : readTags.getKeys()) {
 				ImmutableNbtCompound tag = new ImmutableNbtCompound(readTags.getCompound(tagKey));
 				tags.tagsForStruct.put(id, tag);
-				tags.structsForTag.put(tag, id);
 			}
 
-		}
+		});
 
 		return tags;
 	}
 
-	public List<Identifier> matching(ImmutableNbtCompound... tags) {
+	public Set<Identifier> matching(Predicate<ImmutableNbtCompound> matcher) {
 
-		if (tags.length == 0) {
-			return Lists.newArrayList();
-		}
+		Set<Identifier> matching = Sets.newHashSet();
 
-		List<Identifier> commonItems = null;
+		for (Entry<Identifier, ImmutableNbtCompound> entry : this.tagsForStruct.entries()) {
 
-		for (int i = 0; i < tags.length; i++) {
-
-			if (commonItems == null) {
-
-				if (this.structsForTag.containsKey(tags[i])) {
-					commonItems = Lists.newArrayList(this.structsForTag.get(tags[i]));
-				}
-
-			} else if (commonItems != null) {
-				commonItems.retainAll(this.structsForTag.get(tags[i]));
+			if (matcher.test(entry.getValue())) {
+				matching.add(entry.getKey());
 			}
 
 		}
 
-		if (commonItems == null) {
-			return Lists.newArrayList();
-		}
+		return matching;
+	}
 
-		return Lists.newArrayList(commonItems);
+	public Set<Identifier> matching(String cache, Predicate<ImmutableNbtCompound> matcher) {
+		return this.matchingCache.computeIfAbsent(cache, (c) -> matching(matcher));
+	}
+
+	public void closeCache() {
+		this.matchingCache.clear();
 	}
 
 }

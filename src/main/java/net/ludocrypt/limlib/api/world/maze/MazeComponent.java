@@ -9,6 +9,7 @@ import com.google.common.collect.Maps;
 import net.ludocrypt.limlib.api.world.nbt.ImmutableNbtCompound;
 import net.ludocrypt.limlib.api.world.nbt.NbtSerializer;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
 
@@ -66,7 +67,7 @@ public final class MazeComponent implements NbtSerializer<MazeComponent> {
 	}
 
 	@Override
-	public ImmutableNbtCompound write() {
+	public NbtCompound write() {
 		NbtCompound nbt = new NbtCompound();
 
 		for (int x = 0; x < width; x++) {
@@ -81,7 +82,7 @@ public final class MazeComponent implements NbtSerializer<MazeComponent> {
 	}
 
 	@Override
-	public MazeComponent read(ImmutableNbtCompound nbt) {
+	public MazeComponent read(NbtCompound nbt) {
 
 		for (int x = 0; x < width; x++) {
 
@@ -265,7 +266,7 @@ public final class MazeComponent implements NbtSerializer<MazeComponent> {
 		}
 
 		@Override
-		public ImmutableNbtCompound write() {
+		public NbtCompound write() {
 			NbtCompound nbt = new NbtCompound();
 
 			nbt.putBoolean("up", up);
@@ -286,7 +287,7 @@ public final class MazeComponent implements NbtSerializer<MazeComponent> {
 		}
 
 		@Override
-		public CellState read(ImmutableNbtCompound nbt) {
+		public CellState read(NbtCompound nbt) {
 			this.up = nbt.getBoolean("up");
 			this.down = nbt.getBoolean("down");
 			this.left = nbt.getBoolean("left");
@@ -428,7 +429,7 @@ public final class MazeComponent implements NbtSerializer<MazeComponent> {
 		}
 
 		@Override
-		public ImmutableNbtCompound write() {
+		public NbtCompound write() {
 			NbtCompound nbt = new NbtCompound();
 
 			nbt.putInt("x", x);
@@ -438,7 +439,7 @@ public final class MazeComponent implements NbtSerializer<MazeComponent> {
 		}
 
 		@Override
-		public Vec2i read(ImmutableNbtCompound nbt) {
+		public Vec2i read(NbtCompound nbt) {
 			this.x = nbt.getInt("x");
 			this.y = nbt.getInt("y");
 
@@ -447,12 +448,18 @@ public final class MazeComponent implements NbtSerializer<MazeComponent> {
 
 	}
 
-	public static enum Face {
+	public static enum Face implements StringIdentifiable {
 
-		UP,
-		DOWN,
-		LEFT,
-		RIGHT;
+		UP("up"),
+		DOWN("down"),
+		LEFT("left"),
+		RIGHT("right");
+
+		final String name;
+
+		private Face(String name) {
+			this.name = name;
+		}
 
 		public Face mirror() {
 			return switch (this) {
@@ -474,6 +481,10 @@ public final class MazeComponent implements NbtSerializer<MazeComponent> {
 
 		public Face anticlockwise() {
 			return clockwise().clockwise().clockwise();
+		}
+
+		public String asString() {
+			return name;
 		}
 
 	}

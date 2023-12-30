@@ -7,8 +7,11 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 
 import org.apache.logging.log4j.util.TriConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.mojang.datafixers.util.Pair;
 
@@ -40,6 +43,8 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.ChunkRegion;
 
 public class NbtPlacerUtil {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(NbtPlacerUtil.class);
 
 	public final NbtCompound storedNbt;
 	public final HashMap<BlockPos, Pair<BlockState, Optional<NbtCompound>>> positions;
@@ -127,60 +132,54 @@ public class NbtPlacerUtil {
 
 	public static Optional<NbtPlacerUtil> loadSafe(Identifier id, ResourceManager manager) {
 
-		try {
-			Optional<NbtCompound> nbtOptional = loadNbtSafe(id, manager);
+		Optional<NbtCompound> nbtOptional = loadNbtSafe(id, manager);
 
-			if (nbtOptional.isPresent()) {
-				NbtCompound nbt = nbtOptional.get();
-				NbtList paletteList = nbt.getList("palette", 10);
-				HashMap<Integer, BlockState> palette = new HashMap<Integer, BlockState>(paletteList.size());
-				List<NbtCompound> paletteCompoundList = paletteList
-					.stream()
-					.filter(nbtElement -> nbtElement instanceof NbtCompound)
-					.map(element -> (NbtCompound) element)
-					.toList();
+		if (nbtOptional.isPresent()) {
+			NbtCompound nbt = nbtOptional.get();
+			NbtList paletteList = nbt.getList("palette", 10);
+			HashMap<Integer, BlockState> palette = new HashMap<Integer, BlockState>(paletteList.size());
+			List<NbtCompound> paletteCompoundList = paletteList
+				.stream()
+				.filter(nbtElement -> nbtElement instanceof NbtCompound)
+				.map(element -> (NbtCompound) element)
+				.toList();
 
-				for (int i = 0; i < paletteCompoundList.size(); i++) {
-					palette.put(i, NbtHelper.toBlockState(Registries.BLOCK.asLookup(), paletteCompoundList.get(i)));
-				}
-
-				NbtList sizeList = nbt.getList("size", 3);
-				BlockPos sizeVectorRotated = new BlockPos(sizeList.getInt(0), sizeList.getInt(1), sizeList.getInt(2));
-				BlockPos sizeVector = new BlockPos(Math.abs(sizeVectorRotated.getX()), Math.abs(sizeVectorRotated.getY()),
-					Math.abs(sizeVectorRotated.getZ()));
-				NbtList positionsList = nbt.getList("blocks", 10);
-				HashMap<BlockPos, Pair<BlockState, Optional<NbtCompound>>> positions = new HashMap<BlockPos, Pair<BlockState, Optional<NbtCompound>>>(
-					positionsList.size());
-				List<Pair<BlockPos, Pair<BlockState, Optional<NbtCompound>>>> positionsPairList = positionsList
-					.stream()
-					.filter(nbtElement -> nbtElement instanceof NbtCompound)
-					.map(element -> (NbtCompound) element)
-					.map((nbtCompound) -> Pair
-						.of(new BlockPos(nbtCompound.getList("pos", 3).getInt(0), nbtCompound.getList("pos", 3).getInt(1),
-							nbtCompound.getList("pos", 3).getInt(2)),
-							Pair
-								.of(palette.get(nbtCompound.getInt("state")),
-									nbtCompound.contains("nbt", NbtElement.COMPOUND_TYPE)
-											? Optional.of(nbtCompound.getCompound("nbt"))
-											: emptyNbt())))
-					.sorted(Comparator.comparing((pair) -> pair.getFirst().getX()))
-					.sorted(Comparator.comparing((pair) -> pair.getFirst().getY()))
-					.sorted(Comparator.comparing((pair) -> pair.getFirst().getZ()))
-					.toList();
-				positionsPairList
-					.forEach((pair) -> positions
-						.put(pair.getFirst().subtract(positionsPairList.get(0).getFirst()), pair.getSecond()));
-				return Optional
-					.of(new NbtPlacerUtil(nbt, positions, nbt.getList("entities", 10), positionsPairList.get(0).getFirst(),
-						sizeVector));
+			for (int i = 0; i < paletteCompoundList.size(); i++) {
+				palette.put(i, NbtHelper.toBlockState(Registries.BLOCK.asLookup(), paletteCompoundList.get(i)));
 			}
 
-			throw new NullPointerException();
-		} catch (Exception e) {
-			e.printStackTrace();
-			return Optional.empty();
+			NbtList sizeList = nbt.getList("size", 3);
+			BlockPos sizeVectorRotated = new BlockPos(sizeList.getInt(0), sizeList.getInt(1), sizeList.getInt(2));
+			BlockPos sizeVector = new BlockPos(Math.abs(sizeVectorRotated.getX()), Math.abs(sizeVectorRotated.getY()),
+				Math.abs(sizeVectorRotated.getZ()));
+			NbtList positionsList = nbt.getList("blocks", 10);
+			HashMap<BlockPos, Pair<BlockState, Optional<NbtCompound>>> positions = new HashMap<BlockPos, Pair<BlockState, Optional<NbtCompound>>>(
+				positionsList.size());
+			List<Pair<BlockPos, Pair<BlockState, Optional<NbtCompound>>>> positionsPairList = positionsList
+				.stream()
+				.filter(nbtElement -> nbtElement instanceof NbtCompound)
+				.map(element -> (NbtCompound) element)
+				.map((nbtCompound) -> Pair
+					.of(new BlockPos(nbtCompound.getList("pos", 3).getInt(0), nbtCompound.getList("pos", 3).getInt(1),
+						nbtCompound.getList("pos", 3).getInt(2)),
+						Pair
+							.of(palette.get(nbtCompound.getInt("state")),
+								nbtCompound.contains("nbt", NbtElement.COMPOUND_TYPE)
+										? Optional.of(nbtCompound.getCompound("nbt"))
+										: emptyNbt())))
+				.sorted(Comparator.comparing((pair) -> pair.getFirst().getX()))
+				.sorted(Comparator.comparing((pair) -> pair.getFirst().getY()))
+				.sorted(Comparator.comparing((pair) -> pair.getFirst().getZ()))
+				.toList();
+			positionsPairList
+				.forEach((pair) -> positions
+					.put(pair.getFirst().subtract(positionsPairList.get(0).getFirst()), pair.getSecond()));
+			return Optional
+				.of(new NbtPlacerUtil(nbt, positions, nbt.getList("entities", 10), positionsPairList.get(0).getFirst(),
+					sizeVector));
 		}
 
+		return Optional.empty();
 	}
 
 	public static NbtCompound loadTags(Identifier id, ResourceManager manager) {
@@ -196,7 +195,7 @@ public class NbtPlacerUtil {
 		try {
 			return Optional.ofNullable(readStructure(manager.getResource(id).get()));
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error("Failed to load structure '{}' {}", id, e);
 			return Optional.empty();
 		}
 
@@ -245,18 +244,20 @@ public class NbtPlacerUtil {
 		return this;
 	}
 
-	public NbtPlacerUtil spawnEntities(ChunkRegion region, BlockPos pos, Manipulation manipulation) {
-		return spawnEntities(region, BlockPos.ORIGIN, pos, pos.add(this.sizeX, this.sizeY, this.sizeZ), manipulation);
+	public NbtPlacerUtil spawnEntities(ChunkRegion region, BlockPos pos, Manipulation manipulation,
+			Function<NbtCompound, NbtCompound> modifier) {
+		return spawnEntities(region, BlockPos.ORIGIN, pos, pos.add(this.sizeX, this.sizeY, this.sizeZ), manipulation,
+			modifier);
 	}
 
 	public NbtPlacerUtil spawnEntities(ChunkRegion region, BlockPos offset, BlockPos from, BlockPos to,
-			Manipulation manipulation) {
-		this.entities.forEach((nbtElement) -> spawnEntity(nbtElement, region, offset, from, to, manipulation));
+			Manipulation manipulation, Function<NbtCompound, NbtCompound> modifier) {
+		this.entities.forEach((nbtElement) -> spawnEntity(nbtElement, region, offset, from, to, manipulation, modifier));
 		return this;
 	}
 
 	public NbtPlacerUtil spawnEntity(NbtElement nbtElement, ChunkRegion region, BlockPos offset, BlockPos from, BlockPos to,
-			Manipulation manipulation) {
+			Manipulation manipulation, Function<NbtCompound, NbtCompound> modifier) {
 		NbtCompound entityCompound = (NbtCompound) nbtElement;
 		NbtList nbtPos = entityCompound.getList("pos", 6);
 		Vec3d relativeLocation = mirror(
@@ -305,7 +306,7 @@ public class NbtPlacerUtil {
 			nbt.putInt("TileZ", MathHelper.floor(realPosition.z));
 		}
 
-		Optional<Entity> optionalEntity = getEntity(region, nbt);
+		Optional<Entity> optionalEntity = getEntity(region, modifier.apply(nbt));
 
 		if (optionalEntity.isPresent()) {
 			Entity entity = optionalEntity.get();
@@ -341,6 +342,7 @@ public class NbtPlacerUtil {
 		try {
 			return EntityType.getEntityFromNbt(nbt, region.toServerWorld());
 		} catch (Exception e) {
+			LOGGER.error("Failed to parse entity {}", nbt);
 			return Optional.empty();
 		}
 
