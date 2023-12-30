@@ -3,6 +3,7 @@ package net.ludocrypt.limlib.api.effects.sky;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 
+import org.quiltmc.loader.api.ModInternal;
 import org.quiltmc.loader.api.minecraft.ClientOnly;
 
 import com.mojang.serialization.Codec;
@@ -30,9 +31,19 @@ public abstract class DimensionEffects {
 	public static final RegistryKey<Registry<DimensionEffects>> DIMENSION_EFFECTS_KEY = RegistryKey
 		.ofRegistry(new Identifier("limlib/dimension_effects"));
 
+	@ModInternal
 	public static final AtomicReference<HolderLookup<DimensionEffects>> MIXIN_WORLD_LOOKUP = new AtomicReference<HolderLookup<DimensionEffects>>();
 
 	public abstract Codec<? extends DimensionEffects> getCodec();
+
+	public static void init() {
+		Registry
+			.register(DimensionEffects.DIMENSION_EFFECTS_CODEC, new Identifier("limlib", "static"),
+				StaticDimensionEffects.CODEC);
+		Registry
+			.register(DimensionEffects.DIMENSION_EFFECTS_CODEC, new Identifier("limlib", "empty"),
+				EmptyDimensionEffects.CODEC);
+	}
 
 	@ClientOnly
 	public abstract DimensionVisualEffects getDimensionEffects();

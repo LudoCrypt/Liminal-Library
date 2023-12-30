@@ -27,6 +27,12 @@ public abstract class DistortionEffect {
 
 	public abstract Codec<? extends DistortionEffect> getCodec();
 
+	public static void init() {
+		Registry
+			.register(DistortionEffect.DISTORTION_EFFECT_CODEC, new Identifier("limlib", "static"),
+				StaticDistortionEffect.CODEC);
+	}
+
 	/**
 	 * Whether or not a Sound Event should be ignored
 	 * 

@@ -17,9 +17,9 @@ import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
-import net.ludocrypt.limlib.api.world.NbtGroup;
-import net.ludocrypt.limlib.api.world.NbtPlacerUtil;
 import net.ludocrypt.limlib.api.world.chunk.AbstractNbtChunkGenerator;
+import net.ludocrypt.limlib.api.world.nbt.NbtGroup;
+import net.ludocrypt.limlib.api.world.nbt.NbtPlacerUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -174,8 +174,8 @@ public class DebugNbtChunkGenerator extends AbstractNbtChunkGenerator {
 
 	@Override
 	protected void modifyStructure(ChunkRegion region, BlockPos pos, BlockState state, Optional<NbtCompound> blockEntityNbt,
-			int update) {
-		region.setBlockState(pos, state, update, 1);
+			int update, int depth) {
+		region.setBlockState(pos, state, Block.FORCE_STATE, 0);
 		blockEntityNbt.ifPresent((nbt) -> {
 			if (region.getBlockEntity(pos) != null)
 				region.getBlockEntity(pos).readNbt(nbt);

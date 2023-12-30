@@ -15,6 +15,7 @@ import com.mojang.logging.LogUtils;
 import net.ludocrypt.limlib.api.world.maze.MazeComponent;
 import net.ludocrypt.limlib.api.world.maze.MazeComponent.Vec2i;
 import net.ludocrypt.limlib.api.world.maze.MazeGenerator;
+import net.ludocrypt.limlib.api.world.nbt.ImmutableNbtCompound;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.util.math.MathHelper;
@@ -64,7 +65,7 @@ public class MazeStorage {
 							.get(id)
 							.getMazes()
 							.put(regionPos.add(pos), new MazeComponent(mazeRaw.getInt("width"), mazeRaw.getInt("height"))
-								.read(mazeRaw.getCompound("maze")));
+								.read(new ImmutableNbtCompound(mazeRaw.getCompound("maze"))));
 					}
 
 				} catch (IOException | NullPointerException e) {
@@ -99,7 +100,7 @@ public class MazeStorage {
 			}
 
 			NbtCompound compound = new NbtCompound();
-			NbtCompound mazeCompound = maze.write(new NbtCompound());
+			NbtCompound mazeCompound = maze.write();
 
 			compound.put("maze", mazeCompound);
 			compound.putInt("width", maze.width);

@@ -24,6 +24,11 @@ public abstract class PostEffect {
 
 	public abstract Codec<? extends PostEffect> getCodec();
 
+	public static void init() {
+		Registry.register(PostEffect.POST_EFFECT_CODEC, new Identifier("limlib", "static"), StaticPostEffect.CODEC);
+		Registry.register(PostEffect.POST_EFFECT_CODEC, new Identifier("limlib", "empty"), EmptyPostEffect.CODEC);
+	}
+
 	public abstract boolean shouldRender();
 
 	public abstract void beforeRender();

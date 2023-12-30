@@ -1,4 +1,4 @@
-package net.ludocrypt.limlib.api.world;
+package net.ludocrypt.limlib.api.world.nbt;
 
 import java.util.Map;
 import java.util.Optional;

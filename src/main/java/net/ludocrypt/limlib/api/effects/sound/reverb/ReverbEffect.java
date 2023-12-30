@@ -27,6 +27,10 @@ public abstract class ReverbEffect {
 
 	public abstract Codec<? extends ReverbEffect> getCodec();
 
+	public static void init() {
+		Registry.register(ReverbEffect.REVERB_EFFECT_CODEC, new Identifier("limlib", "static"), StaticReverbEffect.CODEC);
+	}
+
 	/**
 	 * Whether or not a Sound Event should be ignored
 	 * 

@@ -1,8 +1,10 @@
-package net.ludocrypt.limlib.api.world;
+package net.ludocrypt.limlib.api.world.nbt;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.function.Consumer;
 
 import com.google.common.collect.Lists;
@@ -97,6 +99,10 @@ public class NbtGroup {
 
 	}
 
+	public Iterator<Identifier> iterator() {
+		return new NbtIterator();
+	}
+
 	public <A, V> void fill(FunctionMap<Identifier, A, V> map) {
 		forEach(map::put);
 	}
@@ -146,6 +152,55 @@ public class NbtGroup {
 
 		public NbtGroup build() {
 			return new NbtGroup(id, groups);
+		}
+
+	}
+
+	private class NbtIterator implements Iterator<Identifier> {
+
+		private Iterator<Entry<String, List<String>>> groupIterator;
+		private Iterator<String> nbtIterator;
+
+		public NbtIterator() {
+			groupIterator = groups.entrySet().iterator();
+			nbtIterator = getNextNbtIterator();
+		}
+
+		private Iterator<String> getNextNbtIterator() {
+
+			while (groupIterator.hasNext()) {
+				Entry<String, List<String>> entry = groupIterator.next();
+				List<String> nbtList = entry.getValue();
+
+				if (nbtList != null && !nbtList.isEmpty()) {
+					return nbtList.iterator();
+				}
+
+			}
+
+			return null;
+		}
+
+		@Override
+		public boolean hasNext() {
+			return nbtIterator != null && nbtIterator.hasNext();
+		}
+
+		@Override
+		public Identifier next() {
+
+			if (!hasNext()) {
+				throw new NoSuchElementException("No more elements");
+			}
+
+			String nbt = nbtIterator.next();
+			Identifier id = nbtId(groupIterator.next().getKey(), nbt);
+
+			if (!nbtIterator.hasNext()) {
+				nbtIterator = getNextNbtIterator();
+			}
+
+			return id;
 		}
 
 	}

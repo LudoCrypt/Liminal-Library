@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import net.ludocrypt.limlib.api.world.chunk.AbstractNbtChunkGenerator;
 import net.ludocrypt.limlib.api.world.maze.storage.MazeStorage;
 import net.ludocrypt.limlib.api.world.maze.storage.MazeStorageProvider;
 import net.ludocrypt.limlib.api.world.maze.storage.ServerWorldMazeAccess;
@@ -41,12 +42,16 @@ public class ServerWorldMixin implements ServerWorldMazeAccess {
 				session.getWorldDirectory(registryKey).resolve("maze_region").toFile());
 		}
 
+		if (dimensionOptions.getChunkGenerator() instanceof AbstractNbtChunkGenerator generator) {
+			generator.loadTags(((ServerWorld) (Object) this));
+		}
+
 	}
 
 	@Inject(method = "saveWorld", at = @At("TAIL"))
 	private void limlib$saveWorld(CallbackInfo ci) {
 
-		if (mazeStorage != null) {
+		if (this.mazeStorage != null) {
 			this.mazeStorage.save();
 		}
 

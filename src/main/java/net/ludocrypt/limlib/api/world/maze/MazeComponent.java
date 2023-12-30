@@ -6,7 +6,8 @@ import java.util.Objects;
 
 import com.google.common.collect.Maps;
 
-import net.ludocrypt.limlib.api.world.maze.storage.NbtSerializer;
+import net.ludocrypt.limlib.api.world.nbt.ImmutableNbtCompound;
+import net.ludocrypt.limlib.api.world.nbt.NbtSerializer;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3i;
@@ -56,7 +57,6 @@ public final class MazeComponent implements NbtSerializer<MazeComponent> {
 
 			for (int y = 0; y < height; y++) {
 				row.append(cellState(width - x, y).toString());
-
 			}
 
 			row.append("\n");
@@ -66,21 +66,22 @@ public final class MazeComponent implements NbtSerializer<MazeComponent> {
 	}
 
 	@Override
-	public NbtCompound write(NbtCompound nbt) {
+	public ImmutableNbtCompound write() {
+		NbtCompound nbt = new NbtCompound();
 
 		for (int x = 0; x < width; x++) {
 
 			for (int y = 0; y < height; y++) {
-				nbt.put(x + "." + y, this.cellState(x, y).write(new NbtCompound()));
+				nbt.put(x + "." + y, this.cellState(x, y).write());
 			}
 
 		}
 
-		return nbt;
+		return new ImmutableNbtCompound(nbt);
 	}
 
 	@Override
-	public MazeComponent read(NbtCompound nbt) {
+	public MazeComponent read(ImmutableNbtCompound nbt) {
 
 		for (int x = 0; x < width; x++) {
 
@@ -264,12 +265,14 @@ public final class MazeComponent implements NbtSerializer<MazeComponent> {
 		}
 
 		@Override
-		public NbtCompound write(NbtCompound nbt) {
+		public ImmutableNbtCompound write() {
+			NbtCompound nbt = new NbtCompound();
+
 			nbt.putBoolean("up", up);
 			nbt.putBoolean("down", down);
 			nbt.putBoolean("left", left);
 			nbt.putBoolean("right", right);
-			nbt.put("pos", this.position.write(new NbtCompound()));
+			nbt.put("pos", this.position.write());
 
 			NbtCompound extraData = new NbtCompound();
 
@@ -279,11 +282,11 @@ public final class MazeComponent implements NbtSerializer<MazeComponent> {
 
 			nbt.put("extra", extraData);
 
-			return nbt;
+			return new ImmutableNbtCompound(nbt);
 		}
 
 		@Override
-		public CellState read(NbtCompound nbt) {
+		public CellState read(ImmutableNbtCompound nbt) {
 			this.up = nbt.getBoolean("up");
 			this.down = nbt.getBoolean("down");
 			this.left = nbt.getBoolean("left");
@@ -425,15 +428,17 @@ public final class MazeComponent implements NbtSerializer<MazeComponent> {
 		}
 
 		@Override
-		public NbtCompound write(NbtCompound nbt) {
+		public ImmutableNbtCompound write() {
+			NbtCompound nbt = new NbtCompound();
+
 			nbt.putInt("x", x);
 			nbt.putInt("y", y);
 
-			return nbt;
+			return new ImmutableNbtCompound(nbt);
 		}
 
 		@Override
-		public Vec2i read(NbtCompound nbt) {
+		public Vec2i read(ImmutableNbtCompound nbt) {
 			this.x = nbt.getInt("x");
 			this.y = nbt.getInt("y");
 

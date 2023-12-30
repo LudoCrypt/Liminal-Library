@@ -1,4 +1,4 @@
-package net.ludocrypt.limlib.api.world;
+package net.ludocrypt.limlib.api.world.nbt;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,7 +12,9 @@ import org.apache.logging.log4j.util.TriConsumer;
 
 import com.mojang.datafixers.util.Pair;
 
+import net.ludocrypt.limlib.api.world.Manipulation;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.decoration.AbstractDecorationEntity;
@@ -181,6 +183,10 @@ public class NbtPlacerUtil {
 
 	}
 
+	public static NbtCompound loadTags(Identifier id, ResourceManager manager) {
+		return loadNbtSafe(id, manager).orElseGet(NbtCompound::new).getCompound("limlib_tag");
+	}
+
 	private static Optional<NbtCompound> emptyNbt() {
 		return Optional.empty();
 	}
@@ -219,14 +225,15 @@ public class NbtPlacerUtil {
 					BlockPos pos = new BlockPos(xi, yi, zi);
 					Pair<BlockState, Optional<NbtCompound>> pair = this.positions.get(pos.add(offset));
 
-					if (pair != null) {
-						BlockState state = pair.getFirst();
-						Optional<NbtCompound> nbt = pair.getSecond();
+					if (pair == null) {
+						pair = Pair.of(Blocks.STRUCTURE_VOID.getDefaultState(), Optional.empty());
+					}
 
-						if (state != null) {
-							consumer.accept(from.add(pos), state, nbt);
-						}
+					BlockState state = pair.getFirst();
+					Optional<NbtCompound> nbt = pair.getSecond();
 
+					if (state != null) {
+						consumer.accept(from.add(pos), state, nbt);
 					}
 
 				}

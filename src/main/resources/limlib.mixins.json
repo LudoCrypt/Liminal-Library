@@ -8,6 +8,8 @@
 		"ChunkStatusMixin",
 		"DynamicRegistrySyncMixin",
 		"GeneratorTypeAccessor",
+		"NbtCompoundAccessor",
+		"NbtListAccessor",
 		"RegistriesAccessor",
 		"RegistryLoaderMixin",
 		"ServerPlayerEntityMixin",

@@ -27,6 +27,11 @@ public abstract class Skybox {
 
 	public abstract Codec<? extends Skybox> getCodec();
 
+	public static void init() {
+		Registry.register(Skybox.SKYBOX_CODEC, new Identifier("limlib", "empty"), EmptySkybox.CODEC);
+		Registry.register(Skybox.SKYBOX_CODEC, new Identifier("limlib", "textured"), TexturedSkybox.CODEC);
+	}
+
 	@ClientOnly
 	public abstract void renderSky(WorldRenderer worldRenderer, MinecraftClient client, MatrixStack matrices,
 			Matrix4f projectionMatrix, float tickDelta);
