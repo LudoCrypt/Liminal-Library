@@ -14,6 +14,7 @@ import net.ludocrypt.limlib.api.world.chunk.AbstractNbtChunkGenerator;
 import net.ludocrypt.limlib.api.world.maze.storage.MazeStorage;
 import net.ludocrypt.limlib.api.world.maze.storage.MazeStorageProvider;
 import net.ludocrypt.limlib.api.world.maze.storage.ServerWorldMazeAccess;
+import net.ludocrypt.limlib.api.world.nbt.NbtTags;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.WorldGenerationProgressListener;
@@ -43,7 +44,12 @@ public class ServerWorldMixin implements ServerWorldMazeAccess {
 		}
 
 		if (dimensionOptions.getChunkGenerator() instanceof AbstractNbtChunkGenerator generator) {
-			generator.loadTags(((ServerWorld) (Object) this));
+
+			if (generator.tags == null) {
+				generator.tags = NbtTags.parse(generator.nbtGroup, server.getResourceManager());
+			}
+
+			generator.loadTags();
 		}
 
 	}

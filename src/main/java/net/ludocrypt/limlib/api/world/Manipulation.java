@@ -5,6 +5,7 @@ import com.mojang.serialization.Codec;
 import net.minecraft.util.BlockMirror;
 import net.minecraft.util.BlockRotation;
 import net.minecraft.util.StringIdentifiable;
+import net.minecraft.util.math.Direction;
 import net.minecraft.util.random.RandomGenerator;
 
 public enum Manipulation implements StringIdentifiable {
@@ -52,6 +53,45 @@ public enum Manipulation implements StringIdentifiable {
 
 	public static Manipulation of(BlockMirror mirror) {
 		return of(BlockRotation.NONE, mirror);
+	}
+
+	public static Manipulation of(Direction from, Direction to) {
+		return switch (from) {
+			case DOWN -> throw new UnsupportedOperationException();
+			case UP -> throw new UnsupportedOperationException();
+			case EAST -> (switch (to) {
+				case DOWN -> throw new UnsupportedOperationException();
+				case UP -> throw new UnsupportedOperationException();
+				case EAST -> NONE;
+				case NORTH -> COUNTERCLOCKWISE_90;
+				case SOUTH -> CLOCKWISE_90;
+				case WEST -> CLOCKWISE_180;
+			});
+			case NORTH -> (switch (to) {
+				case DOWN -> throw new UnsupportedOperationException();
+				case UP -> throw new UnsupportedOperationException();
+				case EAST -> CLOCKWISE_90;
+				case NORTH -> NONE;
+				case SOUTH -> CLOCKWISE_180;
+				case WEST -> COUNTERCLOCKWISE_90;
+			});
+			case SOUTH -> (switch (to) {
+				case DOWN -> throw new UnsupportedOperationException();
+				case UP -> throw new UnsupportedOperationException();
+				case EAST -> COUNTERCLOCKWISE_90;
+				case NORTH -> CLOCKWISE_180;
+				case SOUTH -> NONE;
+				case WEST -> CLOCKWISE_90;
+			});
+			case WEST -> (switch (to) {
+				case DOWN -> throw new UnsupportedOperationException();
+				case UP -> throw new UnsupportedOperationException();
+				case EAST -> CLOCKWISE_180;
+				case NORTH -> CLOCKWISE_90;
+				case SOUTH -> COUNTERCLOCKWISE_90;
+				case WEST -> NONE;
+			});
+		};
 	}
 
 	public static Manipulation of(BlockRotation rotation, BlockMirror mirror) {
@@ -143,6 +183,19 @@ public enum Manipulation implements StringIdentifiable {
 
 	public Manipulation manipulate(Manipulation manipulation) {
 		return this.rotate(manipulation.rotation).mirror(manipulation.mirror);
+	}
+
+	public BlockRotation flattenRotation() {
+		return switch (this) {
+			case NONE -> BlockRotation.NONE;
+			case FRONT_BACK -> BlockRotation.CLOCKWISE_180;
+			case LEFT_RIGHT -> BlockRotation.NONE;
+			case CLOCKWISE_180 -> BlockRotation.CLOCKWISE_180;
+			case CLOCKWISE_90 -> BlockRotation.CLOCKWISE_90;
+			case COUNTERCLOCKWISE_90 -> BlockRotation.COUNTERCLOCKWISE_90;
+			case TOP_LEFT_BOTTOM_RIGHT -> BlockRotation.CLOCKWISE_90;
+			case TOP_RIGHT_BOTTOM_LEFT -> BlockRotation.COUNTERCLOCKWISE_90;
+		};
 	}
 
 	public static Manipulation[] rotations() {

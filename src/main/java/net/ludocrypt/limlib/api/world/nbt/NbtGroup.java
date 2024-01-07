@@ -3,6 +3,7 @@ package net.ludocrypt.limlib.api.world.nbt;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 import com.google.common.collect.Lists;
@@ -22,6 +23,7 @@ public class NbtGroup {
 			return group.groups;
 		})).apply(instance, instance.stable(NbtGroup::new));
 	});
+
 	Identifier id;
 	Map<String, List<String>> groups;
 
@@ -35,7 +37,7 @@ public class NbtGroup {
 			"structures/nbt/" + this.id.getPath() + "/" + group + "/" + nbt + ".nbt");
 	}
 
-	public Identifier pick(String key, RandomGenerator random) {
+	public Identifier pick(RandomGenerator random, String key) {
 
 		if (!groups.containsKey(key)) {
 			throw new NullPointerException();
@@ -86,11 +88,15 @@ public class NbtGroup {
 	}
 
 	public void forEach(Consumer<Identifier> runnable) {
+		forEachGroup((group, id) -> runnable.accept(id));
+	}
+
+	public void forEachGroup(BiConsumer<String, Identifier> runnable) {
 
 		for (Entry<String, List<String>> entry : groups.entrySet()) {
 
 			for (String nbt : entry.getValue()) {
-				runnable.accept(nbtId(entry.getKey(), nbt));
+				runnable.accept(entry.getKey(), nbtId(entry.getKey(), nbt));
 			}
 
 		}

@@ -57,10 +57,8 @@ public class MazeGenerator {
 				Vec2i inPos = pos.add(x, y);
 
 				if (Math.floorMod(inPos.getX(), thicknessX) == 0 && Math.floorMod(inPos.getY(), thicknessY) == 0) {
-					Vec2i realPos = new Vec2i(inPos.getX() - Math.floorMod(inPos.getX(), (width * thicknessX)),
-						inPos.getY() - Math.floorMod(inPos.getY(), (height * thicknessY)));
-
-					Vec2i mazePos = new Vec2i(realPos.getX() / (width * thicknessX), realPos.getY() / (height * thicknessY));
+					Vec2i realPos = getRealMaze(inPos);
+					Vec2i mazePos = getInlineMaze(inPos);
 
 					MazeComponent maze;
 
@@ -80,9 +78,7 @@ public class MazeGenerator {
 
 					}
 
-					int cellX = (inPos.getX() - realPos.getX()) / thicknessX;
-					int cellY = (inPos.getY() - realPos.getY()) / thicknessY;
-					CellState originCell = maze.cellState(cellX, cellY);
+					CellState originCell = maze.cellState(getInlineCell(inPos));
 					cellDecorator
 						.generate(region, inPos, realPos, maze, originCell, new Vec2i(this.thicknessX, this.thicknessY),
 							RandomGenerator
@@ -94,6 +90,21 @@ public class MazeGenerator {
 
 		}
 
+	}
+
+	public Vec2i getRealMaze(Vec2i real) {
+		return new Vec2i(real.getX() - Math.floorMod(real.getX(), (width * thicknessX)),
+			real.getY() - Math.floorMod(real.getY(), (height * thicknessY)));
+	}
+
+	public Vec2i getInlineMaze(Vec2i real) {
+		Vec2i realMaze = getRealMaze(real);
+		return new Vec2i(realMaze.getX() / (width * thicknessX), realMaze.getY() / (height * thicknessY));
+	}
+
+	public Vec2i getInlineCell(Vec2i real) {
+		Vec2i realPos = getRealMaze(real);
+		return new Vec2i((real.getX() - realPos.getX()) / thicknessX, (real.getY() - realPos.getY()) / thicknessY);
 	}
 
 	public HashMap<Vec2i, MazeComponent> getMazes() {

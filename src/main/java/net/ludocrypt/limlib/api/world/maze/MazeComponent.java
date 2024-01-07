@@ -6,7 +6,6 @@ import java.util.Objects;
 
 import com.google.common.collect.Maps;
 
-import net.ludocrypt.limlib.api.world.nbt.ImmutableNbtCompound;
 import net.ludocrypt.limlib.api.world.nbt.NbtSerializer;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.StringIdentifiable;
@@ -78,7 +77,7 @@ public final class MazeComponent implements NbtSerializer<MazeComponent> {
 
 		}
 
-		return new ImmutableNbtCompound(nbt);
+		return nbt;
 	}
 
 	@Override
@@ -283,7 +282,7 @@ public final class MazeComponent implements NbtSerializer<MazeComponent> {
 
 			nbt.put("extra", extraData);
 
-			return new ImmutableNbtCompound(nbt);
+			return nbt;
 		}
 
 		@Override
@@ -435,7 +434,7 @@ public final class MazeComponent implements NbtSerializer<MazeComponent> {
 			nbt.putInt("x", x);
 			nbt.putInt("y", y);
 
-			return new ImmutableNbtCompound(nbt);
+			return nbt;
 		}
 
 		@Override

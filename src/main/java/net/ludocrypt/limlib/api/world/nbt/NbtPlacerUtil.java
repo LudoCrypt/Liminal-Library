@@ -210,11 +210,12 @@ public class NbtPlacerUtil {
 
 	public NbtPlacerUtil generateNbt(ChunkRegion region, BlockPos at,
 			TriConsumer<BlockPos, BlockState, Optional<NbtCompound>> consumer) {
-		return generateNbt(region, BlockPos.ZERO, at, at.add(this.sizeVector), consumer);
+		return generateNbt(region, BlockPos.ZERO, at, new Bound(at.add(this.sizeVector)), consumer);
 	}
 
-	public NbtPlacerUtil generateNbt(ChunkRegion region, Vec3i offset, BlockPos from, BlockPos to,
+	public NbtPlacerUtil generateNbt(ChunkRegion region, Vec3i offset, BlockPos from, Bound bound,
 			TriConsumer<BlockPos, BlockState, Optional<NbtCompound>> consumer) {
+		BlockPos to = new BlockPos(bound.boundX.orElse(sizeX), bound.boundY.orElse(sizeY), bound.boundZ.orElse(sizeZ));
 
 		for (int xi = 0; xi < Math.min(to.subtract(from).getX(), this.sizeX); xi++) {
 
@@ -246,18 +247,19 @@ public class NbtPlacerUtil {
 
 	public NbtPlacerUtil spawnEntities(ChunkRegion region, BlockPos pos, Manipulation manipulation,
 			Function<NbtCompound, NbtCompound> modifier) {
-		return spawnEntities(region, BlockPos.ORIGIN, pos, pos.add(this.sizeX, this.sizeY, this.sizeZ), manipulation,
-			modifier);
+		return spawnEntities(region, BlockPos.ORIGIN, pos, new Bound(pos.add(this.sizeVector)), manipulation, modifier);
 	}
 
-	public NbtPlacerUtil spawnEntities(ChunkRegion region, BlockPos offset, BlockPos from, BlockPos to,
+	public NbtPlacerUtil spawnEntities(ChunkRegion region, BlockPos offset, BlockPos from, Bound bound,
 			Manipulation manipulation, Function<NbtCompound, NbtCompound> modifier) {
-		this.entities.forEach((nbtElement) -> spawnEntity(nbtElement, region, offset, from, to, manipulation, modifier));
+		this.entities.forEach((nbtElement) -> spawnEntity(nbtElement, region, offset, from, bound, manipulation, modifier));
 		return this;
 	}
 
-	public NbtPlacerUtil spawnEntity(NbtElement nbtElement, ChunkRegion region, BlockPos offset, BlockPos from, BlockPos to,
+	public NbtPlacerUtil spawnEntity(NbtElement nbtElement, ChunkRegion region, BlockPos offset, BlockPos from, Bound bound,
 			Manipulation manipulation, Function<NbtCompound, NbtCompound> modifier) {
+		BlockPos to = new BlockPos(bound.boundX.orElse(sizeX), bound.boundY.orElse(sizeY), bound.boundZ.orElse(sizeZ));
+
 		NbtCompound entityCompound = (NbtCompound) nbtElement;
 		NbtList nbtPos = entityCompound.getList("pos", 6);
 		Vec3d relativeLocation = mirror(
@@ -295,6 +297,13 @@ public class NbtPlacerUtil {
 				manipulation.getMirror());
 			nbt.remove("facing");
 			nbt.putByte("facing", (byte) dir.getHorizontal());
+		}
+
+		if (nbt.contains("Facing")) {
+			Direction dir = mirror(manipulation.getRotation().rotate(Direction.fromHorizontal(nbt.getByte("Facing"))),
+				manipulation.getMirror());
+			nbt.remove("Facing");
+			nbt.putByte("Facing", (byte) dir.getHorizontal());
 		}
 
 		if (nbt.contains("TileX", 3) && nbt.contains("TileY", 3) && nbt.contains("TileZ", 3)) {
@@ -488,6 +497,52 @@ public class NbtPlacerUtil {
 		}
 
 		return nbtList;
+	}
+
+	public static class Bound {
+
+		final Optional<Integer> boundX;
+		final Optional<Integer> boundY;
+		final Optional<Integer> boundZ;
+
+		public Bound(Optional<Integer> boundX, Optional<Integer> boundY, Optional<Integer> boundZ) {
+			this.boundX = boundX;
+			this.boundY = boundY;
+			this.boundZ = boundZ;
+		}
+
+		public Bound(Integer boundX, Integer boundY, Integer boundZ) {
+			this(Optional.ofNullable(boundX), Optional.ofNullable(boundY), Optional.ofNullable(boundZ));
+		}
+
+		public Bound(Vec3i pos) {
+			this(pos.getX(), pos.getY(), pos.getZ());
+		}
+
+		public Optional<Integer> getBoundX() {
+			return boundX;
+		}
+
+		public Optional<Integer> getBoundY() {
+			return boundY;
+		}
+
+		public Optional<Integer> getBoundZ() {
+			return boundZ;
+		}
+
+		public boolean isBoundX() {
+			return boundX.isPresent();
+		}
+
+		public boolean isBoundY() {
+			return boundY.isPresent();
+		}
+
+		public boolean isBoundZ() {
+			return boundZ.isPresent();
+		}
+
 	}
 
 }

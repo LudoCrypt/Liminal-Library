@@ -20,6 +20,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.ludocrypt.limlib.api.world.chunk.AbstractNbtChunkGenerator;
 import net.ludocrypt.limlib.api.world.nbt.NbtGroup;
 import net.ludocrypt.limlib.api.world.nbt.NbtPlacerUtil;
+import net.ludocrypt.limlib.impl.access.StructureBlockBlockEntityAccess;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -59,6 +60,11 @@ public class DebugNbtChunkGenerator extends AbstractNbtChunkGenerator {
 
 	public DebugNbtChunkGenerator(Holder.Reference<Biome> reference) {
 		super(new FixedBiomeSource(reference), new DebugNbtGroup());
+	}
+
+	@Override
+	public void loadTags() {
+
 	}
 
 	@Override
@@ -155,6 +161,7 @@ public class DebugNbtChunkGenerator extends AbstractNbtChunkGenerator {
 								id.toString().substring(0, id.toString().length() - 4).replaceFirst("structures/", ""));
 						blockEntity.setOffset(new BlockPos(1, 1, 1));
 						blockEntity.setIgnoreEntities(false);
+						((StructureBlockBlockEntityAccess) blockEntity).setTags(NbtPlacerUtil.loadTags(id, resourceManager));
 					}
 
 				}

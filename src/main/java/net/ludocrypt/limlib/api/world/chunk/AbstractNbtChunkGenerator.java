@@ -2,11 +2,14 @@ package net.ludocrypt.limlib.api.world.chunk;
 
 import java.util.Optional;
 
+import org.apache.logging.log4j.util.TriConsumer;
+
 import net.ludocrypt.limlib.api.world.LimlibHelper;
 import net.ludocrypt.limlib.api.world.Manipulation;
 import net.ludocrypt.limlib.api.world.nbt.FunctionMap;
 import net.ludocrypt.limlib.api.world.nbt.NbtGroup;
 import net.ludocrypt.limlib.api.world.nbt.NbtPlacerUtil;
+import net.ludocrypt.limlib.api.world.nbt.NbtPlacerUtil.Bound;
 import net.ludocrypt.limlib.api.world.nbt.NbtTags;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -16,7 +19,6 @@ import net.minecraft.block.entity.LootableContainerBlockEntity;
 import net.minecraft.loot.LootTables;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.resource.ResourceManager;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkRegion;
@@ -40,13 +42,7 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 		this.nbtGroup.fill(structures);
 	}
 
-	public void loadTags(ServerWorld world) {
-
-		if (this.tags == null) {
-			this.tags = NbtTags.parse(this.nbtGroup, world.getServer().getResourceManager());
-		}
-
-	}
+	public abstract void loadTags();
 
 	public void generateNbt(ChunkRegion region, BlockPos at, Identifier id) {
 		generateNbt(region, at, id, Manipulation.NONE);
@@ -67,11 +63,27 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 
 	}
 
-	public void generateNbt(ChunkRegion region, BlockPos offset, BlockPos from, BlockPos to, Identifier id) {
+	public void generateNbt(ChunkRegion region, BlockPos at, Identifier id, Manipulation manipulation,
+			TriConsumer<BlockPos, BlockState, Optional<NbtCompound>> consumer) {
+
+		try {
+			structures
+				.eval(id, region.getServer().getResourceManager())
+				.manipulate(manipulation)
+				.generateNbt(region, at, consumer)
+				.spawnEntities(region, at, manipulation, (nbt) -> this.modifyEntity(region, nbt));
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new NullPointerException("Attempted to load undefined structure \'" + id + "\'");
+		}
+
+	}
+
+	public void generateNbt(ChunkRegion region, BlockPos offset, BlockPos from, Bound to, Identifier id) {
 		generateNbt(region, offset, from, to, id, Manipulation.NONE);
 	}
 
-	public void generateNbt(ChunkRegion region, BlockPos offset, BlockPos from, BlockPos to, Identifier id,
+	public void generateNbt(ChunkRegion region, BlockPos offset, BlockPos from, Bound to, Identifier id,
 			Manipulation manipulation) {
 
 		try {
@@ -79,6 +91,22 @@ public abstract class AbstractNbtChunkGenerator extends LiminalChunkGenerator {
 				.eval(id, region.getServer().getResourceManager())
 				.manipulate(manipulation)
 				.generateNbt(region, offset, from, to, (pos, state, nbt) -> this.modifyStructure(region, pos, state, nbt))
+				.spawnEntities(region, offset, from, to, manipulation, (nbt) -> this.modifyEntity(region, nbt));
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new NullPointerException("Attempted to load undefined structure \'" + id + "\'");
+		}
+
+	}
+
+	public void generateNbt(ChunkRegion region, BlockPos offset, BlockPos from, Bound to, Identifier id,
+			Manipulation manipulation, TriConsumer<BlockPos, BlockState, Optional<NbtCompound>> consumer) {
+
+		try {
+			structures
+				.eval(id, region.getServer().getResourceManager())
+				.manipulate(manipulation)
+				.generateNbt(region, offset, from, to, consumer)
 				.spawnEntities(region, offset, from, to, manipulation, (nbt) -> this.modifyEntity(region, nbt));
 		} catch (Exception e) {
 			e.printStackTrace();
